@@ -1,0 +1,16 @@
+import { QueryClientProvider } from "@tanstack/react-query"
+import LoadingPage from "components/common/LoadingPage"
+import { queryClient } from "configs/queryClient"
+import { router } from "configs/router"
+import { Suspense } from "react"
+import { RouterProvider } from "react-router-dom"
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback={<LoadingPage />}>
+        <RouterProvider router={router} />
+      </Suspense>
+    </QueryClientProvider>
+  )
+}
