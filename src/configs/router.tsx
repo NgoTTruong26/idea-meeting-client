@@ -1,4 +1,5 @@
-import { createBrowserRouter } from "react-router-dom"
+import { nav } from "constants/nav"
+import { Navigate, createBrowserRouter } from "react-router-dom"
 import { authRoute } from "../modules/auth/route"
 
 export const router = createBrowserRouter([
@@ -8,6 +9,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <div>404</div>,
+    element: <Navigate to={`${nav.AUTH}${nav.SIGN_IN}`} />,
   },
 ])

@@ -1,6 +1,10 @@
 import Button from "components/core/Button"
+import { nav } from "constants/nav"
+import { useNavigate } from "react-router-dom"
 
 export default function SignIn() {
+  const navigate = useNavigate()
+
   return (
     <div className="min-h-screen grid md:grid-cols-2 place-items-center p-4">
       <img
@@ -16,6 +20,7 @@ export default function SignIn() {
         <div className="mt-12 flex flex-col gap-2">
           <Button
             icon={<img src="/images/google.png" alt="" className="w-6" />}
+            onClick={() => navigate(`${nav.AUTH}${nav.UPDATE_PROFILE}`)}
           >
             Sign in with Google
           </Button>
