@@ -6,7 +6,7 @@ export default function SignIn() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen grid md:grid-cols-2 place-items-center p-4 h-full overflow-hidden">
+    <div className="min-h-screen grid md:grid-cols-2 place-items-center p-4">
       <img
         src="/images/sign-in-bg.jpg"
         alt=""
