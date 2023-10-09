@@ -25,7 +25,7 @@ export default function SignIn() {
             startContent={
               <img src="/images/google.png" alt="" className="w-6" />
             }
-            onClick={() => navigate(`${nav.AUTH}${nav.UPDATE_PROFILE}`)}
+            onClick={() => navigate(`${nav.AUTH}${nav.NEW_PROFILE}`)}
           >
             Sign in with Google
           </Button>

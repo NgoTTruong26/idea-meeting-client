@@ -3,7 +3,7 @@ import { lazy } from "react"
 import { RouteObject } from "react-router-dom"
 
 const SignIn = lazy(() => import("./pages/SignIn")),
-  UpdateProfile = lazy(() => import("./pages/UpdateProfile"))
+  NewProfile = lazy(() => import("./pages/NewProfile"))
 
 export const authRoute: RouteObject = {
   path: nav.AUTH.slice(1),
@@ -13,8 +13,8 @@ export const authRoute: RouteObject = {
       Component: SignIn,
     },
     {
-      path: nav.UPDATE_PROFILE.slice(1),
-      Component: UpdateProfile,
+      path: nav.NEW_PROFILE.slice(1),
+      Component: NewProfile,
     },
   ],
 }
