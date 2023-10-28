@@ -1,4 +1,4 @@
-import { QueryClient } from "@tanstack/react-query"
+import { QueryClient, keepPreviousData } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { toast } from "react-hot-toast"
 
@@ -16,8 +16,7 @@ export const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 2,
-      keepPreviousData: true,
-      onError: handleQueryError,
+      placeholderData: keepPreviousData,
     },
     mutations: {
       onError: handleQueryError,

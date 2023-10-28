@@ -15,7 +15,7 @@
     "@commitlint/config-conventional": "^17.7.0",
     "@nextui-org/react": "^2.1.13",
     "@react-oauth/google": "^0.11.1",
-    "@tanstack/react-query": "^4.35.3",
+    "@tanstack/react-query": "^5.0.5",
     "add": "^2.0.6",
     "axios": "^1.5.1",
     "clsx": "^2.0.0",

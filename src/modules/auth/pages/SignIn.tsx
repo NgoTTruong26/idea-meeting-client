@@ -1,13 +1,19 @@
 import { Button } from "@nextui-org/react"
 import { useGoogleLogin } from "@react-oauth/google"
+import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
+import { useGoogleSignIn } from "../services/googleSignIn"
 
 export default function SignIn() {
   const navigate = useNavigate()
-  const googleLogin = useGoogleLogin({
+  const googleSignIn = useGoogleSignIn()
+  const handleGoogleSignIn = useGoogleLogin({
     flow: "auth-code",
-    onSuccess(code) {
-      console.log(code)
+    async onSuccess(code) {
+      // const user = await googleSignIn.mutateAsync()
+    },
+    onError() {
+      toast.error("Can't sign in with Google")
     },
   })
 
@@ -31,7 +37,8 @@ export default function SignIn() {
             startContent={
               <img src="/images/google.png" alt="" className="w-6" />
             }
-            onClick={googleLogin}
+            isLoading={googleSignIn.isPending}
+            onClick={handleGoogleSignIn}
           >
             Sign in with Google
           </Button>
