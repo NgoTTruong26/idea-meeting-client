@@ -1,9 +1,15 @@
 import { Button } from "@nextui-org/react"
-import { nav } from "constants/nav"
+import { useGoogleLogin } from "@react-oauth/google"
 import { useNavigate } from "react-router-dom"
 
 export default function SignIn() {
   const navigate = useNavigate()
+  const googleLogin = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess(code) {
+      console.log(code)
+    },
+  })
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 place-items-center p-4">
@@ -25,7 +31,7 @@ export default function SignIn() {
             startContent={
               <img src="/images/google.png" alt="" className="w-6" />
             }
-            onClick={() => navigate(`${nav.AUTH}${nav.NEW_PROFILE}`)}
+            onClick={googleLogin}
           >
             Sign in with Google
           </Button>
