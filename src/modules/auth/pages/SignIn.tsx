@@ -9,10 +9,18 @@ export default function SignIn() {
   const googleSignIn = useGoogleSignIn()
   const handleGoogleSignIn = useGoogleLogin({
     flow: "auth-code",
-    async onSuccess(code) {
-      console.log(code)
-
-      // const user = await googleSignIn.mutateAsync()
+    async onSuccess({ code }) {
+      googleSignIn.mutate(
+        { code },
+        {
+          onSuccess() {
+            console.log("success")
+          },
+          onError() {
+            console.log("error")
+          },
+        },
+      )
     },
     onError() {
       toast.error("Can't sign in with Google")

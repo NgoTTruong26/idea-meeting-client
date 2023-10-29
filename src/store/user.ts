@@ -9,8 +9,7 @@ interface UserState extends User {
 const defaultUser: User = {
   id: "",
   email: "",
-  fullName: "",
-  birthday: "",
+  profile: {},
 }
 
 export const useUser = create<UserState>((set) => ({
