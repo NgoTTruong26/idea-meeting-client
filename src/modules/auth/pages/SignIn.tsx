@@ -10,6 +10,8 @@ export default function SignIn() {
   const handleGoogleSignIn = useGoogleLogin({
     flow: "auth-code",
     async onSuccess(code) {
+      console.log(code)
+
       // const user = await googleSignIn.mutateAsync()
     },
     onError() {

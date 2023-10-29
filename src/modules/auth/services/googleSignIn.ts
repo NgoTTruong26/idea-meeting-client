@@ -1,7 +1,9 @@
 import { useMutation } from "@tanstack/react-query"
 import { api } from "configs/api"
 
-export interface GoogleSignInRequest {}
+export interface GoogleSignInRequest {
+  code:string
+}
 export interface GoogleSignInResponse {}
 
 export async function googleSignIn(data: GoogleSignInRequest) {
