@@ -20,9 +20,9 @@ export default function useUpload<T = unknown>({
   multiple,
   onSuccess,
 }: UseUploadProps<T>) {
-  const { mutate, isLoading } = useMutation((data: FormData) =>
-    api.post<T>(url, data),
-  )
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: FormData) => api.post<T>(url, data),
+  })
   const [queue, setQueue] = useState<File[]>([])
 
   const queueFn = useMemo(
@@ -63,15 +63,15 @@ export default function useUpload<T = unknown>({
   })
 
   useEffect(() => {
-    if (!isLoading && queue.length) {
+    if (!isPending && queue.length) {
       mutateUpload(queue[0])
       queueFn.shift()
     }
-  }, [isLoading, queue])
+  }, [isPending, queue])
 
   return {
     getRootProps,
-    isLoading,
+    isPending,
     queue,
   }
 }
