@@ -9,7 +9,7 @@ export interface SelectOption {
   value: string | number
 }
 
-export interface SelectProps extends NextSelectProps {
+export interface SelectProps extends Omit<NextSelectProps, "children"> {
   t: "select"
   options: SelectOption[]
 }

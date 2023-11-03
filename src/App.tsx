@@ -12,11 +12,9 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <NextUIProvider>
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-          <main className="purple text-foreground bg-background">
-            <Suspense fallback={<LoadingPage />}>
-              <RouterProvider router={router} />
-            </Suspense>
-          </main>
+          <Suspense fallback={<LoadingPage />}>
+            <RouterProvider router={router} />
+          </Suspense>
         </GoogleOAuthProvider>
       </NextUIProvider>
     </QueryClientProvider>

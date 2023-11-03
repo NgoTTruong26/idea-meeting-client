@@ -18,8 +18,7 @@ export const colors = {
 
 export const theme: NextUIPluginConfig = {
   themes: {
-    purple: {
-      extend: "light",
+    light: {
       colors,
     },
   },

@@ -8,5 +8,12 @@ export interface InputProps extends NextInputProps {
 }
 
 export default function Input({ t, ...props }: InputProps) {
-  return <NextInput variant="bordered" {...props} />
+  return (
+    <NextInput
+      color="primary"
+      classNames={{ label: "text-black" }}
+      variant="bordered"
+      {...props}
+    />
+  )
 }

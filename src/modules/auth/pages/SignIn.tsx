@@ -2,6 +2,7 @@ import { Button } from "@nextui-org/react"
 import { useGoogleLogin } from "@react-oauth/google"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
+import UpdateProfileModal from "../components/UpdateProfileModal"
 import { useGoogleSignIn } from "../services/googleSignIn"
 
 export default function SignIn() {
@@ -10,17 +11,7 @@ export default function SignIn() {
   const handleGoogleSignIn = useGoogleLogin({
     flow: "auth-code",
     async onSuccess({ code }) {
-      googleSignIn.mutate(
-        { code },
-        {
-          onSuccess() {
-            console.log("success")
-          },
-          onError() {
-            console.log("error")
-          },
-        },
-      )
+      const data = await googleSignIn.mutateAsync({ code })
     },
     onError() {
       toast.error("Can't sign in with Google")
@@ -63,6 +54,7 @@ export default function SignIn() {
           </Button>
         </div>
       </div>
+      <UpdateProfileModal />
     </div>
   )
 }
