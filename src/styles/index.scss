@@ -19,3 +19,20 @@
     "Helvetica Neue",
     sans-serif;
 }
+
+/* width */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+*::-webkit-scrollbar-track {
+  background: #f3f0f9;
+}
+
+/* Handle */
+*::-webkit-scrollbar-thumb {
+  background: #c72adb;
+  border-radius: 10px;
+}

@@ -11,27 +11,22 @@ export default function PrivateChannels() {
   const { id } = useParams<keyof DirectMessageParams>()
 
   return (
-    <div className=" px-4 py-5 [&>div+div]:mt-5 border-x-2 bg-gray-50">
-      <div>
-        <h1 className="text-3xl font-bold">Chats</h1>
-      </div>
-      <div>
-        <Input
-          t="input"
-          placeholder="Search"
-          variant="bordered"
-          endContent={<LuSearch />}
-          size="lg"
-        />
+    <div className="h-screen px-4 pb-5 border-x-2 bg-gray-50 space-y-5 overflow-y-auto">
+      <div className="sticky top-0 pt-5 pb-2 bg-gray-50 z-20">
+        <div className="text-3xl font-bold">Chats</div>
+        <div className="mt-5">
+          <Input
+            t="input"
+            placeholder="Search"
+            variant="bordered"
+            endContent={<LuSearch />}
+            size="lg"
+          />
+        </div>
       </div>
       <div>
         <div className="text-gray-500">All Chats</div>
-        <div
-          className={clsx(
-            "max-h-[calc(100vh-200px)] pb-14 overflow-x-hidden overflow-y-auto",
-            "mr-[-15.21px]",
-          )}
-        >
+        <div className="pb-14">
           <div className="[&>div]:mt-4 [&>div:hover]:bg-purple-100 [&>div:hover]:cursor-pointer">
             {Array(10)
               .fill("")
