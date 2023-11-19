@@ -5,7 +5,7 @@ import SidebarItem from "./SidebarItem"
 
 export default function Sidebar() {
   return (
-    <div className="py-2 bg-slate-200 space-y-2">
+    <div className="py-2 bg-slate-200 space-y-2 max-h-[calc(100vh - 60px)] pb-12 overflow-x-hidden overflow-y-auto">
       <SidebarItem label="Direct Messages" />
       <div className="flex justify-center">
         <Divider className="w-8" />

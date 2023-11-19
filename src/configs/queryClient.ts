@@ -19,6 +19,7 @@ export const queryClient = new QueryClient({
       placeholderData: keepPreviousData,
     },
     mutations: {
+      retry: 0,
       onError: handleQueryError,
     },
   },

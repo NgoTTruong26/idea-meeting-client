@@ -1,17 +1,37 @@
 import { Button } from "@nextui-org/react"
 import { useGoogleLogin } from "@react-oauth/google"
+import { useState } from "react"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
+import { useUser } from "store/user"
 import UpdateProfileModal from "../components/UpdateProfileModal"
 import { useGoogleSignIn } from "../services/googleSignIn"
 
 export default function SignIn() {
+  const [showModalUpdate, setShowModalUpdate] = useState<boolean>(false)
+
   const navigate = useNavigate()
   const googleSignIn = useGoogleSignIn()
+  const { setUser } = useUser()
   const handleGoogleSignIn = useGoogleLogin({
     flow: "auth-code",
     async onSuccess({ code }) {
       const data = await googleSignIn.mutateAsync({ code })
+      console.log(data.user.id)
+
+      setUser({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        profile: data.user.profile,
+        email: data.user.email,
+        id: data.user.id,
+      })
+
+      if (!data.user.profile?.fullName) {
+        return setShowModalUpdate(true)
+      }
+
+      navigate("/direct-message")
     },
     onError() {
       toast.error("Can't sign in with Google")
@@ -54,7 +74,7 @@ export default function SignIn() {
           </Button>
         </div>
       </div>
-      <UpdateProfileModal />
+      <UpdateProfileModal showModalUpdate={showModalUpdate} />
     </div>
   )
 }
