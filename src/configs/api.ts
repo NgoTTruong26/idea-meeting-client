@@ -1,10 +1,6 @@
 import axios, { AxiosError, AxiosHeaders } from "axios"
+import { User } from "types/user"
 import { StorageValue } from "zustand/middleware"
-
-export interface UserStorage {
-  accessToken: string
-  refreshToken: string
-}
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -15,8 +11,8 @@ api.interceptors.request.use((config) => {
 
   if (!userStorage) return config
 
-  const accessToken = (JSON.parse(userStorage) as StorageValue<UserStorage>)
-    .state.accessToken
+  const accessToken = (JSON.parse(userStorage) as StorageValue<User>).state
+    .accessToken
 
   if (accessToken)
     (config.headers as AxiosHeaders).set(
