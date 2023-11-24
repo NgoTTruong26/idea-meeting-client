@@ -4,7 +4,7 @@ import {
 } from "@nextui-org/react"
 
 export interface InputProps extends NextInputProps {
-  t: "input"
+  t: "input" | "hide-input-errors"
 }
 
 export default function Input({ t, ...props }: InputProps) {

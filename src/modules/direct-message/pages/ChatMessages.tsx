@@ -15,7 +15,7 @@ export default function ChatMessages() {
   const { id: userIdParams } = useParams<keyof DirectMessageParams>()
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full max-h-screen">
       <div className="flex items-center justify-between gap-10 w-full  bg-gray-50 py-6 px-6 ">
         <div className={clsx("flex items-center")}>
           <div className="relative">
@@ -40,7 +40,7 @@ export default function ChatMessages() {
           className={clsx(
             "flex text-primary-500",
             "[&>button+button]:ml-5 [&>button]:p-2 [&>button]:rounded-full",
-            "[&>button]:hover:cursor-pointer  [&>button:hover]:bg-purple-100 ",
+            "[&>button]:hover:cursor-pointer  [&>button:hover]:bg-purple-50 ",
           )}
         >
           <Button isIconOnly size="lg" className="bg-gray-50 text-primary-500">
@@ -54,7 +54,7 @@ export default function ChatMessages() {
           </Button>
         </div>
       </div>
-      <div className="h-full bg-purple-100">
+      <div className="h-full bg-purple-50 pb-5 overflow-y-auto">
         <ChatContent />
       </div>
       <MessageInput />

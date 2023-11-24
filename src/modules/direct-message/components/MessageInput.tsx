@@ -48,7 +48,7 @@ export default function MessageInput() {
           <div className="flex-1">
             <Field
               name="value"
-              t="input"
+              t="hide-input-errors"
               placeholder="Write a message..."
               variant="bordered"
               startContent={
@@ -64,6 +64,8 @@ export default function MessageInput() {
                 />
               }
               size="lg"
+              isInvalid={false}
+              errorMessage={false}
             />
           </div>
           <div>
