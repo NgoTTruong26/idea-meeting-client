@@ -23,6 +23,7 @@ import {
   useUpdateUserProfile,
 } from "modules/user/services/updateUserProfile"
 import { useEffect, useState } from "react"
+import { toast } from "react-hot-toast"
 import { AiOutlineUser } from "react-icons/ai"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
@@ -83,6 +84,9 @@ export default function UpdateProfileModal({ showModalUpdate }: Props) {
       {
         onSuccess: () => {
           navigate("/direct-message")
+        },
+        onError() {
+          toast.error("Can't update user profile")
         },
       },
     )

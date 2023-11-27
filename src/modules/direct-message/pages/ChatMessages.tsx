@@ -1,38 +1,79 @@
 import { Avatar, Button } from "@nextui-org/react"
 import clsx from "clsx"
+import { SocketEvent, socket } from "configs/socket"
+import { useEffect, useState } from "react"
 import { HiDotsVertical } from "react-icons/hi"
 import { ImPhone } from "react-icons/im"
 import { IoVideocam } from "react-icons/io5"
 import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
-import ChatContent from "../components/ChatContent"
-import MessageInput from "../components/MessageInput"
+import { MessageFromSocket } from "types/messageFromSocket"
+import ChatContent from "../components/ChatMessages/ChatContent"
+import IntroduceFriend from "../components/ChatMessages/IntroduceFriend"
+import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
+import { useGetFriend } from "../services/friend"
 
 export default function ChatMessages() {
-  const { id } = useUser()
+  const { id: userId } = useUser()
 
-  const { id: userIdParams } = useParams<keyof DirectMessageParams>()
+  const [messages, setMessages] = useState<MessageFromSocket[]>([])
+
+  const { id: friendId = "" } = useParams<keyof DirectMessageParams>()
+
+  const { data: friendData } = useGetFriend({ targetId: friendId })
+
+  const handleIncomingMessage = (message: MessageFromSocket) => {
+    if ([userId, friendId].includes(message.userId))
+      setMessages((prev) => [message, ...prev])
+  }
+
+  useEffect(() => {
+    socket.on(SocketEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
+
+    return () => {
+      socket.off(SocketEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
+    }
+  }, [socket])
+
+  if (!friendData) {
+    return <div></div>
+  }
+
+  const {
+    profile: friendProfile,
+    isOnline,
+    directMessageChannelId,
+  } = friendData
+
+  console.log(directMessageChannelId)
+
+  console.log(messages)
 
   return (
     <div className="flex flex-col w-full max-h-screen">
       <div className="flex items-center justify-between gap-10 w-full  bg-gray-50 py-6 px-6 ">
         <div className={clsx("flex items-center")}>
           <div className="relative">
-            <Avatar
-              src="https://images2.boardingschoolreview.com/photo/593/IMG-Academy-6r5kz9j4u144kso44sw8800k0-1122.jpg"
-              size="lg"
-            />
-            <span className="absolute right-0 bottom-0 z-10 w-4 h-4 rounded-full bg-green-400"></span>
+            <Avatar src={friendProfile.avatarUrl} size="lg" />
+            {isOnline && (
+              <span
+                className={clsx(
+                  "absolute right-0 bottom-0 z-10 w-4 h-4 rounded-full bg-green-400",
+                )}
+              ></span>
+            )}
           </div>
 
           <div className="flex w-full flex-col pl-3">
-            <div className="flex w-full gap-3 items-end justify-between mb-1">
-              <span className="font-bold">User {userIdParams}</span>
+            <div className="flex w-full mb-1">
+              <span className="font-bold">{friendProfile.fullName}</span>
             </div>
 
-            <div className="flex w-full gap-3 items-end justify-between">
-              <span className={clsx("text-gray-500 text-sm")}>Online</span>
+            <div className="flex w-full">
+              <span className={clsx("text-gray-500 text-sm")}>
+                {isOnline ? "Online" : "Offline"}
+              </span>
             </div>
           </div>
         </div>
@@ -55,9 +96,14 @@ export default function ChatMessages() {
         </div>
       </div>
       <div className="h-full bg-purple-50 pb-5 overflow-y-auto">
-        <ChatContent />
+        <IntroduceFriend {...friendProfile} isOnline={isOnline} />
+        <ChatContent
+          directMessageChannelId={directMessageChannelId}
+          messages={messages}
+          friendProfile={friendProfile}
+        />
       </div>
-      <MessageInput />
+      <MessageInput directMessageChannelId={directMessageChannelId} />
     </div>
   )
 }

@@ -11,9 +11,13 @@ import * as yup from "yup"
 import {
   CreateDirectMessageRequest,
   MessageType,
-} from "../services/sendMessage"
+} from "../../services/sendMessage"
 
 interface FormValues extends CreateDirectMessageRequest {}
+
+interface Props {
+  directMessageChannelId: string
+}
 
 const formSchema = yup.object().shape({
   directMessageChannelId: yup.string().required(),
@@ -24,10 +28,10 @@ const formSchema = yup.object().shape({
     .transform((value) => removeWhiteSpace(value)),
 })
 
-export default function MessageInput() {
+export default function MessageInput({ directMessageChannelId }: Props) {
   const methods = useForm<Required<FormValues>>({
     defaultValues: {
-      directMessageChannelId: "66bcbcd0-0b4c-484b-953e-156e54be763a",
+      directMessageChannelId,
       type: "TEXT",
       value: "",
     },
@@ -44,7 +48,7 @@ export default function MessageInput() {
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit}>
-        <div className="flex gap-5 items-center w-full py-8 px-9">
+        <div className="flex gap-2 items-center w-full py-2 px-4 bg-purple-50">
           <div className="flex-1">
             <Field
               name="value"
