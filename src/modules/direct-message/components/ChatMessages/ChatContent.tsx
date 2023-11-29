@@ -1,7 +1,11 @@
 import { useGetMessageListFromFriend } from "modules/direct-message/services/getMessage"
+import { useEffect } from "react"
+import { useInView } from "react-intersection-observer"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
 import { UserProfile } from "types/user"
+import IntroduceFriend from "./IntroduceFriend"
+import LoadingChatContent from "./LoadingChatContent"
 import MessageFromFriend from "./MessageFromFriend"
 import MessageFromMe from "./MessageFromMe"
 
@@ -9,23 +13,39 @@ interface Props {
   directMessageChannelId: string
   messages: MessageFromSocket[]
   friendProfile: UserProfile
+  isOnline: boolean
 }
 
 export default function ChatContent({
   directMessageChannelId,
   messages,
   friendProfile,
+  isOnline,
 }: Props) {
   const { id } = useUser()
 
-  const { data: dataResponse } = useGetMessageListFromFriend({
+  const {
+    data: dataResponse,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGetMessageListFromFriend({
     directMessageChannelId,
-    page: 1,
   })
+
+  const { ref, inView } = useInView()
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage()
+    }
+  }, [fetchNextPage, inView])
 
   if (!dataResponse) {
     return <div></div>
   }
+
+  console.log(messages, id)
 
   return (
     <div className="flex flex-col-reverse w-full">
@@ -35,8 +55,8 @@ export default function ChatContent({
             key={idx}
             id={`${idx}`}
             message={message.value}
-            isNextMessageFromFriend={
-              messages[idx + 1] && messages[idx + 1].userId !== id
+            isPrevsMessageFromMe={
+              messages[idx - 1] ? messages[idx - 1].userId === id : true
             }
           />
         ) : (
@@ -45,35 +65,58 @@ export default function ChatContent({
             id={`${idx}`}
             message={message.value}
             profile={friendProfile}
-            isNextMessageFromFriend={
-              messages[idx + 1] && messages[idx + 1].userId !== id
+            isPrevsMessageFromMe={
+              messages[idx - 1] ? messages[idx - 1].userId === id : true
             }
           />
         ),
       )}
-      {dataResponse.data.map((message, idx) =>
-        message.userId === id ? (
-          <MessageFromMe
-            key={message.id}
-            id={message.id}
-            message={message.value}
-            isNextMessageFromFriend={
-              dataResponse.data[idx + 1] &&
-              dataResponse.data[idx + 1].userId !== id
-            }
-          />
-        ) : (
-          <MessageFromFriend
-            key={message.id}
-            id={message.id}
-            message={message.value}
-            profile={message.user.profile}
-            isNextMessageFromFriend={
-              dataResponse.data[idx + 1] &&
-              dataResponse.data[idx + 1].userId !== id
-            }
-          />
-        ),
+      {dataResponse.pages.map(
+        (page, pageIdx) =>
+          page &&
+          page.data.map((message, idx) =>
+            message.userId === id ? (
+              <MessageFromMe
+                ref={
+                  pageIdx === dataResponse.pages.length - 1 && idx === 17
+                    ? ref
+                    : undefined
+                }
+                key={message.id}
+                id={message.id}
+                message={message.value}
+                isPrevsMessageFromMe={
+                  page.data[idx - 1] ? page.data[idx - 1].userId === id : true
+                }
+              />
+            ) : (
+              <MessageFromFriend
+                ref={
+                  pageIdx === dataResponse.pages.length - 1 && idx === 17
+                    ? ref
+                    : undefined
+                }
+                key={message.id}
+                id={message.id}
+                message={message.value}
+                profile={message.user.profile}
+                isPrevsMessageFromMe={
+                  messages.length > 0 &&
+                  idx === 0 &&
+                  messages[messages.length - 1].userId !== id
+                    ? false
+                    : page.data[idx - 1]
+                    ? page.data[idx - 1].userId === id
+                    : true
+                }
+              />
+            ),
+          ),
+      )}
+
+      {isFetchingNextPage && <LoadingChatContent />}
+      {!hasNextPage && (
+        <IntroduceFriend {...friendProfile} isOnline={isOnline} />
       )}
     </div>
   )

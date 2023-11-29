@@ -28,7 +28,7 @@ export default function IntroduceFriend({
       </div>
       <div className="flex flex-col items-center">
         <div>IdeaM</div>
-        <div>You guys are friends on IdeaM</div>
+        <div>You are friends on IdeaM</div>
       </div>
     </div>
   )

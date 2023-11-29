@@ -9,7 +9,6 @@ import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
 import ChatContent from "../components/ChatMessages/ChatContent"
-import IntroduceFriend from "../components/ChatMessages/IntroduceFriend"
 import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
 import { useGetFriend } from "../services/friend"
@@ -96,11 +95,11 @@ export default function ChatMessages() {
         </div>
       </div>
       <div className="h-full bg-purple-50 pb-5 overflow-y-auto">
-        <IntroduceFriend {...friendProfile} isOnline={isOnline} />
         <ChatContent
           directMessageChannelId={directMessageChannelId}
           messages={messages}
           friendProfile={friendProfile}
+          isOnline={isOnline}
         />
       </div>
       <MessageInput directMessageChannelId={directMessageChannelId} />

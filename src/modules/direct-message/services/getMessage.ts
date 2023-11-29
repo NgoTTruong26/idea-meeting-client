@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { toast } from "react-hot-toast"
 import { BaseGetList } from "types/getList"
@@ -7,7 +7,6 @@ import { MessageType } from "./sendMessage"
 
 export interface GetMessageListFromFriendRequest {
   directMessageChannelId: string
-  page: number
   take?: number
 }
 
@@ -25,24 +24,44 @@ export interface GetMessageListFromFriendResponse extends BaseGetList {
   data: GetMessageFromFriendResponse[]
 }
 
+interface PageParam {
+  page: number
+}
+
 export function useGetMessageListFromFriend({
   directMessageChannelId,
-  page,
   take = 20,
 }: GetMessageListFromFriendRequest) {
-  return useQuery({
-    queryKey: ["get-message-from-friend", directMessageChannelId, page, take],
-    queryFn: async () => {
+  return useInfiniteQuery({
+    queryKey: ["get-message-from-friend", directMessageChannelId, take],
+    queryFn: async ({ pageParam }) => {
       try {
         return (
           await api.get<GetMessageListFromFriendResponse>(
-            `/direct-message-channel/${directMessageChannelId}?page=${page}&take=${take}`,
+            `/direct-message-channel/${directMessageChannelId}?page=${pageParam.page}&take=${take}`,
           )
         ).data
       } catch (error) {
         toast.error("Can't get Message")
       }
     },
-    refetchOnMount: "always",
+    initialPageParam: {
+      page: 1,
+    } as PageParam,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage) {
+        return
+      }
+
+      const { page, take, total } = lastPage.meta
+
+      if (page * take > total) {
+        return
+      }
+
+      return {
+        page: page + 1,
+      }
+    },
   })
 }

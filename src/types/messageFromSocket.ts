@@ -1,8 +1,3 @@
-import { MessageType } from "modules/direct-message/services/sendMessage"
+import { GetMessageFromFriendResponse } from "modules/direct-message/services/getMessage"
 
-export interface MessageFromSocket {
-  directMessageChannelId: string
-  type: MessageType
-  userId: string
-  value: string
-}
+export interface MessageFromSocket extends GetMessageFromFriendResponse {}
