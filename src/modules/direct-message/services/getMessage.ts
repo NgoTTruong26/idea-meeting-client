@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { toast } from "react-hot-toast"
-import { BaseGetList } from "types/getList"
-import { User } from "types/user"
+import { BaseGetList, PageParam } from "types/getList"
+import { User, UserProfile } from "types/user"
 import { MessageType } from "./sendMessage"
 
 export interface GetMessageListFromFriendRequest {
@@ -26,8 +26,35 @@ export interface GetMessageListFromFriendResponse extends BaseGetList {
   data: GetMessageFromFriendResponse[]
 }
 
-interface PageParam {
-  page: number
+export interface GetDirectMessageRequest {
+  take?: number
+}
+
+export interface GetLastMessage {
+  id: string
+  createdAt: string
+  updatedAt: string
+  isDeleted: boolean
+  type: MessageType
+  value: string
+  duration: any
+  userId: string
+  directMessageChannelId: string
+  user: Pick<User, "profile">
+}
+export interface GetDirectMessageResponse {
+  createdAt: string
+  updatedAt: string
+  isDeleted: boolean
+  user: {
+    isOnline: boolean
+    profile: UserProfile
+  }
+  lastMessage: GetLastMessage
+}
+
+export interface GetDirectMessageListResponse extends BaseGetList {
+  data: GetDirectMessageResponse[]
 }
 
 export function useGetMessageListFromFriend({
@@ -41,6 +68,41 @@ export function useGetMessageListFromFriend({
         return (
           await api.get<GetMessageListFromFriendResponse>(
             `/direct-message-channel/${directMessageChannelId}?page=${pageParam.page}&take=${take}`,
+          )
+        ).data
+      } catch (error) {
+        toast.error("Can't get Message")
+      }
+    },
+    initialPageParam: {
+      page: 1,
+    } as PageParam,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage) {
+        return
+      }
+
+      const { page, take, total } = lastPage.meta
+
+      if (page * take > total) {
+        return
+      }
+
+      return {
+        page: page + 1,
+      }
+    },
+  })
+}
+
+export function useGetDirectMessage({ take = 20 }: GetDirectMessageRequest) {
+  return useInfiniteQuery({
+    queryKey: ["get-direct-message", take],
+    queryFn: async ({ pageParam }) => {
+      try {
+        return (
+          await api.get<GetDirectMessageListResponse>(
+            `/direct-message-channel?page=${pageParam.page}&take=${take}`,
           )
         ).data
       } catch (error) {

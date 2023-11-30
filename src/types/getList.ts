@@ -5,3 +5,7 @@ export interface BaseGetList {
     total: number
   }
 }
+
+export interface PageParam {
+  page: number
+}

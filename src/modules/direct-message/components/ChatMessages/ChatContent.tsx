@@ -78,7 +78,8 @@ export default function ChatContent({
             message.userId === id ? (
               <MessageFromMe
                 ref={
-                  pageIdx === dataResponse.pages.length - 1 && idx === 17
+                  pageIdx === dataResponse.pages.length - 1 &&
+                  idx === page.data.length / 2
                     ? ref
                     : undefined
                 }
@@ -93,7 +94,8 @@ export default function ChatContent({
             ) : (
               <MessageFromFriend
                 ref={
-                  pageIdx === dataResponse.pages.length - 1 && idx === 17
+                  pageIdx === dataResponse.pages.length - 1 &&
+                  idx === page.data.length / 2
                     ? ref
                     : undefined
                 }
@@ -102,9 +104,14 @@ export default function ChatContent({
                 message={message.value}
                 profile={message.user.profile}
                 isPrevsMessageFromMe={
-                  messages.length > 0 &&
-                  idx === 0 &&
-                  messages[messages.length - 1].userId !== id
+                  (idx === 0 &&
+                    messages.length > 0 &&
+                    messages[messages.length - 1].userId !== id) ||
+                  (idx === 0 &&
+                    pageIdx > 0 &&
+                    dataResponse.pages[pageIdx - 1]?.data[
+                      dataResponse.pages[pageIdx - 1]!.data.length - 1
+                    ].userId !== id)
                     ? false
                     : page.data[idx - 1]
                     ? page.data[idx - 1].userId === id

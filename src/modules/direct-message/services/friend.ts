@@ -1,12 +1,11 @@
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { toast } from "react-hot-toast"
 import { FriendshipRequest } from "types/friendship"
-import { BaseGetList } from "types/getList"
+import { BaseGetList, PageParam } from "types/getList"
 import { UserProfile } from "types/user"
 
 export interface GetFriendListRequest {
-  page: number
   take?: number
 }
 
@@ -27,18 +26,36 @@ export interface GetFriendResponse {
   directMessageChannelId: string
 }
 
-export function useGetFriendList({ page, take = 20 }: GetFriendListRequest) {
-  return useQuery({
-    queryKey: ["get-friend-list", page, take],
-    queryFn: async () => {
+export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
+  return useInfiniteQuery({
+    queryKey: ["get-friend-list", take],
+    queryFn: async ({ pageParam }) => {
       try {
         return (
           await api.get<GetFriendListResponse>(
-            `/friend?page=${page}&take=${take}`,
+            `/friend?page=${pageParam.page}&take=${take}`,
           )
         ).data
       } catch (error) {
         toast.error("Can't get friend list")
+      }
+    },
+    initialPageParam: {
+      page: 1,
+    } as PageParam,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage) {
+        return
+      }
+
+      const { page, take, total } = lastPage.meta
+
+      if (page * take > total) {
+        return
+      }
+
+      return {
+        page: page + 1,
       }
     },
   })
