@@ -1,5 +1,6 @@
 import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
+import Tooltip from "components/core/Tooltip"
 import { LegacyRef, forwardRef } from "react"
 import { UserProfile } from "types/user"
 
@@ -8,13 +9,23 @@ interface Props {
   profile: UserProfile
   message: string
   isPrevsMessageFromMe: boolean
+  updatedAt: string
 }
 
 const MessageFromFriend = forwardRef(
   (
-    { message, profile, isPrevsMessageFromMe }: Props,
+    { message, profile, isPrevsMessageFromMe, updatedAt }: Props,
     ref: LegacyRef<HTMLDivElement>,
   ) => {
+    const time =
+      new Date(updatedAt).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }) +
+      ", " +
+      new Date(updatedAt).toLocaleDateString("en-US")
+
     return (
       <div
         ref={ref}
@@ -25,15 +36,18 @@ const MessageFromFriend = forwardRef(
             <div className="grid grid-cols-[48px,1fr,62px]">
               {isPrevsMessageFromMe ? (
                 <div className="flex items-end px-2">
-                  <Avatar src={profile.avatarUrl} size="sm" />
+                  <Tooltip placement="right" content={profile.fullName}>
+                    <Avatar src={profile.avatarUrl} size="sm" />
+                  </Tooltip>
                 </div>
               ) : (
                 <div></div>
               )}
-
-              <div className="flex px-3 py-2 bg-white rounded-2xl max-w-xl">
-                {message}
-              </div>
+              <Tooltip placement="right" content={time}>
+                <div className="flex px-3 py-2 bg-white rounded-2xl max-w-xl">
+                  {message}
+                </div>
+              </Tooltip>
               <div></div>
             </div>
           </div>

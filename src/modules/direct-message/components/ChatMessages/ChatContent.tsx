@@ -45,10 +45,8 @@ export default function ChatContent({
     return <div></div>
   }
 
-  console.log(messages, id)
-
   return (
-    <div className="flex flex-col-reverse w-full">
+    <>
       {messages.map((message, idx) =>
         message.userId === id ? (
           <MessageFromMe
@@ -58,6 +56,7 @@ export default function ChatContent({
             isPrevsMessageFromMe={
               messages[idx - 1] ? messages[idx - 1].userId === id : true
             }
+            updatedAt={message.updatedAt}
           />
         ) : (
           <MessageFromFriend
@@ -68,6 +67,7 @@ export default function ChatContent({
             isPrevsMessageFromMe={
               messages[idx - 1] ? messages[idx - 1].userId === id : true
             }
+            updatedAt={message.updatedAt}
           />
         ),
       )}
@@ -88,6 +88,7 @@ export default function ChatContent({
                 isPrevsMessageFromMe={
                   page.data[idx - 1] ? page.data[idx - 1].userId === id : true
                 }
+                updatedAt={message.updatedAt}
               />
             ) : (
               <MessageFromFriend
@@ -109,6 +110,7 @@ export default function ChatContent({
                     ? page.data[idx - 1].userId === id
                     : true
                 }
+                updatedAt={message.updatedAt}
               />
             ),
           ),
@@ -118,6 +120,6 @@ export default function ChatContent({
       {!hasNextPage && (
         <IntroduceFriend {...friendProfile} isOnline={isOnline} />
       )}
-    </div>
+    </>
   )
 }

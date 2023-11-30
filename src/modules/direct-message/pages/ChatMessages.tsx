@@ -94,7 +94,7 @@ export default function ChatMessages() {
           </Button>
         </div>
       </div>
-      <div className="h-full bg-purple-50 pb-5 overflow-y-auto">
+      <div className="h-full bg-purple-50 pb-5 overflow-y-auto flex flex-col-reverse">
         <ChatContent
           directMessageChannelId={directMessageChannelId}
           messages={messages}

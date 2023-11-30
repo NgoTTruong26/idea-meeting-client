@@ -18,6 +18,8 @@ export interface GetMessageFromFriendResponse {
   userId: string
   directMessageChannelId: string
   user: Pick<User, "profile">
+  createdAt: string
+  updatedAt: string
 }
 
 export interface GetMessageListFromFriendResponse extends BaseGetList {
