@@ -1,7 +1,7 @@
 import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
 import { useGetDirectMessage } from "modules/direct-message/services/getMessage"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
 
 export default function Chat() {
@@ -17,11 +17,9 @@ export default function Chat() {
         (page) =>
           page &&
           page.data.map((user) => (
-            <div
+            <Link
+              to={user.user.profile.userId}
               key={user.lastMessage.userId}
-              onClick={() =>
-                navigate(`${user.lastMessage.directMessageChannelId}`)
-              }
               className={clsx(
                 "flex items-center bg-white py-2 px-3 rounded-2xl text-sm",
               )}
@@ -59,7 +57,7 @@ export default function Chat() {
                   )}
                 </div>
               </div>
-            </div>
+            </Link>
           )),
       )}
     </div>

@@ -37,7 +37,7 @@ export default function FriendList() {
                     <span className="absolute right-0 bottom-0 z-10 w-4 h-4 rounded-full bg-green-400"></span>
                   </div>
                   <div className="flex items-center w-full flex-col pl-3 overflow-hidden">
-                    <span className="max-w-full font-bold overflow-hidden overflow-ellipsis whitespace-nowrap">
+                    <span className="max-w-full font-bold overflow-hidden overflow-ellipsis whitespace-nowrap mb-1">
                       {user.fullName}
                     </span>
                     <span className="w-full text-gray-500">Online</span>
