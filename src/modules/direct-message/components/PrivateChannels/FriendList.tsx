@@ -20,7 +20,7 @@ export default function FriendList() {
   }
 
   return (
-    <div className="[&>div]:mt-4 [&>div:hover]:bg-purple-50 [&>div:hover]:cursor-pointer">
+    <div className="space-y-4 [&>div:hover]:bg-purple-50 [&>div:hover]:cursor-pointer">
       {data.pages.length > 0 ? (
         data.pages.map(
           (page) =>
