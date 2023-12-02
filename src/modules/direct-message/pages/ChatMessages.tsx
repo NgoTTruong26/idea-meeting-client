@@ -1,6 +1,6 @@
 import { Avatar, Button } from "@nextui-org/react"
 import clsx from "clsx"
-import { SocketEvent, socket } from "configs/socket"
+import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
 import { HiDotsVertical } from "react-icons/hi"
 import { ImPhone } from "react-icons/im"
@@ -8,54 +8,46 @@ import { IoVideocam } from "react-icons/io5"
 import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
+import { WsEvent } from "types/ws"
 import ChatContent from "../components/ChatMessages/ChatContent"
 import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
 import { useGetFriend } from "../services/friend"
 
 export default function ChatMessages() {
-  const { id: userId } = useUser()
+  const { user } = useUser()
 
   const [messages, setMessages] = useState<MessageFromSocket[]>([])
+  console.log(messages)
 
   const { id: friendId = "" } = useParams<keyof DirectMessageParams>()
 
-  const { data: friendData } = useGetFriend({ targetId: friendId })
+  const friend = useGetFriend({ targetId: friendId })
 
   const handleIncomingMessage = (message: MessageFromSocket) => {
-    if ([userId, friendId].includes(message.userId))
+    if ([user.id, friendId].includes(message.userId))
       setMessages((prev) => [message, ...prev])
   }
 
   useEffect(() => {
-    socket.on(SocketEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
+    socket.on(WsEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
 
     return () => {
-      socket.off(SocketEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
+      socket.off(WsEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
     }
   }, [socket])
 
-  if (!friendData) {
+  if (!friend.data) {
     return <div></div>
   }
-
-  const {
-    profile: friendProfile,
-    isOnline,
-    directMessageChannelId,
-  } = friendData
-
-  console.log(directMessageChannelId)
-
-  console.log(messages)
 
   return (
     <div className="flex flex-col w-full max-h-screen">
       <div className="flex items-center justify-between gap-10 w-full  bg-gray-50 py-6 px-6 ">
         <div className={clsx("flex items-center")}>
           <div className="relative">
-            <Avatar src={friendProfile.avatarUrl} size="lg" />
-            {isOnline && (
+            <Avatar src={friend.data.profile.avatarUrl} size="lg" />
+            {friend.data.isOnline && (
               <span
                 className={clsx(
                   "absolute right-0 bottom-0 z-10 w-4 h-4 rounded-full bg-green-400",
@@ -66,12 +58,12 @@ export default function ChatMessages() {
 
           <div className="flex w-full flex-col pl-3">
             <div className="flex w-full mb-1">
-              <span className="font-bold">{friendProfile.fullName}</span>
+              <span className="font-bold">{friend.data.profile.fullName}</span>
             </div>
 
             <div className="flex w-full">
               <span className={clsx("text-gray-500 text-sm")}>
-                {isOnline ? "Online" : "Offline"}
+                {friend.data.isOnline ? "Online" : "Offline"}
               </span>
             </div>
           </div>
@@ -96,13 +88,15 @@ export default function ChatMessages() {
       </div>
       <div className="h-full bg-purple-50 pb-5 overflow-y-auto flex flex-col-reverse">
         <ChatContent
-          directMessageChannelId={directMessageChannelId}
+          directMessageChannelId={friend.data.directMessageChannelId}
           messages={messages}
-          friendProfile={friendProfile}
-          isOnline={isOnline}
+          profile={friend.data.profile}
+          isOnline={friend.data.isOnline}
         />
       </div>
-      <MessageInput directMessageChannelId={directMessageChannelId} />
+      <MessageInput
+        directMessageChannelId={friend.data.directMessageChannelId}
+      />
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import AuthLayout from "components/layouts/AuthLayout"
 import HomeLayout from "components/layouts/home"
 import { nav } from "constants/nav"
 import { lazy } from "react"
@@ -12,7 +13,11 @@ const DirectMessages = lazy(() => import("./pages/DirectMessages"))
 
 export const directMessageRoute: RouteObject = {
   path: nav.DIRECT_MESSAGE.slice(1),
-  Component: HomeLayout,
+  element: (
+    <AuthLayout>
+      <HomeLayout />
+    </AuthLayout>
+  ),
   children: [
     {
       path: "",

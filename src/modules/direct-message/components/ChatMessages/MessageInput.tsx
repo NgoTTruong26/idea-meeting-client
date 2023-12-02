@@ -1,12 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button } from "@nextui-org/react"
 import Field from "components/core/field"
-import { SocketEvent, socket } from "configs/socket"
+import { socket } from "configs/socket"
 import { useEffect } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { GoSmiley } from "react-icons/go"
 import { LuSend } from "react-icons/lu"
 import { MdOutlineAttachFile } from "react-icons/md"
+import { WsEvent } from "types/ws"
 import { removeWhiteSpace } from "utils/removeWhiteSpace"
 import * as yup from "yup"
 import {
@@ -40,7 +41,7 @@ export default function MessageInput({ directMessageChannelId }: Props) {
   })
 
   const handleSubmit = methods.handleSubmit((data) => {
-    socket.emit<string>(SocketEvent.CREATE_DIRECT_MESSAGE, data)
+    socket.emit(WsEvent.CREATE_DIRECT_MESSAGE, data)
 
     methods.reset()
 

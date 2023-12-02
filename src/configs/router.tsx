@@ -4,12 +4,10 @@ import { Navigate, createBrowserRouter } from "react-router-dom"
 import { authRoute } from "../modules/auth/route"
 
 export const router = createBrowserRouter([
-  {
-    path: "",
-    children: [authRoute, directMessageRoute],
-  },
+  authRoute,
+  directMessageRoute,
   {
     path: "*",
-    element: <Navigate to={`${nav.AUTH}${nav.SIGN_IN}`} />,
+    element: <Navigate to={nav.AUTH + nav.SIGN_IN} />,
   },
 ])

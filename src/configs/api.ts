@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosHeaders } from "axios"
-import { User } from "types/user"
+import { UserState } from "store/user"
 import { StorageValue } from "zustand/middleware"
 
 interface RefreshTokenResponse {
@@ -15,11 +15,8 @@ api.interceptors.request.use((config) => {
 
   if (!userStorage) return config
 
-  const accessToken = (JSON.parse(userStorage) as StorageValue<User>).state
-    .accessToken
-
-  console.log(8091283)
-
+  const accessToken = (JSON.parse(userStorage) as StorageValue<UserState>).state
+    .auth.accessToken
   if (accessToken)
     (config.headers as AxiosHeaders).set(
       "Authorization",
@@ -38,35 +35,31 @@ api.interceptors.response.use(
       config?.url !== "/auth/user/refresh-token"
     ) {
       const userStorage = localStorage.getItem("user")
-
       if (!userStorage) return Promise.reject(error)
-
-      const refreshToken = (JSON.parse(userStorage) as StorageValue<User>).state
-        .refreshToken
-
+      const userState = JSON.parse(userStorage) as StorageValue<UserState>
+      const refreshToken = userState.state.auth.refreshToken
       if (!refreshToken) {
         return Promise.reject(error)
       }
-
       const accessToken = (
         await api.post<RefreshTokenResponse>("/auth/user/refresh-token", {
           refreshToken,
         })
       ).data.accessToken
-
-      console.log(accessToken, 2)
-
       if (accessToken) {
         config?.headers.set("Authorization", `Bearer ${accessToken}`)
         localStorage.setItem(
           "user",
           JSON.stringify({
-            ...(JSON.parse(userStorage) as StorageValue<User>),
+            ...userState,
             state: {
-              ...(JSON.parse(userStorage) as StorageValue<User>).state,
-              accessToken,
+              ...userState.state,
+              auth: {
+                ...userState.state.auth,
+                accessToken,
+              },
             },
-          } as StorageValue<User>),
+          } as StorageValue<UserState>),
         )
         return api(config!)
       }

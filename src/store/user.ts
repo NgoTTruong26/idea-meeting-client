@@ -1,39 +1,47 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { User } from "../types/user"
+import { User, UserAuth } from "../types/user"
 
-interface UserState extends User {
+export interface UserState {
+  auth: UserAuth
+  user: User
+  setAuth: (auth: UserAuth) => void
   setUser(user: Partial<User>): void
-  clearUser(): void
+  clear(): void
 }
 
-const defaultUser: User = {
-  id: "",
-  email: "",
-  profile: {
-    avatarUrl: "",
-    fullName: "",
-    gender: "",
-    userId: "",
+const defaultUserState: { auth: UserAuth; user: User } = {
+  auth: { accessToken: "", refreshToken: "" },
+  user: {
+    id: "",
+    createdAt: "",
+    updatedAt: "",
+    isDeleted: false,
+    provider: "",
+    email: "",
+    wsId: "",
+    profile: {
+      avatarUrl: "",
+      fullName: "",
+      gender: "",
+      userId: "",
+    },
   },
-  accessToken: "",
-  refreshToken: "",
 }
 
 export const useUser = create<UserState>()(
   persist(
-    (set) => ({
-      ...defaultUser,
-      setUser: (user) => set({ ...user }),
-      clearUser: () => set({ ...defaultUser }),
+    (set, state) => ({
+      ...defaultUserState,
+      setAuth: (auth) => set({ auth }),
+      setUser: (user) => set({ user: { ...state().user, ...user } }),
+      clear: () => set({ ...defaultUserState }),
     }),
     {
       name: "user", // name of the item in the storage (must be unique)
       partialize: (state) =>
         Object.fromEntries(
-          Object.entries(state).filter(([key]) =>
-            ["accessToken", "refreshToken"].includes(key),
-          ),
+          Object.entries(state).filter(([key]) => ["auth"].includes(key)),
         ),
     },
   ),

@@ -5,12 +5,12 @@ import { useUser } from "store/user"
 import Sidebar from "./Sidebar"
 
 export default function HomeLayout() {
-  const { id } = useUser()
+  const {
+    user: { id },
+  } = useUser()
 
   useEffect(() => {
-    if (id) {
-      socket.connect()
-    }
+    if (id) socket.connect()
 
     return () => {
       socket.disconnect()
