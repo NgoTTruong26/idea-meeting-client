@@ -1,13 +1,11 @@
 import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
 import { useGetDirectMessage } from "modules/direct-message/services/getMessage"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useUser } from "store/user"
 
 export default function Chat() {
   const { id } = useUser()
-
-  const navigate = useNavigate()
 
   const { data } = useGetDirectMessage({})
 

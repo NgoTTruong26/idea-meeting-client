@@ -79,7 +79,7 @@ export default function ChatContent({
               <MessageFromMe
                 ref={
                   pageIdx === dataResponse.pages.length - 1 &&
-                  idx === page.data.length / 2
+                  idx >= Math.ceil(page.data.length * 0.6)
                     ? ref
                     : undefined
                 }
@@ -95,7 +95,7 @@ export default function ChatContent({
               <MessageFromFriend
                 ref={
                   pageIdx === dataResponse.pages.length - 1 &&
-                  idx === page.data.length / 2
+                  idx >= Math.ceil(page.data.length * 0.6)
                     ? ref
                     : undefined
                 }
