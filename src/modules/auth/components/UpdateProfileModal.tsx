@@ -39,7 +39,7 @@ interface Props {
 }
 
 export default function UpdateProfileModal({ showModalUpdate }: Props) {
-  const { email } = useUser()
+  const { user } = useUser()
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
@@ -142,7 +142,12 @@ export default function UpdateProfileModal({ showModalUpdate }: Props) {
                 </div>
 
                 <div className="pt-4 [&>div+div]:pt-2">
-                  <Input t="input" label="Email" value={email} isDisabled />
+                  <Input
+                    t="input"
+                    label="Email"
+                    value={user.email}
+                    isDisabled
+                  />
                   <Field name="fullName" t="input" label="Full Name" />
                   <Field
                     name="gender"
@@ -152,6 +157,7 @@ export default function UpdateProfileModal({ showModalUpdate }: Props) {
                       { label: "Male", value: "MALE" },
                       { label: "Female", value: "FEMALE" },
                     ]}
+                    variant="bordered"
                   />
                 </div>
               </ModalBody>
