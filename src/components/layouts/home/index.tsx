@@ -1,4 +1,5 @@
 import { socket } from "configs/socket"
+import CallOverlay from "modules/call/components/CallOverlay"
 import { useEffect } from "react"
 import { Outlet } from "react-router-dom"
 import { useUser } from "store/user"
@@ -21,6 +22,7 @@ export default function HomeLayout() {
     <div className="h-screen grid grid-cols-[72px,1fr]">
       <Sidebar />
       <Outlet />
+      <CallOverlay />
     </div>
   )
 }
