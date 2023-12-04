@@ -1,7 +1,7 @@
 import IncomingCallModal from "./IncomingCallModal"
 import RequestCallModal from "./RequestCallModal"
 
-export default function CallOverlay() {
+export default function DirectCallOverlay() {
   return (
     <>
       <RequestCallModal />

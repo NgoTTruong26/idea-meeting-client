@@ -6,7 +6,6 @@ export enum WsEvent {
 
   REQUEST_CALL = "request-call",
   CANCEL_REQUEST_CALL = "cancel-request-call",
-  SELF_CANCEL_REQUEST_CALL = "self-cancel-request-call",
   ACCEPT_REQUEST_CALL = "accept-request-call",
   CANCEL_CALL = "cancel-call",
 }

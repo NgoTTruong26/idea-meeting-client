@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 import { HiDotsVertical } from "react-icons/hi"
 import { MdPhone, MdVideocam } from "react-icons/md"
 import { useParams } from "react-router-dom"
-import { useCall } from "store/call"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
 import { WsEvent, WsResponse } from "types/ws"
@@ -17,7 +16,6 @@ import { useGetFriend } from "../services/friend"
 
 export default function ChatMessages() {
   const { user } = useUser()
-  const { setRequestCallProfile } = useCall()
 
   const [messages, setMessages] = useState<MessageFromSocket[]>([])
   console.log(messages)
@@ -35,11 +33,7 @@ export default function ChatMessages() {
     socket.emit(
       WsEvent.REQUEST_CALL,
       { toUserId: friend.data.profile.userId },
-      (response: WsResponse) => {
-        if (response.status === "error") handleWsError(response)
-        if (response.status === "success")
-          setRequestCallProfile(friend.data?.profile!)
-      },
+      (response: WsResponse) => handleWsError(response),
     )
   }
 

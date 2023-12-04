@@ -1,5 +1,5 @@
 import { socket } from "configs/socket"
-import CallOverlay from "modules/call/components/CallOverlay"
+import CallOverlay from "modules/direct-call/components/DirectCallOverlay"
 import { useEffect } from "react"
 import { Outlet } from "react-router-dom"
 import { useUser } from "store/user"
