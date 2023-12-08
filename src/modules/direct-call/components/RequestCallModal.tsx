@@ -16,8 +16,9 @@ import { WsEvent } from "types/ws"
 import { DirectCallChannel } from "../types/direct-call-channel"
 
 export default function RequestCallModal() {
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
   const user = useUser()
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
+  const [isEnding, setIsEnding] = useState(false)
   const [directCallChannel, setDirectCallChannel] =
     useState<DirectCallChannel | null>(null)
   const toUserProfile = useMemo(() => {
@@ -28,20 +29,37 @@ export default function RequestCallModal() {
     )
   }, [user, directCallChannel])
 
+  const cancelCall = () => {
+    socket.emit(WsEvent.CANCEL_CALL)
+    onClose()
+  }
   const handleRequestCall = (channel: DirectCallChannel) => {
     if (channel.createdById === user.user.id) {
       onOpen()
       setDirectCallChannel(channel)
     }
   }
+  const handleCancelRequestCall = (channel: DirectCallChannel) => {
+    if (channel.id !== directCallChannel?.id) return
+    setIsEnding(true)
+    setTimeout(onClose, 2000)
+  }
 
   useEffect(() => {
     socket.on(WsEvent.REQUEST_CALL, handleRequestCall)
+    socket.on(WsEvent.CANCEL_CALL, handleCancelRequestCall)
 
     return () => {
       socket.off(WsEvent.REQUEST_CALL, handleRequestCall)
+      socket.off(WsEvent.CANCEL_CALL, handleCancelRequestCall)
     }
-  }, [onOpen, onClose])
+  }, [onOpen, onClose, handleRequestCall, handleCancelRequestCall])
+  useEffect(() => {
+    if (!isOpen) {
+      setIsEnding(false)
+      setDirectCallChannel(null)
+    }
+  }, [isOpen, setIsEnding, setDirectCallChannel])
 
   return (
     <Modal
@@ -59,7 +77,9 @@ export default function RequestCallModal() {
             <div className="mt-4 font-bold text-xl">
               {toUserProfile?.fullName || "‎"}
             </div>
-            <div className="text-gray-500">Calling...</div>
+            <div className="text-gray-500">
+              {isEnding ? "Did not answer" : "Calling..."}
+            </div>
           </div>
         </ModalBody>
         <ModalFooter className="mt-6 justify-center">
@@ -68,7 +88,7 @@ export default function RequestCallModal() {
             color="danger"
             size="lg"
             radius="full"
-            // onClick={handleSelfCancelRequestCall}
+            onClick={cancelCall}
           >
             <MdCallEnd size="26" />
           </Button>
