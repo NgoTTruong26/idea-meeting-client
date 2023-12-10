@@ -29,7 +29,12 @@ export default function IncomingCallModal() {
     )
   }, [user, directCallChannel])
 
+  const acceptRequestCall = () => {
+    if (!isOpen || isEnding) return
+    socket.emit(WsEvent.ACCEPT_REQUEST_CALL)
+  }
   const cancelCall = () => {
+    if (!isOpen || isEnding) return
     socket.emit(WsEvent.CANCEL_CALL)
     onClose()
   }
@@ -39,7 +44,11 @@ export default function IncomingCallModal() {
       setDirectCallChannel(channel)
     }
   }
-  const handleCancelRequestCall = (channel: DirectCallChannel) => {
+  const handleAcceptRequestCall = (channel: DirectCallChannel) => {
+    if (channel.id !== directCallChannel?.id) return
+    onClose()
+  }
+  const handleCancelCall = (channel: DirectCallChannel) => {
     if (channel.id !== directCallChannel?.id) return
     setIsEnding(true)
     setTimeout(onClose, 2000)
@@ -47,13 +56,21 @@ export default function IncomingCallModal() {
 
   useEffect(() => {
     socket.on(WsEvent.REQUEST_CALL, handleRequestCall)
-    socket.on(WsEvent.CANCEL_CALL, handleCancelRequestCall)
+    socket.on(WsEvent.ACCEPT_REQUEST_CALL, handleAcceptRequestCall)
+    socket.on(WsEvent.CANCEL_CALL, handleCancelCall)
 
     return () => {
       socket.off(WsEvent.REQUEST_CALL, handleRequestCall)
-      socket.off(WsEvent.CANCEL_CALL, handleCancelRequestCall)
+      socket.off(WsEvent.ACCEPT_REQUEST_CALL, handleAcceptRequestCall)
+      socket.off(WsEvent.CANCEL_CALL, handleCancelCall)
     }
-  }, [onOpen, onClose, handleRequestCall, handleCancelRequestCall])
+  }, [
+    onOpen,
+    onClose,
+    handleRequestCall,
+    handleAcceptRequestCall,
+    handleCancelCall,
+  ])
   useEffect(() => {
     if (!isOpen) {
       setIsEnding(false)
@@ -89,6 +106,7 @@ export default function IncomingCallModal() {
             size="lg"
             radius="full"
             className="text-white"
+            onClick={acceptRequestCall}
           >
             <MdCall size="26" />
           </Button>
