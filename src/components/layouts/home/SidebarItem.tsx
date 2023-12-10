@@ -6,12 +6,14 @@ import { colors } from "styles/theme"
 interface SidebarItemProps {
   label: string
   src?: string
+  handleClick?: () => void
 }
 
 export default function SidebarItem({
   label,
   src,
   children,
+  handleClick,
 }: PropsWithChildren<SidebarItemProps>) {
   const isDirectMessages = useMemo(() => label === "Direct Messages", [label])
 
@@ -20,6 +22,7 @@ export default function SidebarItem({
       <Tooltip placement="right" offset={18} content={label}>
         <div className="relative group cursor-pointer">
           <div
+            onClick={handleClick ? () => handleClick() : undefined}
             className="w-12 h-12 flex justify-center items-center rounded-[48px] hover:rounded-2xl bg-white bg-center bg-cover transition-all"
             style={{
               backgroundImage: src && `url('${src}')`,

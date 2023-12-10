@@ -57,23 +57,32 @@ export interface GetDirectMessageListResponse extends BaseGetList {
   data: GetDirectMessageResponse[]
 }
 
+export async function getGetMessageListFromFriend(
+  directMessageChannelId: string,
+  pageParam: PageParam,
+  take: number,
+) {
+  try {
+    return (
+      await api.get<GetMessageListFromFriendResponse>(
+        `/direct-message-channel/${directMessageChannelId}?page=${pageParam.page}&take=${take}`,
+      )
+    ).data
+  } catch (error) {
+    toast.error("Can't get Message")
+  }
+}
+
 export function useGetMessageListFromFriend({
   directMessageChannelId,
   take = 20,
 }: GetMessageListFromFriendRequest) {
   return useInfiniteQuery({
     queryKey: ["get-message-from-friend", directMessageChannelId, take],
-    queryFn: async ({ pageParam }) => {
-      try {
-        return (
-          await api.get<GetMessageListFromFriendResponse>(
-            `/direct-message-channel/${directMessageChannelId}?page=${pageParam.page}&take=${take}`,
-          )
-        ).data
-      } catch (error) {
-        toast.error("Can't get Message")
-      }
-    },
+
+    queryFn: ({ pageParam }) =>
+      getGetMessageListFromFriend(directMessageChannelId, pageParam, take),
+
     initialPageParam: {
       page: 1,
     } as PageParam,
