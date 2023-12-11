@@ -19,7 +19,6 @@ import {
   MdVideocam,
   MdVideocamOff,
 } from "react-icons/md"
-import { useStopwatch } from "react-timer-hook"
 import { useUser } from "store/user"
 import { WsEvent } from "types/ws"
 import { DirectCallChannel } from "../types/direct-call-channel"
@@ -45,7 +44,7 @@ export default function InCallModal() {
       )?.user.profile || null
     )
   }, [user, directCallChannel])
-  const stopwatch = useStopwatch({ autoStart: false })
+  // const stopwatch = useStopwatch({ autoStart: false })
   const streamRef = useRef<HTMLVideoElement>(null)
 
   const enableMic = () => {
@@ -71,7 +70,7 @@ export default function InCallModal() {
   const handleAcceptRequestCall = (channel: DirectCallChannel) => {
     onOpen()
     setDirectCallChannel(channel)
-    stopwatch.reset(undefined, true)
+    // stopwatch.reset(undefined, true)
   }
   const handleCancelCall = (channel: DirectCallChannel) => {
     if (channel.id !== directCallChannel?.id) return
@@ -84,7 +83,10 @@ export default function InCallModal() {
       navigator.mediaDevices
         .getUserMedia({
           audio: true,
-          video: true,
+          video: {
+            width: 600,
+            height: 300,
+          },
         })
         .then((stream) => {
           setMicEnabled(true)
@@ -97,19 +99,16 @@ export default function InCallModal() {
   }, [isOpen, setMicEnabled, setStream])
   useEffect(() => {
     if (!directCallChannel || !stream) return
+
+    if (streamRef.current) {
+      streamRef.current.srcObject = stream
+      streamRef.current.play()
+    }
     const peer = new Peer(user.id)
     peer.on("open", () => {
       peer.on("call", (mediaConnection) => {
         mediaConnection.answer(stream)
-        mediaConnection.on("stream", (stream) => {
-          console.log(stream)
-          if (streamRef.current) {
-            streamRef.current.srcObject = stream
-            streamRef.current.pause()
-            streamRef.current.currentTime = 0
-            streamRef.current.play()
-          }
-        })
+        mediaConnection.on("stream", (stream) => {})
       })
       if (directCallChannel.createdById === user.id) {
         const mediaConnection = peer.call(
@@ -122,20 +121,9 @@ export default function InCallModal() {
           )?.user.profile.userId || "",
           stream,
         )
-        mediaConnection.on("stream", (stream) => {
-          if (streamRef.current) {
-            streamRef.current.srcObject = stream
-            streamRef.current.pause()
-            streamRef.current.currentTime = 0
-            streamRef.current.play()
-          }
-        })
+        mediaConnection.on("stream", (stream) => {})
       }
     })
-
-    return () => {
-      peer.destroy()
-    }
   }, [directCallChannel, stream, user])
   useEffect(() => {
     socket.on(WsEvent.ACCEPT_REQUEST_CALL, handleAcceptRequestCall)
@@ -180,17 +168,18 @@ export default function InCallModal() {
               {targetUserProfile?.fullName || "‎"}
             </div>
             <div className="text-gray-500">
-              {isEnding
-                ? "The call has ended"
-                : `${
-                    stopwatch.hours
-                      ? stopwatch.hours.toString().padStart(2, "0") + ":"
-                      : ""
-                  }${stopwatch.minutes
-                    .toString()
-                    .padStart(2, "0")}:${stopwatch.seconds
-                    .toString()
-                    .padStart(2, "0")}`}
+              {
+                isEnding ? "The call has ended" : ""
+                // `${
+                //   stopwatch.hours
+                //     ? stopwatch.hours.toString().padStart(2, "0") + ":"
+                //     : ""
+                // }${stopwatch.minutes
+                //   .toString()
+                //   .padStart(2, "0")}:${stopwatch.seconds
+                //   .toString()
+                //   .padStart(2, "0")}`
+              }
             </div>
           </div>
         </ModalBody>
@@ -227,7 +216,7 @@ export default function InCallModal() {
             <MdCallEnd size="26" />
           </Button>
         </ModalFooter>
-        <video ref={streamRef}></video>
+        <video ref={streamRef} />
       </ModalContent>
     </Modal>
   )
