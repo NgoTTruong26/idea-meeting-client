@@ -7,6 +7,7 @@ export enum WsEvent {
   REQUEST_CALL = "request-call",
   ACCEPT_REQUEST_CALL = "accept-request-call",
   CANCEL_CALL = "cancel-call",
+  READY_CALL = "ready-call",
 }
 
 export interface WsResponse {

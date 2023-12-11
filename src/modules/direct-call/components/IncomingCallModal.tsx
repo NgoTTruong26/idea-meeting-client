@@ -99,7 +99,7 @@ export default function IncomingCallModal() {
             </div>
           </div>
         </ModalBody>
-        <ModalFooter className="mt-6 justify-center gap-10">
+        <ModalFooter className="mt-6 justify-center">
           <Button
             isIconOnly
             color="success"
