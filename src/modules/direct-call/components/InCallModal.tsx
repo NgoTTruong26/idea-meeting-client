@@ -9,6 +9,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react"
 import { socket } from "configs/socket"
+import { Peer } from "peerjs"
 import { useEffect, useMemo, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import {
@@ -19,25 +20,24 @@ import {
   MdVideocamOff,
 } from "react-icons/md"
 import { useStopwatch } from "react-timer-hook"
-import Peer from "simple-peer"
 import { useUser } from "store/user"
 import { WsEvent } from "types/ws"
 import { DirectCallChannel } from "../types/direct-call-channel"
 
 export default function InCallModal() {
-  const user = useUser()
+  const { user } = useUser()
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
   const [isEnding, setIsEnding] = useState(false)
   const [micEnabled, setMicEnabled] = useState(false)
   const [cameraEnabled, setCameraEnabled] = useState(false)
-  const [stream, setStream] = useState<MediaStream | null>(null)
+  const [stream, setStream] = useState<MediaStream>()
   const [directCallChannel, setDirectCallChannel] =
     useState<DirectCallChannel | null>(null)
   const targetUserProfile = useMemo(() => {
     if (!directCallChannel) return null
     return (
-      directCallChannel.users.find(({ user: { id } }) => id !== user.user.id)
-        ?.user.profile || null
+      directCallChannel.users.find(({ user: { id } }) => id !== user.id)?.user
+        .profile || null
     )
   }, [user, directCallChannel])
   const stopwatch = useStopwatch({ autoStart: false })
@@ -53,7 +53,7 @@ export default function InCallModal() {
           setStream(currentStream)
         })
         .catch(() => {
-          toast.error("Can't connect to microphone device")
+          toast.error("Can't connect to microphone device or camera device")
           setMicEnabled(false)
         })
     }
@@ -83,27 +83,31 @@ export default function InCallModal() {
           setStream(currentStream)
         })
         .catch(() => {
-          toast.error("Can't connect to microphone device")
+          toast.error("Can't connect to microphone device or camera device")
           setMicEnabled(false)
         })
   }, [isOpen, setMicEnabled, setStream])
   useEffect(() => {
-    if (!stream) return
-    const peer = new Peer({ initiator: false, trickle: false, stream })
-    console.log(peer)
-    peer.on("signal", (data) => {
-      socket.emit(WsEvent.READY_CALL, { signal: data })
+    const peer = new Peer()
+    peer.on("open", (peerId) => socket.emit(WsEvent.READY_CALL, { peerId })) // caller
+    peer.on("call", (mediaConnection) => {
+      // caller
+      mediaConnection.answer(stream)
+      mediaConnection.on("stream", (stream) => {
+        if (streamRef.current) streamRef.current.srcObject = stream
+      })
     })
-    peer.on("stream", (currentStream) => {
-      if (streamRef.current) streamRef.current.srcObject = currentStream
-    })
-    socket.on(WsEvent.READY_CALL, (signal: Peer.SignalData) => {
-      console.log(signal)
-      peer.signal(signal)
+    socket.on(WsEvent.READY_CALL, (peerId: string) => {
+      // answer
+      const mediaConnection = peer.call(peerId, stream)
+      mediaConnection.on("stream", (stream) => {
+        if (streamRef.current) streamRef.current.srcObject = stream
+      })
     })
 
     return () => {
       socket.off(WsEvent.READY_CALL)
+      peer.destroy()
     }
   }, [stream])
   useEffect(() => {
