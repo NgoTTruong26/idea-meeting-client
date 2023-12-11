@@ -36,8 +36,13 @@ export default function InCallModal() {
   const targetUserProfile = useMemo(() => {
     if (!directCallChannel) return null
     return (
-      directCallChannel.users.find(({ user: { id } }) => id !== user.id)?.user
-        .profile || null
+      directCallChannel.users.find(
+        ({
+          user: {
+            profile: { userId },
+          },
+        }) => userId !== user.id,
+      )?.user.profile || null
     )
   }, [user, directCallChannel])
   const stopwatch = useStopwatch({ autoStart: false })
@@ -93,34 +98,40 @@ export default function InCallModal() {
   useEffect(() => {
     if (!directCallChannel || !stream) return
     const peer = new Peer(user.id)
-    if (directCallChannel.createdById === user.id) {
-      const mediaConnection = peer.call(
-        directCallChannel.users.find(
-          ({
-            user: {
-              profile: { userId },
-            },
-          }) => userId !== user.id,
-        )?.user.profile.userId || "",
-        stream,
-      )
-      mediaConnection.on("stream", (stream) => {
-        if (streamRef.current) {
-          streamRef.current.srcObject = stream
-          streamRef.current.play()
-        }
-      })
-    } else {
+    peer.on("open", () => {
       peer.on("call", (mediaConnection) => {
         mediaConnection.answer(stream)
         mediaConnection.on("stream", (stream) => {
+          console.log(stream)
           if (streamRef.current) {
             streamRef.current.srcObject = stream
+            streamRef.current.pause()
+            streamRef.current.currentTime = 0
             streamRef.current.play()
           }
         })
       })
-    }
+      if (directCallChannel.createdById === user.id) {
+        const mediaConnection = peer.call(
+          directCallChannel.users.find(
+            ({
+              user: {
+                profile: { userId },
+              },
+            }) => userId !== user.id,
+          )?.user.profile.userId || "",
+          stream,
+        )
+        mediaConnection.on("stream", (stream) => {
+          if (streamRef.current) {
+            streamRef.current.srcObject = stream
+            streamRef.current.pause()
+            streamRef.current.currentTime = 0
+            streamRef.current.play()
+          }
+        })
+      }
+    })
 
     return () => {
       peer.destroy()
