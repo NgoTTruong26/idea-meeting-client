@@ -91,36 +91,41 @@ export default function InCallModal() {
         })
   }, [isOpen, setMicEnabled, setStream])
   useEffect(() => {
-    if (!stream) return
-    const peer = new Peer()
-    peer.on("open", (peerId) => socket.emit(WsEvent.READY_CALL, { peerId })) // caller
-    peer.on("call", (mediaConnection) => {
-      // caller
-      mediaConnection.answer(stream)
+    if (!directCallChannel || !stream) return
+    const peer = new Peer(user.id)
+    if (directCallChannel.createdById === user.id) {
+      const mediaConnection = peer.call(
+        directCallChannel.users.find(
+          ({
+            user: {
+              profile: { userId },
+            },
+          }) => userId !== user.id,
+        )?.user.profile.userId || "",
+        stream,
+      )
       mediaConnection.on("stream", (stream) => {
         if (streamRef.current) {
           streamRef.current.srcObject = stream
           streamRef.current.play()
         }
       })
-    })
-    socket.on(WsEvent.READY_CALL, (peerId: string) => {
-      // answer
-      const mediaConnection = peer.call(peerId, stream)
-      mediaConnection.on("stream", (stream) => {
-        if (streamRef.current) {
-          streamRef.current.srcObject = stream
-          streamRef.current.play()
-        }
+    } else {
+      peer.on("call", (mediaConnection) => {
+        mediaConnection.answer(stream)
+        mediaConnection.on("stream", (stream) => {
+          if (streamRef.current) {
+            streamRef.current.srcObject = stream
+            streamRef.current.play()
+          }
+        })
       })
-    })
+    }
 
     return () => {
-      socket.off(WsEvent.READY_CALL)
       peer.destroy()
-      console.log("unmount")
     }
-  }, [stream])
+  }, [directCallChannel, stream, user])
   useEffect(() => {
     socket.on(WsEvent.ACCEPT_REQUEST_CALL, handleAcceptRequestCall)
     socket.on(WsEvent.CANCEL_CALL, handleCancelCall)
