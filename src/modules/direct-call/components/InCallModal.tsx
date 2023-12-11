@@ -47,7 +47,7 @@ export default function InCallModal() {
     if (micEnabled) setMicEnabled(false)
     else {
       navigator.mediaDevices
-        .getUserMedia({ audio: true })
+        .getUserMedia({ audio: true, video: cameraEnabled })
         .then((currentStream) => {
           setMicEnabled(true)
           setStream(currentStream)
@@ -77,10 +77,13 @@ export default function InCallModal() {
   useEffect(() => {
     if (isOpen)
       navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((currentStream) => {
+        .getUserMedia({
+          audio: true,
+          video: true,
+        })
+        .then((stream) => {
           setMicEnabled(true)
-          setStream(currentStream)
+          setStream(stream)
         })
         .catch(() => {
           toast.error("Can't connect to microphone device or camera device")
@@ -88,26 +91,34 @@ export default function InCallModal() {
         })
   }, [isOpen, setMicEnabled, setStream])
   useEffect(() => {
+    if (!stream) return
     const peer = new Peer()
     peer.on("open", (peerId) => socket.emit(WsEvent.READY_CALL, { peerId })) // caller
     peer.on("call", (mediaConnection) => {
       // caller
       mediaConnection.answer(stream)
       mediaConnection.on("stream", (stream) => {
-        if (streamRef.current) streamRef.current.srcObject = stream
+        if (streamRef.current) {
+          streamRef.current.srcObject = stream
+          streamRef.current.play()
+        }
       })
     })
     socket.on(WsEvent.READY_CALL, (peerId: string) => {
       // answer
       const mediaConnection = peer.call(peerId, stream)
       mediaConnection.on("stream", (stream) => {
-        if (streamRef.current) streamRef.current.srcObject = stream
+        if (streamRef.current) {
+          streamRef.current.srcObject = stream
+          streamRef.current.play()
+        }
       })
     })
 
     return () => {
       socket.off(WsEvent.READY_CALL)
       peer.destroy()
+      console.log("unmount")
     }
   }, [stream])
   useEffect(() => {
@@ -124,6 +135,7 @@ export default function InCallModal() {
       setIsEnding(false)
       setMicEnabled(false)
       setCameraEnabled(false)
+      setStream(undefined)
       setDirectCallChannel(null)
     }
   }, [
@@ -131,6 +143,7 @@ export default function InCallModal() {
     setIsEnding,
     setMicEnabled,
     setCameraEnabled,
+    setStream,
     setDirectCallChannel,
   ])
 
@@ -198,7 +211,7 @@ export default function InCallModal() {
             <MdCallEnd size="26" />
           </Button>
         </ModalFooter>
-        <video ref={streamRef} className="hidden"></video>
+        <video ref={streamRef}></video>
       </ModalContent>
     </Modal>
   )
