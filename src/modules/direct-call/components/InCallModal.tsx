@@ -99,16 +99,23 @@ export default function InCallModal() {
   }, [isOpen, setMicEnabled, setStream])
   useEffect(() => {
     if (!directCallChannel || !stream) return
-
-    if (streamRef.current) {
-      streamRef.current.srcObject = stream
-      streamRef.current.play()
-    }
-    const peer = new Peer(user.id)
+    const peer = new Peer(user.id, {
+      config: {
+        iceServers: [
+          { url: "stun:stun.l.google.com:19302" },
+          { url: "stun1.l.google.com:19302" },
+          { url: "stun2.l.google.com:19302" },
+          { url: "stun3.l.google.com:19302" },
+          { url: "stun4.l.google.com:19302" },
+        ],
+      },
+    })
     peer.on("open", () => {
       peer.on("call", (mediaConnection) => {
         mediaConnection.answer(stream)
-        mediaConnection.on("stream", (stream) => {})
+        mediaConnection.on("stream", (stream) => {
+          if (streamRef.current) streamRef.current.srcObject = stream
+        })
       })
       if (directCallChannel.createdById === user.id) {
         const mediaConnection = peer.call(
@@ -121,7 +128,9 @@ export default function InCallModal() {
           )?.user.profile.userId || "",
           stream,
         )
-        mediaConnection.on("stream", (stream) => {})
+        mediaConnection.on("stream", (stream) => {
+          if (streamRef.current) streamRef.current.srcObject = stream
+        })
       }
     })
   }, [directCallChannel, stream, user])
