@@ -9,7 +9,6 @@ import {
   useDisclosure,
 } from "@nextui-org/react"
 import { socket } from "configs/socket"
-import { Peer } from "peerjs"
 import { useEffect, useMemo, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import {
@@ -19,19 +18,21 @@ import {
   MdVideocam,
   MdVideocamOff,
 } from "react-icons/md"
+import { usePeer } from "store/peer"
 import { useUser } from "store/user"
 import { WsEvent } from "types/ws"
 import { DirectCallChannel } from "../types/direct-call-channel"
 
 export default function InCallModal() {
   const { user } = useUser()
+  const { peer } = usePeer()
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
   const [isEnding, setIsEnding] = useState(false)
+  const [stream, setStream] = useState<MediaStream>()
   const [micEnabled, setMicEnabled] = useState(false)
   const [cameraEnabled, setCameraEnabled] = useState(false)
-  const [stream, setStream] = useState<MediaStream>()
   const [directCallChannel, setDirectCallChannel] =
-    useState<DirectCallChannel | null>(null)
+    useState<DirectCallChannel>()
   const targetUserProfile = useMemo(() => {
     if (!directCallChannel) return null
     return (
@@ -79,61 +80,55 @@ export default function InCallModal() {
   }
 
   useEffect(() => {
-    if (isOpen)
+    if (peer)
+      peer.on("call", (mediaConnection) => {
+        mediaConnection.answer(stream)
+        mediaConnection.on("stream", (stream) => {
+          console.log("answer", stream)
+          if (streamRef.current) streamRef.current.srcObject = stream
+        })
+      })
+  }, [peer])
+  useEffect(() => {
+    if (isOpen) {
       navigator.mediaDevices
         .getUserMedia({
           audio: true,
-          video: {
-            width: 600,
-            height: 300,
-          },
+          video: true,
         })
         .then((stream) => {
-          setMicEnabled(true)
           setStream(stream)
+          setMicEnabled(true)
         })
         .catch(() => {
           toast.error("Can't connect to microphone device or camera device")
           setMicEnabled(false)
         })
-  }, [isOpen, setMicEnabled, setStream])
+    } else {
+      setIsEnding(false)
+      setStream(undefined)
+      setMicEnabled(false)
+      setCameraEnabled(false)
+      setDirectCallChannel(undefined)
+    }
+  }, [
+    isOpen,
+    setIsEnding,
+    setStream,
+    setMicEnabled,
+    setCameraEnabled,
+    setDirectCallChannel,
+  ])
   useEffect(() => {
-    if (!directCallChannel || !stream) return
-    const peer = new Peer(user.id, {
-      config: {
-        iceServers: [
-          { url: "stun:stun.l.google.com:19302" },
-          { url: "stun1.l.google.com:19302" },
-          { url: "stun2.l.google.com:19302" },
-          { url: "stun3.l.google.com:19302" },
-          { url: "stun4.l.google.com:19302" },
-        ],
-      },
-    })
-    peer.on("open", () => {
-      peer.on("call", (mediaConnection) => {
-        mediaConnection.answer(stream)
-        mediaConnection.on("stream", (stream) => {
-          if (streamRef.current) streamRef.current.srcObject = stream
-        })
-      })
-      if (directCallChannel.createdById === user.id) {
-        const mediaConnection = peer.call(
-          directCallChannel.users.find(
-            ({
-              user: {
-                profile: { userId },
-              },
-            }) => userId !== user.id,
-          )?.user.profile.userId || "",
-          stream,
-        )
+    if (peer && stream && directCallChannel && targetUserProfile) {
+      if (directCallChannel.createdById !== targetUserProfile.userId) {
+        const mediaConnection = peer.call(targetUserProfile.userId, stream)
         mediaConnection.on("stream", (stream) => {
           if (streamRef.current) streamRef.current.srcObject = stream
         })
       }
-    })
-  }, [directCallChannel, stream, user])
+    }
+  }, [peer, stream, directCallChannel, targetUserProfile])
   useEffect(() => {
     socket.on(WsEvent.ACCEPT_REQUEST_CALL, handleAcceptRequestCall)
     socket.on(WsEvent.CANCEL_CALL, handleCancelCall)
@@ -143,22 +138,6 @@ export default function InCallModal() {
       socket.off(WsEvent.CANCEL_CALL, handleCancelCall)
     }
   }, [onOpen, onClose, handleAcceptRequestCall, handleCancelCall])
-  useEffect(() => {
-    if (!isOpen) {
-      setIsEnding(false)
-      setMicEnabled(false)
-      setCameraEnabled(false)
-      setStream(undefined)
-      setDirectCallChannel(null)
-    }
-  }, [
-    isOpen,
-    setIsEnding,
-    setMicEnabled,
-    setCameraEnabled,
-    setStream,
-    setDirectCallChannel,
-  ])
 
   return (
     <Modal
