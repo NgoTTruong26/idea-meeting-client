@@ -125,7 +125,12 @@ export default function InCallModal() {
         })
       })
     }
-  }, [peer])
+    return () => {
+      if (peer) {
+        peer.off("call")
+      }
+    }
+  }, [peer, stream])
 
   useEffect(() => {
     if (peer && stream && directCallChannel && targetUserProfile) {
