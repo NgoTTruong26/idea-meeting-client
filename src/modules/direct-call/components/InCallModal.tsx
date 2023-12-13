@@ -81,21 +81,6 @@ export default function InCallModal() {
   }
 
   useEffect(() => {
-    if (peer)
-      peer.on("call", (mediaConnection) => {
-        mediaConnection.answer(stream)
-        mediaConnection.on("stream", (stream) => {
-          console.log("answer", stream)
-          if (remoteStreamRef.current) {
-            remoteStreamRef.current.srcObject = stream
-            remoteStreamRef.current.addEventListener("loadedmetadata", () => {
-              remoteStreamRef.current?.play()
-            })
-          }
-        })
-      })
-  }, [peer])
-  useEffect(() => {
     if (isOpen) {
       navigator.mediaDevices
         .getUserMedia({
@@ -117,8 +102,12 @@ export default function InCallModal() {
       setMicEnabled(false)
       setCameraEnabled(false)
       setDirectCallChannel(undefined)
+      if (localStreamRef.current) localStreamRef.current.srcObject = null
+      if (remoteStreamRef.current) remoteStreamRef.current.srcObject = null
+      peer?.disconnect()
     }
   }, [
+    peer,
     isOpen,
     setIsEnding,
     setStream,
@@ -127,17 +116,25 @@ export default function InCallModal() {
     setDirectCallChannel,
   ])
   useEffect(() => {
+    if (peer) {
+      peer.on("call", (mediaConnection) => {
+        mediaConnection.answer(stream)
+        mediaConnection.on("stream", (stream) => {
+          console.log("answer", stream)
+          if (remoteStreamRef.current)
+            remoteStreamRef.current.srcObject = stream
+        })
+      })
+    }
+  }, [peer])
+
+  useEffect(() => {
     if (peer && stream && directCallChannel && targetUserProfile) {
       if (directCallChannel.createdById !== targetUserProfile.userId) {
         const mediaConnection = peer.call(targetUserProfile.userId, stream)
         mediaConnection.on("stream", (stream) => {
-          console.log("caller", stream)
-          if (remoteStreamRef.current) {
+          if (remoteStreamRef.current)
             remoteStreamRef.current.srcObject = stream
-            remoteStreamRef.current.addEventListener("loadedmetadata", () => {
-              remoteStreamRef.current?.play()
-            })
-          }
         })
       }
     }
