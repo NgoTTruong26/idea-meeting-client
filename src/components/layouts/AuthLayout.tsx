@@ -21,11 +21,12 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       const newPeer = new Peer(user.id, {
         config: {
           iceServers: [
-            { url: "stun:stun.l.google.com:19302" },
-            { url: "stun:stun1.l.google.com:19302" },
-            { url: "stun:stun2.l.google.com:19302" },
-            { url: "stun:stun3.l.google.com:19302" },
-            { url: "stun:stun4.l.google.com:19302" },
+            { urls: "stun:stun.l.google.com:19302" },
+            {
+              urls: "turn:numb.viagenie.ca",
+              username: "webrtc@live.com",
+              credential: "muazkh",
+            },
           ],
         },
       })

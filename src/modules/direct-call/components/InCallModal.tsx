@@ -86,8 +86,12 @@ export default function InCallModal() {
         mediaConnection.answer(stream)
         mediaConnection.on("stream", (stream) => {
           console.log("answer", stream)
-          if (remoteStreamRef.current)
+          if (remoteStreamRef.current) {
             remoteStreamRef.current.srcObject = stream
+            remoteStreamRef.current.addEventListener("loadedmetadata", () => {
+              remoteStreamRef.current?.play()
+            })
+          }
         })
       })
   }, [peer])
@@ -128,8 +132,12 @@ export default function InCallModal() {
         const mediaConnection = peer.call(targetUserProfile.userId, stream)
         mediaConnection.on("stream", (stream) => {
           console.log("caller", stream)
-          if (remoteStreamRef.current)
+          if (remoteStreamRef.current) {
             remoteStreamRef.current.srcObject = stream
+            remoteStreamRef.current.addEventListener("loadedmetadata", () => {
+              remoteStreamRef.current?.play()
+            })
+          }
         })
       }
     }
@@ -209,8 +217,8 @@ export default function InCallModal() {
             <MdCallEnd size="26" />
           </Button>
         </ModalFooter>
-        <video ref={localStreamRef} autoPlay />
-        <video ref={remoteStreamRef} autoPlay />
+        <video ref={localStreamRef} autoPlay playsInline muted />
+        <video ref={remoteStreamRef} autoPlay playsInline muted />
       </ModalContent>
     </Modal>
   )
