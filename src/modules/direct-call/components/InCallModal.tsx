@@ -46,7 +46,8 @@ export default function InCallModal() {
     )
   }, [user, directCallChannel])
   // const stopwatch = useStopwatch({ autoStart: false })
-  const streamRef = useRef<HTMLVideoElement>(null)
+  const localStreamRef = useRef<HTMLVideoElement>(null)
+  const remoteStreamRef = useRef<HTMLVideoElement>(null)
 
   const enableMic = () => {
     if (micEnabled) setMicEnabled(false)
@@ -85,7 +86,8 @@ export default function InCallModal() {
         mediaConnection.answer(stream)
         mediaConnection.on("stream", (stream) => {
           console.log("answer", stream)
-          if (streamRef.current) streamRef.current.srcObject = stream
+          if (remoteStreamRef.current)
+            remoteStreamRef.current.srcObject = stream
         })
       })
   }, [peer])
@@ -99,6 +101,7 @@ export default function InCallModal() {
         .then((stream) => {
           setStream(stream)
           setMicEnabled(true)
+          if (localStreamRef.current) localStreamRef.current.srcObject = stream
         })
         .catch(() => {
           toast.error("Can't connect to microphone device or camera device")
@@ -124,7 +127,9 @@ export default function InCallModal() {
       if (directCallChannel.createdById !== targetUserProfile.userId) {
         const mediaConnection = peer.call(targetUserProfile.userId, stream)
         mediaConnection.on("stream", (stream) => {
-          if (streamRef.current) streamRef.current.srcObject = stream
+          console.log("caller", stream)
+          if (remoteStreamRef.current)
+            remoteStreamRef.current.srcObject = stream
         })
       }
     }
@@ -204,7 +209,8 @@ export default function InCallModal() {
             <MdCallEnd size="26" />
           </Button>
         </ModalFooter>
-        <video ref={streamRef} />
+        <video ref={localStreamRef} autoPlay />
+        <video ref={remoteStreamRef} autoPlay />
       </ModalContent>
     </Modal>
   )
