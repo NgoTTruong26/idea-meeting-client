@@ -68,7 +68,7 @@ export default function CreateGroupModal({ onClose }: Props) {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <ModalHeader className="flex items-center flex-col gap-1">
-          <div className="text-center text-primary">Customize your group</div>
+          <div className="text-center">Customize your group</div>
           <div className="text-center text-base font-normal text-zinc-600">
             Personalize your group by naming it and adding an icon. You can
             change at any time.

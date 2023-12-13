@@ -10,9 +10,12 @@ export default function AuthLayout({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (user.id) {
-      ;(socket.auth as any).accessToken = (
-        JSON.parse(localStorage.getItem("user")!) as StorageValue<UserState>
-      ).state.auth.accessToken
+      socket.auth = {
+        accessToken: (
+          JSON.parse(localStorage.getItem("user")!) as StorageValue<UserState>
+        ).state.auth.accessToken,
+      }
+
       socket.connect()
     }
 
@@ -20,5 +23,9 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       socket.disconnect()
     }
   }, [user.id])
-  return user.id ? children : <Navigate to={nav.AUTH + nav.SIGN_IN} replace />
+  return user.id ? (
+    <>{children}</>
+  ) : (
+    <Navigate to={nav.AUTH + nav.SIGN_IN} replace />
+  )
 }

@@ -59,20 +59,20 @@ export default function ChatContent({
             }
             updatedAt={message.updatedAt}
           />
-        ) : message.userId === profile.userId &&
-          message.directMessageChannelId === directMessageChannelId ? (
-          <MessageFromFriend
-            key={idx}
-            id={`${idx}`}
-            message={message.value}
-            profile={profile}
-            isPrevsMessageFromMe={
-              messages[idx - 1] ? messages[idx - 1].userId === user.id : true
-            }
-            updatedAt={message.updatedAt}
-          />
         ) : (
-          <></>
+          message.userId === profile.userId &&
+          message.directMessageChannelId === directMessageChannelId && (
+            <MessageFromFriend
+              key={idx}
+              id={`${idx}`}
+              message={message.value}
+              profile={profile}
+              isPrevsMessageFromMe={
+                messages[idx - 1] ? messages[idx - 1].userId === user.id : true
+              }
+              updatedAt={message.updatedAt}
+            />
+          )
         ),
       )}
       {dataResponse.pages.map(
@@ -97,36 +97,36 @@ export default function ChatContent({
                 }
                 updatedAt={message.updatedAt}
               />
-            ) : message.userId === profile.userId ? (
-              <MessageFromFriend
-                ref={
-                  pageIdx === dataResponse.pages.length - 1 &&
-                  idx >= Math.ceil(page.data.length * 0.6)
-                    ? ref
-                    : undefined
-                }
-                key={message.id}
-                id={message.id}
-                message={message.value}
-                profile={message.user.profile}
-                isPrevsMessageFromMe={
-                  (idx === 0 &&
-                    messages.length > 0 &&
-                    messages[messages.length - 1].userId !== user.id) ||
-                  (idx === 0 &&
-                    pageIdx > 0 &&
-                    dataResponse.pages[pageIdx - 1]?.data[
-                      dataResponse.pages[pageIdx - 1]!.data.length - 1
-                    ].userId !== user.id)
-                    ? false
-                    : page.data[idx - 1]
-                    ? page.data[idx - 1].userId === user.id
-                    : true
-                }
-                updatedAt={message.updatedAt}
-              />
             ) : (
-              <></>
+              message.userId === profile.userId && (
+                <MessageFromFriend
+                  ref={
+                    pageIdx === dataResponse.pages.length - 1 &&
+                    idx >= Math.ceil(page.data.length * 0.6)
+                      ? ref
+                      : undefined
+                  }
+                  key={message.id}
+                  id={message.id}
+                  message={message.value}
+                  profile={message.user.profile}
+                  isPrevsMessageFromMe={
+                    (idx === 0 &&
+                      messages.length > 0 &&
+                      messages[messages.length - 1].userId !== user.id) ||
+                    (idx === 0 &&
+                      pageIdx > 0 &&
+                      dataResponse.pages[pageIdx - 1]?.data[
+                        dataResponse.pages[pageIdx - 1]!.data.length - 1
+                      ].userId !== user.id)
+                      ? false
+                      : page.data[idx - 1]
+                      ? page.data[idx - 1].userId === user.id
+                      : true
+                  }
+                  updatedAt={message.updatedAt}
+                />
+              )
             ),
           ),
       )}

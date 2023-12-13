@@ -1,12 +1,21 @@
-import { Divider, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
+import {
+  Button,
+  Divider,
+  Modal,
+  ModalContent,
+  useDisclosure,
+} from "@nextui-org/react"
 import CreateGroupModal from "modules/group/components/CreateGroupModal"
 import { useGetGroupList } from "modules/group/services/group"
 import { AiOutlineUsergroupAdd } from "react-icons/ai"
 import { useNavigate } from "react-router-dom"
+import { useUser } from "store/user"
 import { colors } from "styles/theme"
 import SidebarItem from "./SidebarItem"
 
 export default function Sidebar() {
+  const { clear } = useUser()
+
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const getGetGroupList = useGetGroupList({})
@@ -47,6 +56,10 @@ export default function Sidebar() {
           <AiOutlineUsergroupAdd size={24} color={colors.primary[500]} />
         </div>
       </SidebarItem>
+      <div className="flex justify-center">
+        <Divider className="w-8" />
+      </div>
+      <Button onClick={clear}>123</Button>
 
       <Modal size="lg" isOpen={isOpen} onClose={onClose}>
         <ModalContent>
