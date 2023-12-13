@@ -104,7 +104,6 @@ export default function InCallModal() {
       setDirectCallChannel(undefined)
       if (localStreamRef.current) localStreamRef.current.srcObject = null
       if (remoteStreamRef.current) remoteStreamRef.current.srcObject = null
-      peer?.disconnect()
     }
   }, [
     peer,
@@ -133,6 +132,7 @@ export default function InCallModal() {
       if (directCallChannel.createdById !== targetUserProfile.userId) {
         const mediaConnection = peer.call(targetUserProfile.userId, stream)
         mediaConnection.on("stream", (stream) => {
+          console.log("caller", stream)
           if (remoteStreamRef.current)
             remoteStreamRef.current.srcObject = stream
         })
