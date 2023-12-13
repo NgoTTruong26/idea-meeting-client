@@ -4,12 +4,12 @@ import { queryClient } from "configs/queryClient"
 import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
 import { HiDotsVertical } from "react-icons/hi"
-import { ImPhone } from "react-icons/im"
-import { IoVideocam } from "react-icons/io5"
+import { MdPhone, MdVideocam } from "react-icons/md"
 import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
-import { WsEvent } from "types/ws"
+import { WsEvent, WsResponse } from "types/ws"
+import { handleWsError } from "utils/ws"
 import ChatContent from "../components/ChatMessages/ChatContent"
 import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
@@ -32,6 +32,14 @@ export default function ChatMessages() {
     if ([user.id, friendId].includes(message.userId)) {
       setMessages((prev) => [message, ...prev])
     }
+  }
+  const handleRequestCall = () => {
+    if (!friend.data) return
+    socket.emit(
+      WsEvent.REQUEST_CALL,
+      { toUserId: friend.data.profile.userId },
+      (response: WsResponse) => handleWsError(response),
+    )
   }
 
   useEffect(() => {
@@ -81,19 +89,22 @@ export default function ChatMessages() {
           </div>
         </div>
         <div
-          className={clsx(
-            "flex text-primary-500",
-            "[&>button+button]:ml-5 [&>button]:p-2 [&>button]:rounded-full",
-            "[&>button]:hover:cursor-pointer  [&>button:hover]:bg-purple-50 ",
-          )}
+          className={clsx("flex text-primary-500", "[&>button]:rounded-full")}
         >
-          <Button isIconOnly size="lg" className="bg-gray-50 text-primary-500">
-            <ImPhone size="25" />
+          <Button
+            isIconOnly
+            variant="light"
+            color="primary"
+            size="lg"
+            onClick={handleRequestCall}
+          >
+            <MdPhone size="25" />
           </Button>
-          <Button isIconOnly size="lg" className="bg-gray-50 text-primary-500">
-            <IoVideocam size="25" />
+          <Button isIconOnly variant="light" color="primary" size="lg">
+            <MdVideocam size="25" />
           </Button>
-          <Button isIconOnly size="lg" className="bg-gray-50 text-primary-500">
+
+          <Button isIconOnly variant="light" color="primary" size="lg">
             <HiDotsVertical size="25" />
           </Button>
         </div>

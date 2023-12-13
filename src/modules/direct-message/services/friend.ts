@@ -19,6 +19,7 @@ export interface GetFriendRequest {
 
 export interface GetFriendResponse {
   profile: UserProfile
+  wsId: string
   isOnline: boolean
   isFriendship: boolean
   friendshipRequestFromMe: FriendshipRequest[]
