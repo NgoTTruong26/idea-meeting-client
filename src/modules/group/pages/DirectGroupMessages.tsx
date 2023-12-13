@@ -1,6 +1,4 @@
 import {
-  Accordion,
-  AccordionItem,
   Button,
   Divider,
   Dropdown,
@@ -11,17 +9,18 @@ import {
 import { useState } from "react"
 import { AiOutlineUser } from "react-icons/ai"
 import {
-  MdAdd,
   MdKeyboardArrowDown,
   MdOutlineClose,
   MdPersonAddAlt,
 } from "react-icons/md"
 import { TbEdit } from "react-icons/tb"
-import { Outlet } from "react-router-dom"
+import { Outlet, useParams } from "react-router-dom"
 import ChatChannels from "../components/channels/ChatChannels"
-import VoiceChannels from "../components/channels/VoiceChannels"
+import { DirectGroupMessageParams } from "../route"
 
 export default function DirectGroupMessages() {
+  const { groupId } = useParams<keyof DirectGroupMessageParams>()
+
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -39,8 +38,7 @@ export default function DirectGroupMessages() {
           <DropdownTrigger>
             <Button
               fullWidth
-              className="h-fit py-2 mt-2"
-              color="primary"
+              className="h-fit py-2 mt-2 text-black"
               variant="light"
               endContent={
                 showDropdown ? (
@@ -50,7 +48,7 @@ export default function DirectGroupMessages() {
                 )
               }
             >
-              <div className="w-full flex flex-col items-start space-y-1">
+              <div className="w-full flex flex-col items-start space-y-1 text-black">
                 <div className="font-semibold text-xl">HiHi</div>
                 <div className="flex items-end space-x-1 text-sm">
                   <span>
@@ -61,11 +59,7 @@ export default function DirectGroupMessages() {
               </div>
             </Button>
           </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Dynamic Actions"
-            color="primary"
-            className="text-primary"
-          >
+          <DropdownMenu aria-label="Dynamic Actions">
             <DropdownItem
               key="add-member"
               endContent={<MdPersonAddAlt size={18} />}
@@ -77,49 +71,10 @@ export default function DirectGroupMessages() {
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
+
         <Divider />
 
-        <Accordion
-          variant="light"
-          selectionMode="multiple"
-          className="pt-2 px-0 space-y-4"
-          showDivider={false}
-        >
-          <AccordionItem
-            key="chat-channels"
-            aria-label="Chat Channels"
-            title="Chat Channels"
-            classNames={{
-              trigger: "py-0 pr-2",
-              content: "space-y-2",
-            }}
-          >
-            <ChatChannels />
-            <div className="flex gap-4 justify-between text-sm text-primary px-2">
-              <span>Add Chat Channel</span>
-              <span className="w-4">
-                <MdAdd size={14} />
-              </span>
-            </div>
-          </AccordionItem>
-          <AccordionItem
-            key="voice-channels"
-            aria-label="Voice Channels"
-            title="Voice Channels"
-            classNames={{
-              trigger: "py-0 pr-2",
-              content: "space-y-2",
-            }}
-          >
-            <VoiceChannels />
-            <div className="flex gap-4 justify-between text-sm text-primary px-2">
-              <span>Add Voice Channel</span>
-              <span className="w-4">
-                <MdAdd size={14} />
-              </span>
-            </div>
-          </AccordionItem>
-        </Accordion>
+        <ChatChannels groupId={groupId || ""} />
       </div>
       <Outlet />
     </div>

@@ -18,7 +18,6 @@ export default function Sidebar() {
       <SidebarItem
         label="Direct Messages"
         handleClick={() => {
-          console.log(123)
           navigate(`/direct-message`)
         }}
       />
@@ -31,7 +30,6 @@ export default function Sidebar() {
           page.data.map((group, idx) => (
             <SidebarItem
               handleClick={() => {
-                console.log(123)
                 navigate(`/group/${group.group.id}`)
               }}
               label={group.group.name}

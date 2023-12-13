@@ -1,24 +1,28 @@
-import AuthLayout from "components/layouts/AuthLayout"
 import HomeLayout from "components/layouts/home"
 import { nav } from "constants/nav"
 import { RouteObject } from "react-router-dom"
 import ChatGroupMessages from "./pages/ChatGroupMessages"
 import DirectGroupMessages from "./pages/DirectGroupMessages"
 
+export interface DirectGroupMessageParams {
+  groupId: string
+  chatGroupId: string
+}
+
 export const directGroupMessageRoute: RouteObject = {
   path: nav.GROUP.slice(1),
-  element: (
+  element: <HomeLayout /> /* (
     <AuthLayout>
       <HomeLayout />
     </AuthLayout>
-  ),
+  ) */,
   children: [
     {
-      path: "",
+      path: ":groupId",
       Component: DirectGroupMessages,
       children: [
         {
-          path: ":id",
+          path: ":chatGroupId",
           Component: ChatGroupMessages,
         },
       ],

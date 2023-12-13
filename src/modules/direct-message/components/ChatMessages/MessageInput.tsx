@@ -22,7 +22,6 @@ interface Props {
 }
 
 const formSchema = yup.object().shape({
-  directMessageChannelId: yup.string().required(),
   type: yup.string<MessageType>().required(),
   value: yup
     .string()
@@ -31,21 +30,23 @@ const formSchema = yup.object().shape({
 })
 
 export default function MessageInput({ directMessageChannelId }: Props) {
-  const methods = useForm<Required<FormValues>>({
-    defaultValues: {
-      directMessageChannelId,
-      type: "TEXT",
-      value: "",
+  const methods = useForm<Required<Omit<FormValues, "directMessageChannelId">>>(
+    {
+      defaultValues: {
+        type: "TEXT",
+        value: "",
+      },
+      resolver: yupResolver(formSchema),
     },
-    resolver: yupResolver(formSchema),
-  })
+  )
 
   const handleSubmit = methods.handleSubmit((data) => {
-    socket.emit(WsEvent.CREATE_DIRECT_MESSAGE, data)
+    socket.emit(WsEvent.CREATE_DIRECT_MESSAGE, {
+      ...data,
+      directMessageChannelId,
+    })
 
     methods.reset()
-
-    console.log(data)
   })
 
   useEffect(() => {

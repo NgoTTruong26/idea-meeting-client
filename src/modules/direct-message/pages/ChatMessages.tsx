@@ -1,5 +1,6 @@
 import { Avatar, Button } from "@nextui-org/react"
 import clsx from "clsx"
+import { queryClient } from "configs/queryClient"
 import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
 import { HiDotsVertical } from "react-icons/hi"
@@ -18,15 +19,19 @@ export default function ChatMessages() {
   const { user } = useUser()
 
   const [messages, setMessages] = useState<MessageFromSocket[]>([])
-  console.log(messages)
 
   const { id: friendId = "" } = useParams<keyof DirectMessageParams>()
 
   const friend = useGetFriend({ targetId: friendId })
 
   const handleIncomingMessage = (message: MessageFromSocket) => {
-    if ([user.id, friendId].includes(message.userId))
+    queryClient.refetchQueries({
+      queryKey: ["get-direct-message"],
+    })
+
+    if ([user.id, friendId].includes(message.userId)) {
       setMessages((prev) => [message, ...prev])
+    }
   }
 
   useEffect(() => {
@@ -36,6 +41,13 @@ export default function ChatMessages() {
       socket.off(WsEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
     }
   }, [socket])
+
+  useEffect(() => {
+    setMessages([])
+    queryClient.refetchQueries({
+      queryKey: ["get-message-from-friend"],
+    })
+  }, [friendId])
 
   if (!friend.data) {
     return <div></div>

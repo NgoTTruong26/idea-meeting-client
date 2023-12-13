@@ -30,7 +30,7 @@ export interface GetDirectMessageRequest {
   take?: number
 }
 
-export interface GetLastMessage {
+export interface GetLastMessageResponse {
   id: string
   createdAt: string
   updatedAt: string
@@ -50,7 +50,7 @@ export interface GetDirectMessageResponse {
     isOnline: boolean
     profile: UserProfile
   }
-  lastMessage: GetLastMessage
+  lastMessage: GetLastMessageResponse
 }
 
 export interface GetDirectMessageListResponse extends BaseGetList {

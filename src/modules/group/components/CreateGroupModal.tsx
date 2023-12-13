@@ -20,16 +20,19 @@ interface Props {
 }
 
 const formSchema = yup.object({
-  imageUrl: yup.string(),
+  imageUrl: yup.string().required(),
   name: yup.string().label("Group Name").required(),
 })
 
 export default function CreateGroupModal({ onClose }: Props) {
   const [imageUrl, setImageUrl] = useState<string>()
 
-  const methods = useForm<Required<Pick<CreateGroupRequest, "name">>>({
+  const methods = useForm<
+    Required<Pick<CreateGroupRequest, "name" | "imageUrl">>
+  >({
     defaultValues: {
       name: "",
+      imageUrl: "https://discord.com/assets/1697e65656e69f0dbdbd.png",
     },
     resolver: yupResolver(formSchema),
   })

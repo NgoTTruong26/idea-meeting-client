@@ -7,3 +7,12 @@ export interface Group {
   imageUrl: string
   ownerId: string
 }
+
+export interface ChatChannel {
+  id: string
+  createdAt: string
+  updatedAt: string
+  isDeleted: boolean
+  name: string
+  groupId: string
+}

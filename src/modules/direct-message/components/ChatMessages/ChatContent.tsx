@@ -48,7 +48,8 @@ export default function ChatContent({
   return (
     <>
       {messages.map((message, idx) =>
-        message.userId === user.id ? (
+        message.userId === user.id &&
+        message.directMessageChannelId === directMessageChannelId ? (
           <MessageFromMe
             key={idx}
             id={`${idx}`}
@@ -58,7 +59,8 @@ export default function ChatContent({
             }
             updatedAt={message.updatedAt}
           />
-        ) : (
+        ) : message.userId === profile.userId &&
+          message.directMessageChannelId === directMessageChannelId ? (
           <MessageFromFriend
             key={idx}
             id={`${idx}`}
@@ -69,6 +71,8 @@ export default function ChatContent({
             }
             updatedAt={message.updatedAt}
           />
+        ) : (
+          <></>
         ),
       )}
       {dataResponse.pages.map(
@@ -93,7 +97,7 @@ export default function ChatContent({
                 }
                 updatedAt={message.updatedAt}
               />
-            ) : (
+            ) : message.userId === profile.userId ? (
               <MessageFromFriend
                 ref={
                   pageIdx === dataResponse.pages.length - 1 &&
@@ -121,6 +125,8 @@ export default function ChatContent({
                 }
                 updatedAt={message.updatedAt}
               />
+            ) : (
+              <></>
             ),
           ),
       )}

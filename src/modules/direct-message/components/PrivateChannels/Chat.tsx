@@ -17,7 +17,7 @@ export default function Chat() {
           page.data.map((item) => (
             <Link
               to={item.user.profile.userId}
-              key={item.lastMessage.userId}
+              key={item.user.profile.userId}
               className={clsx(
                 "flex items-center bg-white py-2 px-3 rounded-2xl text-sm",
               )}
@@ -44,7 +44,7 @@ export default function Chat() {
                   </div>
                 </div>
                 <div className={clsx("text-xs text-gray-500")}>
-                  {moment(item.lastMessage.updatedAt).format("HH:MM")}
+                  {moment(item.lastMessage.createdAt).format("HH:mm")}
                 </div>
               </div>
             </Link>
