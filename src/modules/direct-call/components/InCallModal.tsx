@@ -217,8 +217,8 @@ export default function InCallModal() {
             <MdCallEnd size="26" />
           </Button>
         </ModalFooter>
-        <video ref={localStreamRef} autoPlay playsInline muted />
-        <video ref={remoteStreamRef} autoPlay playsInline muted />
+        <video ref={localStreamRef} autoPlay muted />
+        <video ref={remoteStreamRef} autoPlay muted />
       </ModalContent>
     </Modal>
   )

@@ -21,11 +21,17 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       const newPeer = new Peer(user.id, {
         config: {
           iceServers: [
-            { urls: "stun:stun.l.google.com:19302" },
+            { urls: "stun:freeturn.net:3478" },
+            { urls: "stun:freeturn.net:5349" },
             {
-              urls: "turn:numb.viagenie.ca",
-              username: "webrtc@live.com",
-              credential: "muazkh",
+              urls: "turn:freeturn.net:3478",
+              credential: "free",
+              username: "free",
+            },
+            {
+              urls: "turn:freeturn.net:5349",
+              credential: "free",
+              username: "free",
             },
           ],
         },
