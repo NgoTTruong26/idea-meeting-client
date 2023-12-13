@@ -215,7 +215,7 @@ export default function InCallModal() {
           </Button>
         </ModalFooter>
         <video ref={localStreamRef} autoPlay muted />
-        <video ref={remoteStreamRef} autoPlay muted />
+        <video ref={remoteStreamRef} autoPlay />
       </ModalContent>
     </Modal>
   )
