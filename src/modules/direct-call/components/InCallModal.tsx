@@ -17,7 +17,6 @@ import {
   MdVideocam,
   MdVideocamOff,
 } from "react-icons/md"
-import { useStopwatch } from "react-timer-hook"
 import { usePeer } from "store/peer"
 import { useUser } from "store/user"
 import { WsEvent } from "types/ws"
@@ -45,7 +44,7 @@ export default function InCallModal() {
       )?.user.profile || null
     )
   }, [user, directCallChannel])
-  const stopwatch = useStopwatch({ autoStart: false })
+  // const stopwatch = useStopwatch({ autoStart: false })
   const localStreamRef = useRef<HTMLVideoElement>(null)
   const remoteStreamRef = useRef<HTMLVideoElement>(null)
 
@@ -54,9 +53,10 @@ export default function InCallModal() {
     else {
       navigator.mediaDevices
         .getUserMedia({ audio: true, video: cameraEnabled })
-        .then((currentStream) => {
+        .then((stream) => {
           setMicEnabled(true)
-          setStream(currentStream)
+          setStream(stream)
+          if (localStreamRef.current) localStreamRef.current.srcObject = stream
         })
         .catch(() => {
           toast.error("Can't connect to microphone device or camera device")
@@ -69,9 +69,10 @@ export default function InCallModal() {
     else {
       navigator.mediaDevices
         .getUserMedia({ audio: micEnabled, video: true })
-        .then((currentStream) => {
+        .then((stream) => {
           setCameraEnabled(true)
-          setStream(currentStream)
+          setStream(stream)
+          if (localStreamRef.current) localStreamRef.current.srcObject = stream
         })
         .catch(() => {
           toast.error("Can't connect to microphone device or camera device")
@@ -87,7 +88,7 @@ export default function InCallModal() {
   const handleAcceptRequestCall = (channel: DirectCallChannel) => {
     onOpen()
     setDirectCallChannel(channel)
-    stopwatch.reset(undefined, true)
+    // stopwatch.reset(undefined, true)
   }
   const handleCancelCall = (channel: DirectCallChannel) => {
     if (channel.id !== directCallChannel?.id) return
@@ -100,15 +101,18 @@ export default function InCallModal() {
       navigator.mediaDevices
         .getUserMedia({
           audio: true,
+          video: true,
         })
         .then((stream) => {
           setStream(stream)
           setMicEnabled(true)
+          setCameraEnabled(true)
           if (localStreamRef.current) localStreamRef.current.srcObject = stream
         })
         .catch(() => {
           toast.error("Can't connect to microphone device or camera device")
           setMicEnabled(false)
+          setCameraEnabled(false)
         })
     } else {
       setIsEnding(false)
@@ -182,17 +186,7 @@ export default function InCallModal() {
               {targetUserProfile?.fullName || "Nam Dao"}
             </div>
             <div className="mt-1 text-gray-500 text-xs">
-              {isEnding
-                ? "The call has ended"
-                : `${
-                    stopwatch.hours
-                      ? stopwatch.hours.toString().padStart(2, "0") + ":"
-                      : ""
-                  }${stopwatch.minutes
-                    .toString()
-                    .padStart(2, "0")}:${stopwatch.seconds
-                    .toString()
-                    .padStart(2, "0")}`}
+              {isEnding ? "The call has ended" : ""}
             </div>
           </div>
         </div>
