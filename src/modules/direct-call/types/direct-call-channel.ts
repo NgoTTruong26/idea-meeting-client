@@ -1,6 +1,6 @@
 import { User } from "types/user"
 
-enum DirectCallChannelType {
+export enum DirectCallChannelType {
   AUDIO = "AUDIO",
   VIDEO = "VIDEO",
 }

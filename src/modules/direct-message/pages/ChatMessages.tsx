@@ -2,6 +2,7 @@ import { Avatar, Button } from "@nextui-org/react"
 import clsx from "clsx"
 import { queryClient } from "configs/queryClient"
 import { socket } from "configs/socket"
+import { DirectCallChannelType } from "modules/direct-call/types/direct-call-channel"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { HiDotsVertical } from "react-icons/hi"
@@ -43,7 +44,10 @@ export default function ChatMessages() {
       .then(() =>
         socket.emit(
           WsEvent.REQUEST_CALL,
-          { toUserId: friend.data?.profile.userId || "" },
+          {
+            toUserId: friend.data?.profile.userId || "",
+            type: DirectCallChannelType.AUDIO,
+          },
           (response: WsResponse) => handleWsError(response),
         ),
       )
