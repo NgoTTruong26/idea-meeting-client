@@ -1,3 +1,4 @@
+import axios from "axios"
 import { socket } from "configs/socket"
 import { nav } from "constants/nav"
 import Peer from "peerjs"
@@ -18,25 +19,19 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       ).state.auth.accessToken
       socket.connect()
 
-      const newPeer = new Peer(user.id, {
-        config: {
-          iceServers: [
-            { urls: "stun:freeturn.net:3478" },
-            { urls: "stun:freeturn.net:5349" },
-            {
-              urls: "turn:freeturn.net:3478",
-              credential: "free",
-              username: "free",
-            },
-            {
-              urls: "turn:freeturn.net:5349",
-              credential: "free",
-              username: "free",
-            },
-          ],
-        },
-      })
-      peer.set(newPeer)
+      axios
+        .get(
+          "https://idea-meeting.metered.live/api/v1/turn/credentials?apiKey=e3f696802a20d03870c4d2c8b452ca3fc20c",
+        )
+        .then((data) => {
+          peer.set(
+            new Peer(user.id, {
+              config: {
+                iceServers: data.data,
+              },
+            }),
+          )
+        })
     }
 
     return () => {
