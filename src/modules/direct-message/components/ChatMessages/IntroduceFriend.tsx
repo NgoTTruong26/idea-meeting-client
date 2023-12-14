@@ -1,5 +1,5 @@
-import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
+import Avatar from "components/core/Avatar"
 import { UserProfile } from "types/user"
 
 interface Props extends UserProfile {
@@ -14,7 +14,7 @@ export default function IntroduceFriend({
   return (
     <div className="flex flex-col items-center space-y-1 pt-14 pb-20">
       <div className="relative">
-        <Avatar src={avatarUrl} className="w-24 h-24" />
+        <Avatar name={fullName} src={avatarUrl} className="w-24 h-24" />
         {isOnline && (
           <span
             className={clsx(

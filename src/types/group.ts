@@ -6,6 +6,10 @@ export interface Group {
   name: string
   imageUrl: string
   ownerId: string
+  _count: {
+    users: number
+    channels: number
+  }
 }
 
 export interface ChatChannel {

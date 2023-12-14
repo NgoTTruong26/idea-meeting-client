@@ -1,19 +1,18 @@
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { MessageType } from "modules/direct-message/services/sendMessage"
+import { toast } from "react-hot-toast"
 import { BaseGetList, PageParam } from "types/getList"
-import { ChatChannel, Group } from "types/group"
+import { Group } from "types/group"
 import { User } from "types/user"
 
 //types
 
-export interface CreateGroupRequest extends Partial<Group> {}
-
-export interface CreateGroupResponse extends Group {}
-
-export interface GetGroupListRequest {
-  take?: number
+export interface GetGroupProfileRequest {
+  groupId: string
 }
+
+export interface GetGroupProfileResponse extends Group {}
 
 export interface GetGroupResponse {
   group: Group
@@ -22,6 +21,10 @@ export interface GetGroupResponse {
       groups: number
     }
   }
+}
+
+export interface GetGroupListRequest {
+  take?: number
 }
 
 export interface GetGroupListResponse extends BaseGetList {
@@ -68,19 +71,21 @@ export interface GetGroupChatChannelListRequest {
   take?: number
 }
 
-export interface CreateChatChannelRequest extends Partial<ChatChannel> {}
-
-export interface CreateChatChannelResponse extends ChatChannel {}
-
 //hook
 
-export async function createGroup(data: CreateGroupRequest) {
-  return (await api.post<CreateGroupResponse>("/group", data)).data
+export async function getGroupProfile(groupId: string) {
+  try {
+    return (await api.get<GetGroupProfileResponse>(`/group/${groupId}`)).data
+  } catch (error) {
+    toast.error("Can't get group")
+  }
 }
 
-export function useCreateGroup() {
-  return useMutation({
-    mutationFn: createGroup,
+export function useGetGroupProfile({ groupId }: GetGroupProfileRequest) {
+  return useQuery({
+    queryKey: ["get-group", groupId],
+    queryFn: async () => await getGroupProfile(groupId),
+    refetchOnMount: "always",
   })
 }
 
@@ -96,7 +101,7 @@ export function useGetGroupList({ take = 20 }: GetGroupListRequest) {
   return useInfiniteQuery({
     queryKey: ["get-group-list", take],
 
-    queryFn: ({ pageParam }) => getGetGroupList(pageParam, take),
+    queryFn: async ({ pageParam }) => await getGetGroupList(pageParam, take),
 
     initialPageParam: {
       page: 1,
@@ -138,8 +143,8 @@ export function useGetGroupChatChannelList({
   return useInfiniteQuery({
     queryKey: ["get-group-chat-channel-list", groupId, take],
 
-    queryFn: ({ pageParam }) =>
-      getGroupChatChannelList(groupId, pageParam, take),
+    queryFn: async ({ pageParam }) =>
+      await getGroupChatChannelList(groupId, pageParam, take),
 
     initialPageParam: {
       page: 1,
@@ -159,17 +164,5 @@ export function useGetGroupChatChannelList({
         page: page + 1,
       }
     },
-  })
-}
-
-export async function createChatChannel(data: CreateChatChannelRequest) {
-  return (
-    await api.post<CreateChatChannelResponse>("/group-message-channel", data)
-  ).data
-}
-
-export function useCreateChatChannel() {
-  return useMutation({
-    mutationFn: createChatChannel,
   })
 }

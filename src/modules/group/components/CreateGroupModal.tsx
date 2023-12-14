@@ -13,7 +13,7 @@ import { toast } from "react-hot-toast"
 import { AiOutlineUsergroupAdd } from "react-icons/ai"
 import { colors } from "styles/theme"
 import * as yup from "yup"
-import { CreateGroupRequest, useCreateGroup } from "../services/group"
+import { CreateGroupRequest, useCreateGroup } from "../services/createGroup"
 
 interface Props {
   onClose: () => void

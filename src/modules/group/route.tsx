@@ -1,3 +1,4 @@
+import AuthLayout from "components/layouts/AuthLayout"
 import HomeLayout from "components/layouts/home"
 import { nav } from "constants/nav"
 import { RouteObject } from "react-router-dom"
@@ -11,11 +12,11 @@ export interface DirectGroupMessageParams {
 
 export const directGroupMessageRoute: RouteObject = {
   path: nav.GROUP.slice(1),
-  element: <HomeLayout /> /* (
+  element: (
     <AuthLayout>
       <HomeLayout />
     </AuthLayout>
-  ) */,
+  ),
   children: [
     {
       path: ":groupId",

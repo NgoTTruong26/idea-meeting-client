@@ -13,7 +13,7 @@ import { WsEvent } from "types/ws"
 import ChatContent from "../components/ChatMessages/ChatContent"
 import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
-import { useGetFriend } from "../services/friend"
+import { useGetFriend } from "../services/getFriend"
 
 export default function ChatMessages() {
   const { user } = useUser()
