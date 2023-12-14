@@ -25,7 +25,9 @@ import { DirectCallChannel } from "../types/direct-call-channel"
 export default function InCallModal() {
   const { user } = useUser()
   const { peer } = usePeer()
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure({
+    isOpen: true,
+  })
   const [isEnding, setIsEnding] = useState(false)
   const [stream, setStream] = useState<MediaStream>()
   const [micEnabled, setMicEnabled] = useState(false)

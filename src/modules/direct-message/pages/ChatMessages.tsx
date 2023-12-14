@@ -3,6 +3,7 @@ import clsx from "clsx"
 import { queryClient } from "configs/queryClient"
 import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { HiDotsVertical } from "react-icons/hi"
 import { MdPhone, MdVideocam } from "react-icons/md"
 import { useParams } from "react-router-dom"
@@ -35,11 +36,18 @@ export default function ChatMessages() {
   }
   const handleRequestCall = () => {
     if (!friend.data) return
-    socket.emit(
-      WsEvent.REQUEST_CALL,
-      { toUserId: friend.data.profile.userId },
-      (response: WsResponse) => handleWsError(response),
-    )
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+      })
+      .then(() =>
+        socket.emit(
+          WsEvent.REQUEST_CALL,
+          { toUserId: friend.data?.profile.userId || "" },
+          (response: WsResponse) => handleWsError(response),
+        ),
+      )
+      .catch(() => toast.error("Can't connect to microphone device"))
   }
 
   useEffect(() => {
