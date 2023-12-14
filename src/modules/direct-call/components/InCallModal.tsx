@@ -5,7 +5,6 @@ import {
   ModalBody,
   ModalContent,
   ModalFooter,
-  ModalHeader,
   useDisclosure,
 } from "@nextui-org/react"
 import { socket } from "configs/socket"
@@ -158,13 +157,12 @@ export default function InCallModal() {
     <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      size="sm"
       isDismissable={false}
+      size="4xl"
       hideCloseButton
     >
-      <ModalContent>
-        <ModalHeader></ModalHeader>
-        <ModalBody>
+      <ModalContent className="h-[600px]">
+        <ModalBody className="relative">
           <div className="flex flex-col items-center">
             <Avatar size="lg" />
             <div className="mt-4 font-bold text-xl">
@@ -219,8 +217,12 @@ export default function InCallModal() {
             <MdCallEnd size="26" />
           </Button>
         </ModalFooter>
-        <video ref={localStreamRef} autoPlay muted />
-        <video ref={remoteStreamRef} autoPlay />
+        <div className="absolute bottom-10 right-6 w-60 h-40 z-10">
+          <video ref={localStreamRef} autoPlay muted className="rounded-xl" />
+        </div>
+        <div className="absolute inset-0">
+          <video ref={remoteStreamRef} autoPlay className="w-full h-full" />
+        </div>
       </ModalContent>
     </Modal>
   )
