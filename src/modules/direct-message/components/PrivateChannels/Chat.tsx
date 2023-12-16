@@ -1,16 +1,19 @@
-import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
+import Avatar from "components/core/Avatar"
+import { DirectMessageParams } from "modules/direct-message/route"
 import { useGetDirectMessage } from "modules/direct-message/services/getMessage"
 import moment from "moment"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { useUser } from "store/user"
 
 export default function Chat() {
   const { user } = useUser()
   const { data } = useGetDirectMessage({})
 
+  const { id } = useParams<keyof DirectMessageParams>()
+
   return (
-    <div className="space-y-4 [&>div:hover]:bg-purple-50 [&>div:hover]:cursor-pointer">
+    <div>
       {data?.pages.map(
         (page) =>
           page &&
@@ -19,11 +22,16 @@ export default function Chat() {
               to={item.user.profile.userId}
               key={item.user.profile.userId}
               className={clsx(
-                "flex items-center bg-white py-2 px-3 rounded-2xl text-sm",
+                "flex items-center py-2 px-3 rounded-2xl text-sm hover:bg-purple-50 cursor-pointer",
+                { "!bg-purple-100": id === item.user.profile.userId },
               )}
             >
               <div className="relative">
-                <Avatar src={item.user.profile.avatarUrl} size="lg" />
+                <Avatar
+                  name={item.user.profile.fullName}
+                  src={item.user.profile.avatarUrl}
+                  size="lg"
+                />
                 {item.user.isOnline && (
                   <span className="absolute right-0 bottom-0 z-10 w-4 h-4 rounded-full bg-green-400"></span>
                 )}

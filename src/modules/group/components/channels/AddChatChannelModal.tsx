@@ -5,7 +5,8 @@ import { queryClient } from "configs/queryClient"
 import {
   CreateChatChannelRequest,
   useCreateChatChannel,
-} from "modules/group/services/group"
+} from "modules/group/services/createGroup"
+
 import { FormProvider, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { FaHashtag } from "react-icons/fa6"

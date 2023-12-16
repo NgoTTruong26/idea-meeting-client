@@ -80,8 +80,12 @@ export function useGetMessageListFromFriend({
   return useInfiniteQuery({
     queryKey: ["get-message-from-friend", directMessageChannelId, take],
 
-    queryFn: ({ pageParam }) =>
-      getGetMessageListFromFriend(directMessageChannelId, pageParam, take),
+    queryFn: async ({ pageParam }) =>
+      await getGetMessageListFromFriend(
+        directMessageChannelId,
+        pageParam,
+        take,
+      ),
 
     initialPageParam: {
       page: 1,

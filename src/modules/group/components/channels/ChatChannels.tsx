@@ -10,20 +10,24 @@ import {
 } from "@nextui-org/react"
 import clsx from "clsx"
 import { DirectGroupMessageParams } from "modules/group/route"
-import { useGetGroupChatChannelList } from "modules/group/services/group"
+import { useGetGroupChatChannelList } from "modules/group/services/getGroup"
 import { FaHashtag } from "react-icons/fa6"
 import { ImBin } from "react-icons/im"
 import { MdAdd } from "react-icons/md"
 import { RiSettings5Fill } from "react-icons/ri"
 import { TbEdit } from "react-icons/tb"
 import { useNavigate, useParams } from "react-router-dom"
+import { useUser } from "store/user"
 import AddChatChannelModal from "./AddChatChannelModal"
 
 interface Props {
   groupId: string
+  ownerId: boolean
 }
 
-export default function ChatChannels({ groupId }: Props) {
+export default function ChatChannels({ groupId, ownerId }: Props) {
+  const { user } = useUser()
+
   const disclosureAddChatChannel = useDisclosure()
 
   const navigate = useNavigate()
@@ -49,7 +53,7 @@ export default function ChatChannels({ groupId }: Props) {
           <MdAdd size={16} />
         </Button>
       </div>
-      <div className="space-y-1">
+      <div>
         {getGroupChatChannelList.data ? (
           getGroupChatChannelList.data.pages.map((page) =>
             page.data.map((chatChannel) => (
@@ -57,9 +61,9 @@ export default function ChatChannels({ groupId }: Props) {
                 onClick={() => handleClick(chatChannel.id)}
                 key={chatChannel.id}
                 className={clsx(
-                  "cursor-pointer [&:hover]:bg-purple-50 flex items-center justify-between gap-4 px-4 py-1",
+                  "cursor-pointer rounded-lg [&:hover]:bg-purple-50 flex items-center justify-between gap-4 px-4 py-1",
                   {
-                    "!bg-purple-100 rounded-lg": chatChannel.id === chatGroupId,
+                    "!bg-purple-100 ": chatChannel.id === chatGroupId,
                   },
                 )}
               >
@@ -69,33 +73,51 @@ export default function ChatChannels({ groupId }: Props) {
                   </span>
                   <span>{chatChannel.name}</span>
                 </div>
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button
-                      isIconOnly
-                      variant="light"
-                      className="h-fit min-w-fit w-4 "
-                    >
-                      <RiSettings5Fill size={16} />
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu aria-label="settings">
-                    <DropdownItem
-                      key="edit_chat_channel"
-                      endContent={<TbEdit size={18} />}
-                    >
-                      Edit Chat Channel
-                    </DropdownItem>
-                    <DropdownItem
-                      key="delete"
-                      className="text-danger"
-                      color="danger"
-                      endContent={<ImBin size="18" />}
-                    >
-                      Delete Channel
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
+                {ownerId && (
+                  <>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button
+                          isIconOnly
+                          variant="light"
+                          className="h-fit min-w-fit w-4 "
+                        >
+                          <RiSettings5Fill size={16} />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="settings">
+                        <DropdownItem
+                          key="edit_chat_channel"
+                          endContent={<TbEdit size={18} />}
+                        >
+                          Edit Chat Channel
+                        </DropdownItem>
+                        <DropdownItem
+                          key="delete"
+                          className="text-danger"
+                          color="danger"
+                          endContent={<ImBin size="18" />}
+                        >
+                          Delete Channel
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </>
+                )}
+                <Modal
+                  size="lg"
+                  isOpen={disclosureAddChatChannel.isOpen}
+                  onClose={disclosureAddChatChannel.onClose}
+                >
+                  <ModalContent>
+                    {(onClose) => (
+                      <AddChatChannelModal
+                        onClose={onClose}
+                        groupId={groupId}
+                      />
+                    )}
+                  </ModalContent>
+                </Modal>
               </div>
             )),
           )
@@ -103,17 +125,6 @@ export default function ChatChannels({ groupId }: Props) {
           <></>
         )}
       </div>
-      <Modal
-        size="lg"
-        isOpen={disclosureAddChatChannel.isOpen}
-        onClose={disclosureAddChatChannel.onClose}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <AddChatChannelModal onClose={onClose} groupId={groupId} />
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   )
 }

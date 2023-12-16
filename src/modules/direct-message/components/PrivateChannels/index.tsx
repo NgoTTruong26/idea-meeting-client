@@ -6,8 +6,8 @@ import FriendList from "./FriendList"
 
 export default function PrivateChannels() {
   return (
-    <div className="h-screen px-4 pb-5 border-x-2 bg-gray-50 space-y-5 overflow-y-auto">
-      <div className="sticky top-0 pt-5 pb-2 bg-gray-50 z-20">
+    <div className="h-screen px-4 pb-5 border-x-2 bg-white space-y-5 overflow-y-auto">
+      <div className="sticky top-0 pt-5 pb-2 bg-white z-20">
         <div className="text-3xl font-bold">Chats</div>
         <div className="mt-5">
           <Input

@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { toast } from "react-hot-toast"
+import { Friend } from "types/friend"
 import { FriendshipRequest } from "types/friendship"
 import { BaseGetList, PageParam } from "types/getList"
 import { UserProfile } from "types/user"
@@ -10,7 +11,7 @@ export interface GetFriendListRequest {
 }
 
 export interface GetFriendListResponse extends BaseGetList {
-  data: UserProfile[]
+  data: Friend[]
 }
 
 export interface GetFriendRequest {
@@ -62,16 +63,18 @@ export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
   })
 }
 
+export async function getFriend(targetId: string) {
+  try {
+    return (await api.get<GetFriendResponse>(`/user/${targetId}`)).data
+  } catch (error) {
+    toast.error("Can't get friend")
+  }
+}
+
 export function useGetFriend({ targetId }: GetFriendRequest) {
   return useQuery({
     queryKey: ["get-friend", targetId],
-    queryFn: async () => {
-      try {
-        return (await api.get<GetFriendResponse>(`/user/${targetId}`)).data
-      } catch (error) {
-        toast.error("Can't get friend")
-      }
-    },
+    queryFn: async () => await getFriend(targetId),
     refetchOnMount: "always",
   })
 }

@@ -13,7 +13,7 @@ import { handleWsError } from "utils/ws"
 import ChatContent from "../components/ChatMessages/ChatContent"
 import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
-import { useGetFriend } from "../services/friend"
+import { useGetFriend } from "../services/getFriend"
 
 export default function ChatMessages() {
   const { user } = useUser()
@@ -21,15 +21,15 @@ export default function ChatMessages() {
   const [messages, setMessages] = useState<MessageFromSocket[]>([])
 
   const { id: friendId = "" } = useParams<keyof DirectMessageParams>()
+  console.log(friendId)
 
   const friend = useGetFriend({ targetId: friendId })
 
   const handleIncomingMessage = (message: MessageFromSocket) => {
-    queryClient.refetchQueries({
-      queryKey: ["get-direct-message"],
-    })
+    console.log(friendId, message.userId, "IncomingMessage")
 
     if ([user.id, friendId].includes(message.userId)) {
+      console.log("set message")
       setMessages((prev) => [message, ...prev])
     }
   }
@@ -48,7 +48,7 @@ export default function ChatMessages() {
     return () => {
       socket.off(WsEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
     }
-  }, [socket])
+  }, [socket, friendId])
 
   useEffect(() => {
     setMessages([])
@@ -60,6 +60,8 @@ export default function ChatMessages() {
   if (!friend.data) {
     return <div></div>
   }
+
+  console.log(messages)
 
   return (
     <div className="flex flex-col w-full max-h-screen">
