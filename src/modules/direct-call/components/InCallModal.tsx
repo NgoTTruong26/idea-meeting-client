@@ -8,6 +8,7 @@ import {
 } from "@nextui-org/react"
 import clsx from "clsx"
 import { socket } from "configs/socket"
+import { MediaConnection } from "peerjs"
 import { useEffect, useMemo, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import {
@@ -27,6 +28,7 @@ export default function InCallModal() {
   const { peer } = usePeer()
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
   const [isEnding, setIsEnding] = useState(false)
+  const [mediaConnection, setMediaConnection] = useState<MediaConnection>()
   const [stream, setStream] = useState<MediaStream>()
   const [micEnabled, setMicEnabled] = useState(false)
   const [cameraEnabled, setCameraEnabled] = useState(false)
@@ -122,11 +124,14 @@ export default function InCallModal() {
       setDirectCallChannel(undefined)
       if (localStreamRef.current) localStreamRef.current.srcObject = null
       if (remoteStreamRef.current) remoteStreamRef.current.srcObject = null
+      if (mediaConnection) mediaConnection.close()
     }
   }, [
     peer,
     isOpen,
+    mediaConnection,
     setIsEnding,
+    setMediaConnection,
     setStream,
     setMicEnabled,
     setCameraEnabled,
@@ -141,25 +146,26 @@ export default function InCallModal() {
           if (remoteStreamRef.current)
             remoteStreamRef.current.srcObject = stream
         })
+        setMediaConnection(mediaConnection)
       })
     }
-  }, [peer, stream])
+  }, [peer, stream, setMediaConnection])
 
   useEffect(() => {
     if (peer && stream && directCallChannel && targetUserProfile) {
       if (directCallChannel.createdById !== targetUserProfile.userId) {
         const mediaConnection = peer.call(targetUserProfile.userId, stream)
-
         mediaConnection.on("stream", (stream) => {
           console.log("caller", stream)
           if (remoteStreamRef.current)
             remoteStreamRef.current.srcObject = stream
         })
+        setMediaConnection(mediaConnection)
       }
     }
 
     return () => {}
-  }, [peer, stream, directCallChannel, targetUserProfile])
+  }, [peer, stream, directCallChannel, targetUserProfile, setMediaConnection])
   useEffect(() => {
     socket.on(WsEvent.ACCEPT_REQUEST_CALL, handleAcceptRequestCall)
     socket.on(WsEvent.CANCEL_CALL, handleCancelCall)
