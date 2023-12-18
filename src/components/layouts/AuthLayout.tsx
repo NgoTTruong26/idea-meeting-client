@@ -5,19 +5,16 @@ import Peer from "peerjs"
 import { PropsWithChildren, useEffect } from "react"
 import { Navigate } from "react-router"
 import { usePeer } from "store/peer"
-import { UserState, useUser } from "store/user"
-import { StorageValue } from "zustand/middleware"
+import { useUser } from "store/user"
 
 export default function AuthLayout({ children }: PropsWithChildren) {
-  const { user } = useUser()
+  const { user, auth } = useUser()
   const peer = usePeer()
 
   useEffect(() => {
     if (user.id) {
       socket.auth = {
-        accessToken: (
-          JSON.parse(localStorage.getItem("user")!) as StorageValue<UserState>
-        ).state.auth.accessToken,
+        accessToken: auth.accessToken,
       }
 
       socket.connect()
