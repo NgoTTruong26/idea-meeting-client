@@ -29,19 +29,18 @@ export default function Sidebar() {
         <div className="flex justify-center">
           <Divider className="w-8" />
         </div>
-        {getGetGroupList.data &&
-          getGetGroupList.data.pages.map((page) =>
-            page.data.map((group, idx) => (
-              <SidebarItem
-                handleClick={() => {
-                  navigate(`/group/${group.group.id}`)
-                }}
-                label={group.group.name}
-                src={group.group.imageUrl}
-                key={idx}
-              />
-            )),
-          )}
+        {getGetGroupList.data?.pages.map((page) =>
+          page.data.map((group, idx) => (
+            <SidebarItem
+              handleClick={() => {
+                navigate(`/group/${group.group.id}`)
+              }}
+              label={group.group.name}
+              src={group.group.imageUrl}
+              key={idx}
+            />
+          )),
+        )}
         <SidebarItem label="Add a group">
           <div
             onClick={onOpen}

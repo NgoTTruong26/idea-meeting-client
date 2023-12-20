@@ -17,7 +17,6 @@ import { MdAdd } from "react-icons/md"
 import { RiSettings5Fill } from "react-icons/ri"
 import { TbEdit } from "react-icons/tb"
 import { useNavigate, useParams } from "react-router-dom"
-import { useUser } from "store/user"
 import AddChatChannelModal from "./AddChatChannelModal"
 
 interface Props {
@@ -26,8 +25,6 @@ interface Props {
 }
 
 export default function ChatChannels({ groupId, ownerId }: Props) {
-  const { user } = useUser()
-
   const disclosureAddChatChannel = useDisclosure()
 
   const navigate = useNavigate()

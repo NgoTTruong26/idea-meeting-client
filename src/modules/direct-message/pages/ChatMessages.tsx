@@ -73,8 +73,6 @@ export default function ChatMessages() {
     return <div></div>
   }
 
-  console.log(messages)
-
   return (
     <div className="flex flex-col w-full max-h-screen">
       <div className="flex items-center justify-between gap-10 w-full  bg-gray-50 py-6 px-6 ">
