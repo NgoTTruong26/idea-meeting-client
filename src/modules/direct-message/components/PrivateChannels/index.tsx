@@ -3,6 +3,7 @@ import Input from "components/core/field/Input"
 import { LuSearch } from "react-icons/lu"
 import Chat from "./Chat"
 import FriendList from "./FriendList"
+import FriendRequestList from "./FriendRequestList"
 
 export default function PrivateChannels() {
   return (
@@ -36,7 +37,10 @@ export default function PrivateChannels() {
             <Chat />
           </Tab>
           <Tab key="friends" title="Friends">
-            <FriendList />
+            <div>
+              <FriendRequestList />
+              <FriendList />
+            </div>
           </Tab>
         </Tabs>
       </div>
