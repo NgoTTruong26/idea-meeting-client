@@ -10,6 +10,7 @@ import SearchFriendModal from "modules/user/components/SearchFriendModal"
 import { LuSearch } from "react-icons/lu"
 import Chat from "./Chat"
 import FriendList from "./FriendList"
+import FriendRequestList from "./FriendRequestList"
 
 export default function PrivateChannels() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -46,7 +47,10 @@ export default function PrivateChannels() {
             <Chat />
           </Tab>
           <Tab key="friends" title="Friends">
-            <FriendList />
+            <div>
+              <FriendRequestList />
+              <FriendList />
+            </div>
           </Tab>
         </Tabs>
       </div>
