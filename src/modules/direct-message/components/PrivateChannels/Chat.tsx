@@ -1,20 +1,27 @@
+import { Spinner } from "@nextui-org/react"
 import clsx from "clsx"
+import Empty from "components/common/Empty"
 import Avatar from "components/core/Avatar"
 import { DirectMessageParams } from "modules/direct-message/route"
 import { useGetDirectMessage } from "modules/direct-message/services/getMessage"
 import moment from "moment"
+import { useMemo } from "react"
 import { Link, useParams } from "react-router-dom"
 import { useUser } from "store/user"
 
 export default function Chat() {
-  const { user } = useUser()
-  const { data } = useGetDirectMessage({})
-
   const { id } = useParams<keyof DirectMessageParams>()
+  const { user } = useUser()
+  const directMessageChannelList = useGetDirectMessage({})
+
+  const countdirectMessageChannelList = useMemo(() => {
+    if (!directMessageChannelList.data) return undefined
+    return directMessageChannelList.data.pages?.[0]?.meta.total || 0
+  }, [directMessageChannelList.data])
 
   return (
     <div>
-      {data?.pages.map(
+      {directMessageChannelList.data?.pages.map(
         (page) =>
           page &&
           page.data.map((item) => (
@@ -57,6 +64,16 @@ export default function Chat() {
               </div>
             </Link>
           )),
+      )}
+      {countdirectMessageChannelList !== undefined &&
+        !countdirectMessageChannelList && (
+          <Empty text="No data, let's chat with friends!" />
+        )}
+      {(directMessageChannelList.isLoading ||
+        directMessageChannelList.isFetching) && (
+        <div className="flex justify-center">
+          <Spinner />
+        </div>
       )}
     </div>
   )
