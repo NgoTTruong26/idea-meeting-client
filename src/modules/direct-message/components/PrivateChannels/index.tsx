@@ -26,6 +26,7 @@ export default function PrivateChannels() {
           className="justify-start capitalize"
           startContent={<LuSearch size={20} />}
           fullWidth
+          size="lg"
         >
           Search your friends...
         </Button>
@@ -60,6 +61,7 @@ export default function PrivateChannels() {
         isOpen={isOpen}
         onClose={onClose}
         className="max-w-lg max-h-[600px]"
+        isDismissable={false}
       >
         <ModalContent>
           {(onClose) => <SearchFriendModal onClose={onClose} />}

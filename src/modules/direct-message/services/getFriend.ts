@@ -25,7 +25,7 @@ export interface GetFriendResponse {
   isFriendship: boolean
   friendshipRequestFromMe: FriendshipRequest[]
   friendshipRequestToMe: FriendshipRequest[]
-  directMessageChannelId: string
+  directMessageChannelId?: string
 }
 
 export function useGetFriendList({ take = 20 }: GetFriendListRequest) {

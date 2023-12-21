@@ -1,10 +1,13 @@
-import { Button } from "@nextui-org/react"
+import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
+import SearchFriendModal from "modules/user/components/SearchFriendModal"
 import { AiOutlineUsergroupAdd } from "react-icons/ai"
 import { IoIosArrowForward } from "react-icons/io"
 import { RiUserSearchLine, RiUserSharedLine } from "react-icons/ri"
 import { TbUserEdit } from "react-icons/tb"
 
 export default function Home() {
+  const disclosureSearchFriend = useDisclosure()
+
   return (
     <div className="flex justify-center items-center py-10">
       <div className="flex flex-col items-center max-w-sm w-full space-y-6">
@@ -26,7 +29,7 @@ export default function Home() {
           <Button
             variant="flat"
             color="default"
-            /* onPress={() => handleOpen(b)} */
+            onPress={disclosureSearchFriend.onOpen}
             fullWidth
             startContent={<RiUserSearchLine size={25} />}
             endContent={<IoIosArrowForward size={20} />}
@@ -64,6 +67,18 @@ export default function Home() {
           </Button>
         </div>
       </div>
+
+      <Modal
+        hideCloseButton
+        isOpen={disclosureSearchFriend.isOpen}
+        onClose={disclosureSearchFriend.onClose}
+        className="max-w-lg max-h-[600px]"
+        isDismissable={false}
+      >
+        <ModalContent>
+          {(onClose) => <SearchFriendModal onClose={onClose} />}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
