@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react"
 import { LuSearch } from "react-icons/lu"
 import { useNavigate } from "react-router-dom"
 import { useGetUserList } from "../services/getUser"
+import LoadingSearchFriend from "./LoadingSearchFriend"
 
 interface Props {
   onClose: () => void
@@ -31,7 +32,9 @@ export default function SearchFriendModal({ onClose }: Props) {
     debouncedSearch.cancel()
   }, [debouncedSearch])
 
-  const { data } = useGetUserList({ keyword: searchCharacters })
+  const { data, status, isFetching } = useGetUserList({
+    keyword: searchCharacters,
+  })
 
   return (
     <>
@@ -48,7 +51,9 @@ export default function SearchFriendModal({ onClose }: Props) {
       </ModalHeader>
       <ModalBody className="overflow-hidden">
         <div className="flex-1 overflow-y-auto space-y-2">
-          {!!data && data.pages[0].data.length > 0 ? (
+          {isFetching ? (
+            <LoadingSearchFriend />
+          ) : !!data && data.pages[0].data.length > 0 ? (
             data.pages.map((page) =>
               page.data.map((user) => (
                 <Button
