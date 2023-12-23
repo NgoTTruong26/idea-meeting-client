@@ -1,9 +1,9 @@
-import { Button } from "@nextui-org/react"
+import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
 import { useGoogleLogin } from "@react-oauth/google"
 import LoadingPage from "components/common/LoadingPage"
 import { nav } from "constants/nav"
 import { useGetUserProfile } from "modules/user/services/getUserProfile"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
@@ -11,7 +11,7 @@ import UpdateProfileModal from "../components/UpdateProfileModal"
 import { useGoogleSignIn } from "../services/googleSignIn"
 
 export default function SignIn() {
-  const [showModalUpdate, setShowModalUpdate] = useState(false)
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
   const navigate = useNavigate()
   const user = useUser()
@@ -26,7 +26,9 @@ export default function SignIn() {
         refreshToken: data.refreshToken,
       })
       user.setUser(data.user)
-      if (!data.user.profile?.fullName) setShowModalUpdate(true)
+      console.log(data.user)
+
+      if (!data.user.profile?.fullName) onOpen()
       else navigate(nav.DIRECT_MESSAGE)
     },
     onError() {
@@ -35,7 +37,7 @@ export default function SignIn() {
   })
 
   useEffect(() => {
-    if (user.auth.accessToken)
+    if (user.auth.accessToken && user.user.profile?.fullName)
       getUserProfile.mutate(undefined, {
         onSuccess(data) {
           user.setUser(data)
@@ -84,7 +86,20 @@ export default function SignIn() {
           </Button>
         </div>
       </div>
-      <UpdateProfileModal showModalUpdate={showModalUpdate} />
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={false}
+        hideCloseButton
+        size="md"
+        classNames={{
+          wrapper: "max-sm:items-center",
+        }}
+      >
+        <ModalContent>
+          <UpdateProfileModal />
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

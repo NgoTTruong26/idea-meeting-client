@@ -1,17 +1,15 @@
 import { Divider, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
 import CreateGroupModal from "modules/group/components/CreateGroupModal"
 import { useGetGroupList } from "modules/group/services/getGroup"
-import { AiOutlineUsergroupAdd } from "react-icons/ai"
 import { TbLogout } from "react-icons/tb"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
-import { colors } from "styles/theme"
 import SidebarItem from "./SidebarItem"
 
 export default function Sidebar() {
   const { clear } = useUser()
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const disclosureAddGroup = useDisclosure()
 
   const getGetGroupList = useGetGroupList({})
 
@@ -20,6 +18,7 @@ export default function Sidebar() {
   return (
     <div className="flex flex-col justify-between bg-slate-200 py-2 max-h-screen overflow-hidden">
       <div className="space-y-2  max-h-[calc(100vh - 30px)] overflow-x-hidden overflow-y-auto pb-6">
+        <SidebarItem label="Update Profile" handleClick={() => {}} />
         <SidebarItem
           label="Direct Messages"
           handleClick={() => {
@@ -41,20 +40,11 @@ export default function Sidebar() {
             />
           )),
         )}
-        <SidebarItem label="Add a group">
-          <div
-            onClick={onOpen}
-            className="flex items-center justify-center w-full h-full"
-          >
-            <AiOutlineUsergroupAdd size={24} color={colors.primary[500]} />
-          </div>
-        </SidebarItem>
 
-        <Modal size="lg" isOpen={isOpen} onClose={onClose}>
-          <ModalContent>
-            {(onClose) => <CreateGroupModal onClose={onClose} />}
-          </ModalContent>
-        </Modal>
+        <SidebarItem
+          label="Add Group"
+          handleClick={disclosureAddGroup.onOpen}
+        />
       </div>
       <div className="space-y-2">
         <div className="flex justify-center">
@@ -66,6 +56,16 @@ export default function Sidebar() {
           handleClick={clear}
         />
       </div>
+
+      <Modal
+        size="lg"
+        isOpen={disclosureAddGroup.isOpen}
+        onClose={disclosureAddGroup.onClose}
+      >
+        <ModalContent>
+          {(onClose) => <CreateGroupModal onClose={onClose} />}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
