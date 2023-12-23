@@ -128,7 +128,7 @@ export default function ChatMessages() {
         </div>
         {!friend.data.directMessageChannelId && (
           <>
-            <div className="flex justify-between gap-5 w-full py-4 px-6 bg-purple-100">
+            <div className="flex justify-between gap-5 w-full py-4 px-6 bg-default-100">
               <div className="flex items-center gap-2">
                 <MdOutlinePersonAddAlt size={20} />
                 <span>
@@ -136,7 +136,10 @@ export default function ChatMessages() {
                 </span>
               </div>
               <Button variant="flat" color="primary">
-                Add friend
+                Send request
+              </Button>
+              <Button variant="flat" color="danger">
+                Cancel request
               </Button>
             </div>
           </>
@@ -157,12 +160,14 @@ export default function ChatMessages() {
           />
         </>
       ) : (
-        <div>
-          <IntroduceFriend
-            {...friend.data.profile}
-            isOnline={friend.data.isOnline}
-          />
-          <div className="flex justify-center text-center p-6 w-full bg-purple-100">
+        <div className="h-full flex flex-col">
+          <div className="flex-1">
+            <IntroduceFriend
+              {...friend.data.profile}
+              isOnline={friend.data.isOnline}
+            />
+          </div>
+          <div className="flex justify-center text-center p-6 w-full bg-default-100">
             You need to be friends with {friend.data.profile.fullName} to text
           </div>
         </div>
