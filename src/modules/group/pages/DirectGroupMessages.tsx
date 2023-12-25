@@ -17,13 +17,13 @@ import { TbEdit } from "react-icons/tb"
 import { Outlet, useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import ChatChannels from "../components/channels/ChatChannels"
-import { DirectGroupMessageParams } from "../route"
+import { GroupMessageParams } from "../route"
 import { useGetGroupProfile } from "../services/getGroup"
 
 export default function DirectGroupMessages() {
   const { user } = useUser()
 
-  const { groupId = "" } = useParams<keyof DirectGroupMessageParams>()
+  const { groupId = "" } = useParams<keyof GroupMessageParams>()
 
   const groupProfile = useGetGroupProfile({ groupId })
 

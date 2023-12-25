@@ -30,13 +30,12 @@ export default function ChatMessages() {
   const friend = useGetFriend({ targetId: friendId })
 
   const handleIncomingMessage = (message: MessageFromSocket) => {
-    console.log(friendId, message.userId, "IncomingMessage")
-
     if ([user.id, friendId].includes(message.userId)) {
       console.log("set message")
       setMessages((prev) => [message, ...prev])
     }
   }
+
   const handleRequestCall = () => {
     if (!friend.data) return
     navigator.mediaDevices

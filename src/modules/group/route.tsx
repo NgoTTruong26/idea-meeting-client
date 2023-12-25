@@ -5,7 +5,7 @@ import { RouteObject } from "react-router-dom"
 import ChatGroupMessages from "./pages/ChatGroupMessages"
 import DirectGroupMessages from "./pages/DirectGroupMessages"
 
-export interface DirectGroupMessageParams {
+export interface GroupMessageParams {
   groupId: string
   chatGroupId: string
 }

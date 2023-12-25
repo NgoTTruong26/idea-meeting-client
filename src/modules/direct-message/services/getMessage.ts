@@ -8,6 +8,7 @@ import { MessageType } from "./sendMessage"
 export interface GetMessageListFromFriendRequest {
   directMessageChannelId: string
   take?: number
+  page?: number
 }
 
 export interface GetMessageFromFriendResponse {
@@ -57,15 +58,15 @@ export interface GetDirectMessageListResponse extends BaseGetList {
   data: GetDirectMessageResponse[]
 }
 
-export async function getGetMessageListFromFriend(
-  directMessageChannelId: string,
-  pageParam: PageParam,
-  take: number,
-) {
+export async function getGetMessageListFromFriend({
+  directMessageChannelId,
+  ...params
+}: GetMessageListFromFriendRequest) {
   try {
     return (
       await api.get<GetMessageListFromFriendResponse>(
-        `/direct-message-channel/${directMessageChannelId}?page=${pageParam.page}&take=${take}`,
+        `/direct-message-channel/${directMessageChannelId}/message`,
+        { params },
       )
     ).data
   } catch (error) {
@@ -80,12 +81,12 @@ export function useGetMessageListFromFriend({
   return useInfiniteQuery({
     queryKey: ["get-message-from-friend", directMessageChannelId, take],
 
-    queryFn: async ({ pageParam }) =>
-      await getGetMessageListFromFriend(
+    queryFn: async ({ pageParam: { page } }) =>
+      await getGetMessageListFromFriend({
         directMessageChannelId,
-        pageParam,
+        page,
         take,
-      ),
+      }),
 
     initialPageParam: {
       page: 1,

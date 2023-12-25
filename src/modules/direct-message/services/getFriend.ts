@@ -30,12 +30,15 @@ export interface GetFriendResponse {
 export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
   return useInfiniteQuery({
     queryKey: ["get-friend-list", take],
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({ pageParam: { page } }) => {
       try {
         return (
-          await api.get<GetFriendListResponse>(
-            `/friend?page=${pageParam.page}&take=${take}`,
-          )
+          await api.get<GetFriendListResponse>(`/friend`, {
+            params: {
+              page,
+              take,
+            },
+          })
         ).data
       } catch (error) {
         toast.error("Can't get friend list")

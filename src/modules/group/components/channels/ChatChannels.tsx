@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react"
 import clsx from "clsx"
-import { DirectGroupMessageParams } from "modules/group/route"
+import { GroupMessageParams } from "modules/group/route"
 import { useGetGroupChatChannelList } from "modules/group/services/getGroup"
 import { FaHashtag } from "react-icons/fa6"
 import { ImBin } from "react-icons/im"
@@ -29,7 +29,7 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
 
   const navigate = useNavigate()
 
-  const { chatGroupId } = useParams<keyof DirectGroupMessageParams>()
+  const { chatGroupId } = useParams<keyof GroupMessageParams>()
 
   const getGroupChatChannelList = useGetGroupChatChannelList({ groupId })
 
@@ -101,20 +101,6 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
                     </Dropdown>
                   </>
                 )}
-                <Modal
-                  size="lg"
-                  isOpen={disclosureAddChatChannel.isOpen}
-                  onClose={disclosureAddChatChannel.onClose}
-                >
-                  <ModalContent>
-                    {(onClose) => (
-                      <AddChatChannelModal
-                        onClose={onClose}
-                        groupId={groupId}
-                      />
-                    )}
-                  </ModalContent>
-                </Modal>
               </div>
             )),
           )
@@ -122,6 +108,17 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
           <></>
         )}
       </div>
+      <Modal
+        size="lg"
+        isOpen={disclosureAddChatChannel.isOpen}
+        onClose={disclosureAddChatChannel.onClose}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <AddChatChannelModal onClose={onClose} groupId={groupId} />
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
