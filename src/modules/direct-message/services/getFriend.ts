@@ -2,7 +2,6 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { toast } from "react-hot-toast"
 import { Friend } from "types/friend"
-import { FriendshipRequest } from "types/friendship"
 import { BaseGetList, PageParam } from "types/getList"
 import { UserProfile } from "types/user"
 
@@ -23,8 +22,8 @@ export interface GetFriendResponse {
   wsId: string
   isOnline: boolean
   isFriendship: boolean
-  friendshipRequestFromMe: FriendshipRequest[]
-  friendshipRequestToMe: FriendshipRequest[]
+  friendshipRequestFromMe: boolean
+  friendshipRequestToMe: boolean
   directMessageChannelId?: string
 }
 

@@ -35,11 +35,10 @@ export async function getUserList(
   ).data
 }
 
-export function useGetUserList({
-  take = 10,
-  keyword,
-  notInGroupId,
-}: GetUserListRequest) {
+export function useGetUserList(
+  { take = 10, keyword, notInGroupId }: GetUserListRequest,
+  enabled?: boolean,
+) {
   return useInfiniteQuery({
     queryKey: ["get-user-list", take, keyword, notInGroupId],
 
@@ -64,6 +63,7 @@ export function useGetUserList({
         page: page + 1,
       }
     },
+    enabled,
     refetchOnMount: "always",
   })
 }

@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   ModalBody,
   ModalFooter,
@@ -32,9 +33,12 @@ export default function SearchFriendModal({ onClose }: Props) {
     debouncedSearch.cancel()
   }, [debouncedSearch])
 
-  const { data, status, isFetching } = useGetUserList({
-    keyword: searchCharacters,
-  })
+  const { data, isFetching } = useGetUserList(
+    {
+      keyword: searchCharacters,
+    },
+    !!searchCharacters,
+  )
 
   return (
     <>
@@ -51,7 +55,17 @@ export default function SearchFriendModal({ onClose }: Props) {
       </ModalHeader>
       <ModalBody className="overflow-hidden">
         <div className="flex-1 overflow-y-auto space-y-2">
-          {isFetching ? (
+          {!searchCharacters ? (
+            <div className="flex flex-col items-center">
+              <Avatar
+                src="https://play-lh.googleusercontent.com/mLvvgUXJVZeu-GbqWZfr8ug74V7d8Od9yU2AOvUUptiki9wIH-BJHataFTJI_J0TlQ"
+                className="w-28 h-28"
+              />
+              <div className="font-thin text-gray-500">
+                Enter the name of the friend you want to search for
+              </div>
+            </div>
+          ) : isFetching ? (
             <LoadingSearchFriend />
           ) : !!data && data.pages[0].data.length > 0 ? (
             data.pages.map((page) =>
@@ -69,7 +83,7 @@ export default function SearchFriendModal({ onClose }: Props) {
                 >
                   <User
                     name={user.fullName}
-                    description={user.gender.toLowerCase()}
+                    description={user.gender?.toLowerCase()}
                     avatarProps={{
                       src: user.avatarUrl,
                       size: "lg",

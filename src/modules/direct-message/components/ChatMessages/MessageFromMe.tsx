@@ -11,7 +11,7 @@ interface Props {
 
 const MessageFromMe = forwardRef(
   (
-    { id, message, isPrevsMessageFromMe, updatedAt }: Props,
+    { message, isPrevsMessageFromMe, updatedAt }: Props,
     ref: LegacyRef<HTMLDivElement>,
   ) => {
     const time =

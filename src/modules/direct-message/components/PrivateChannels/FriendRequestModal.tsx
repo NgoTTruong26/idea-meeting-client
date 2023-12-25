@@ -37,6 +37,7 @@ export default function FriendRequestModal({ countFriendRequestToMe }: Props) {
         {friendRequestToMeList.data?.pages.map((page) =>
           page.data.map((item) => (
             <FriendRequestRow
+              key={item.userId}
               data={item}
               refetch={friendRequestToMeList.refetch}
             />

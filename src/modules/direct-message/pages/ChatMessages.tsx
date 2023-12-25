@@ -6,13 +6,14 @@ import { DirectCallChannelType } from "modules/direct-call/types/direct-call-cha
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { HiDotsVertical } from "react-icons/hi"
-import { MdOutlinePersonAddAlt, MdPhone, MdVideocam } from "react-icons/md"
+import { MdPhone, MdVideocam } from "react-icons/md"
 import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
 import { WsEvent, WsResponse } from "types/ws"
 import { handleWsError } from "utils/ws"
 import ChatContent from "../components/ChatMessages/ChatContent"
+import FriendRequest from "../components/ChatMessages/FriendRequest"
 import IntroduceFriend from "../components/ChatMessages/IntroduceFriend"
 import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
@@ -76,8 +77,8 @@ export default function ChatMessages() {
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">
-      <div className="flex flex-col items-center w-full bg-gray-50 py-6 space-y-2">
-        <div className="flex items-center justify-between gap-10 w-full px-6">
+      <div className="flex flex-col items-center w-full bg-gray-50 space-y-2">
+        <div className="flex items-center justify-between gap-10 w-full p-6">
           <div className={clsx("flex items-center")}>
             <div className="relative">
               <Avatar
@@ -126,50 +127,40 @@ export default function ChatMessages() {
             </Button>
           </div>
         </div>
-        {!friend.data.directMessageChannelId && (
-          <>
-            <div className="flex justify-between gap-5 w-full py-4 px-6 bg-default-100">
-              <div className="flex items-center gap-2">
-                <MdOutlinePersonAddAlt size={20} />
-                <span>
-                  Send friend request to {friend.data.profile.fullName}
-                </span>
-              </div>
-              <Button variant="flat" color="primary">
-                Send request
-              </Button>
-              <Button variant="flat" color="danger">
-                Cancel request
-              </Button>
-            </div>
-          </>
+        {!friend.data.isFriendship && (
+          <FriendRequest
+            profile={friend.data.profile}
+            friendshipRequestFromMe={friend.data.friendshipRequestFromMe}
+            friendshipRequestToMe={friend.data.friendshipRequestToMe}
+          />
         )}
       </div>
-      {!!friend.data.directMessageChannelId ? (
-        <>
-          <div className="h-full bg-purple-50 pb-5 overflow-y-auto flex flex-col-reverse">
-            <ChatContent
-              directMessageChannelId={friend.data.directMessageChannelId}
-              messages={messages}
-              profile={friend.data.profile}
-              isOnline={friend.data.isOnline}
-            />
-          </div>
-          <MessageInput
+
+      <div className="h-full bg-purple-50 pb-5 overflow-y-auto flex flex-col-reverse">
+        {!!friend.data.directMessageChannelId ? (
+          <ChatContent
             directMessageChannelId={friend.data.directMessageChannelId}
+            messages={messages}
+            profile={friend.data.profile}
+            isOnline={friend.data.isOnline}
           />
-        </>
-      ) : (
-        <div className="h-full flex flex-col">
+        ) : (
           <div className="flex-1">
             <IntroduceFriend
               {...friend.data.profile}
               isOnline={friend.data.isOnline}
             />
           </div>
-          <div className="flex justify-center text-center p-6 w-full bg-default-100">
-            You need to be friends with {friend.data.profile.fullName} to text
-          </div>
+        )}
+      </div>
+
+      {!!friend.data.isFriendship && !!friend.data.directMessageChannelId ? (
+        <MessageInput
+          directMessageChannelId={friend.data.directMessageChannelId}
+        />
+      ) : (
+        <div className="flex justify-center text-center p-6 w-full bg-default-100">
+          You need to be friends with {friend.data.profile.fullName} to text
         </div>
       )}
     </div>

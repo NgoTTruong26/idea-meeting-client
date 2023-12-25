@@ -23,7 +23,7 @@ export default function PrivateChannels() {
           variant="flat"
           color="default"
           onPress={onOpen}
-          className="justify-start capitalize"
+          className="justify-start"
           startContent={<LuSearch size={20} />}
           fullWidth
           size="lg"

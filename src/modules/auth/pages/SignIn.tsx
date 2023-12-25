@@ -21,15 +21,18 @@ export default function SignIn() {
     flow: "auth-code",
     async onSuccess({ code }) {
       const data = await googleSignIn.mutateAsync({ code })
+
       user.setAuth({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
       })
+
       user.setUser(data.user)
-      console.log(data.user)
 
       if (!data.user.profile?.fullName) onOpen()
-      else navigate(nav.DIRECT_MESSAGE)
+      else {
+        navigate(nav.DIRECT_MESSAGE)
+      }
     },
     onError() {
       toast.error("Can't sign in with Google")
@@ -37,13 +40,15 @@ export default function SignIn() {
   })
 
   useEffect(() => {
-    if (user.auth.accessToken && user.user.profile?.fullName)
+    if (user.auth.accessToken)
       getUserProfile.mutate(undefined, {
         onSuccess(data) {
-          user.setUser(data)
-          navigate(nav.DIRECT_MESSAGE, {
-            replace: true,
-          })
+          if (data.profile.fullName) {
+            user.setUser(data)
+            navigate(nav.DIRECT_MESSAGE, {
+              replace: true,
+            })
+          }
         },
       })
   }, [user.auth, user.setUser])
