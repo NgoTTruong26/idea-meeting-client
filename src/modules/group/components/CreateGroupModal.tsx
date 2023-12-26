@@ -52,16 +52,13 @@ export default function CreateGroupModal({ onClose }: Props) {
   const createGroup = useCreateGroup()
 
   const onSubmit = (data: CreateGroupRequest) => {
-    createGroup.mutate(
-      { ...data, imageUrl },
-      {
-        onSuccess: () => {
-          queryClient.refetchQueries({ queryKey: ["get-group-list"] })
-          toast.success("Create group success")
-          onClose()
-        },
+    createGroup.mutate(data, {
+      onSuccess: () => {
+        queryClient.refetchQueries({ queryKey: ["get-group-list"] })
+        toast.success("Create group success")
+        onClose()
       },
-    )
+    })
   }
 
   return (

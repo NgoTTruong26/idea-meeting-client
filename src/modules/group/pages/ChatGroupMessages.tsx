@@ -1,7 +1,8 @@
-import { Avatar, Button } from "@nextui-org/react"
+import { Button } from "@nextui-org/react"
 import clsx from "clsx"
 import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
+import { FaHashtag } from "react-icons/fa6"
 import { HiDotsVertical } from "react-icons/hi"
 import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
@@ -9,16 +10,22 @@ import { GroupMessageFromSocket } from "types/messageFromSocket"
 import { WsEvent } from "types/ws"
 import GroupMessageInput from "../components/groupChatMessages/GroupMessageInput"
 import { GroupMessageParams } from "../route"
+import { useGetGroupChannel } from "../services/getGroup"
 
 export default function ChatGroupMessages() {
   const { user } = useUser()
 
-  const { chatGroupId = "", groupId = "" } =
+  const { groupMessageChannelId = "", groupId = "" } =
     useParams<keyof GroupMessageParams>()
+
+  const groupChannel = useGetGroupChannel(
+    { groupId, groupMessageChannelId },
+    !!groupId && !!groupMessageChannelId,
+  )
 
   const [messages, setMessages] = useState<GroupMessageFromSocket[]>([])
 
-  console.log(chatGroupId)
+  console.log(groupMessageChannelId)
 
   const handleIncomingMessage = (message: GroupMessageFromSocket) => {
     console.log(message)
@@ -29,38 +36,25 @@ export default function ChatGroupMessages() {
     }
   }
 
+  console.log(groupChannel.data)
+
   useEffect(() => {
     socket.on(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
 
     return () => {
       socket.off(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
     }
-  }, [socket, chatGroupId, groupId])
+  }, [socket, groupMessageChannelId, groupId])
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">
       <div className="flex flex-col items-center w-full bg-gray-50 space-y-2">
-        <div className="flex items-center justify-between gap-10 w-full p-6">
-          <div className={clsx("flex items-center")}>
-            <div className="relative">
-              <Avatar
-                /* src={friend.data.profile.avatarUrl} */
-                size="lg"
-                /* name={friend.data.profile.fullName} */
-              />
-            </div>
-            <div className="flex w-full flex-col pl-3">
-              <div className="flex w-full mb-1">
-                <span className="font-bold">
-                  {/* {friend.data.profile.fullName} */}
-                </span>
-              </div>
-              <div className="flex w-full">
-                <span className={clsx("text-gray-500 text-sm")}>
-                  {/*  {friend.data.isOnline ? "Online" : "Offline"} */}
-                </span>
-              </div>
-            </div>
+        <div className="flex items-center justify-between gap-10 w-full px-6 py-2">
+          <div className="flex items-center space-x-1">
+            <span>
+              <FaHashtag size={20} />
+            </span>
+            <span className="text-xl">{groupChannel.data?.name}</span>
           </div>
           <div
             className={clsx("flex text-primary-500", "[&>button]:rounded-full")}
@@ -106,7 +100,9 @@ export default function ChatGroupMessages() {
       You need to be friends with {friend.data.profile.fullName} to text
     </div>
   )} */}
-      <GroupMessageInput groupMessageChannelId={chatGroupId} />
+      {groupChannel.data && (
+        <GroupMessageInput groupMessageChannelId={groupChannel.data.id} />
+      )}
     </div>
   )
 }

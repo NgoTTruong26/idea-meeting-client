@@ -7,7 +7,7 @@ import DirectGroupMessages from "./pages/DirectGroupMessages"
 
 export interface GroupMessageParams {
   groupId: string
-  chatGroupId: string
+  groupMessageChannelId: string
 }
 
 export const directGroupMessageRoute: RouteObject = {
@@ -23,7 +23,7 @@ export const directGroupMessageRoute: RouteObject = {
       Component: DirectGroupMessages,
       children: [
         {
-          path: ":chatGroupId",
+          path: ":groupMessageChannelId",
           Component: ChatGroupMessages,
         },
       ],

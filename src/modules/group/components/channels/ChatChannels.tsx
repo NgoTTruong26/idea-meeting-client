@@ -29,7 +29,7 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
 
   const navigate = useNavigate()
 
-  const { chatGroupId } = useParams<keyof GroupMessageParams>()
+  const { groupMessageChannelId } = useParams<keyof GroupMessageParams>()
 
   const getGroupChatChannelList = useGetGroupChatChannelList({ groupId })
 
@@ -60,7 +60,7 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
                 className={clsx(
                   "cursor-pointer rounded-lg [&:hover]:bg-purple-50 flex items-center justify-between gap-4 px-4 py-1",
                   {
-                    "!bg-purple-100 ": chatChannel.id === chatGroupId,
+                    "!bg-purple-100 ": chatChannel.id === groupMessageChannelId,
                   },
                 )}
               >

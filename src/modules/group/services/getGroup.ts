@@ -71,6 +71,20 @@ export interface GetGroupChatChannelListRequest {
   take?: number
 }
 
+export interface GetGroupChannelRequest {
+  groupId: string
+  groupMessageChannelId: string
+}
+
+export interface GetGroupChannelResponse {
+  id: string
+  createdAt: string
+  updatedAt: string
+  isDeleted: boolean
+  name: string
+  groupId: string
+}
+
 //hook
 
 export async function getGroupProfile(groupId: string) {
@@ -164,5 +178,29 @@ export function useGetGroupChatChannelList({
         page: page + 1,
       }
     },
+  })
+}
+
+export async function getGroupChannel(params: GetGroupChannelRequest) {
+  return (
+    await api.get<GetGroupChannelResponse>(
+      `/group-message-channel/${params.groupId}/${params.groupMessageChannelId}`,
+    )
+  ).data
+}
+
+export function useGetGroupChannel(
+  params: GetGroupChannelRequest,
+  enabled: boolean,
+) {
+  return useQuery({
+    queryKey: [
+      "get-group-Channel",
+      params.groupId,
+      params.groupMessageChannelId,
+    ],
+    queryFn: async () => await getGroupChannel(params),
+    refetchOnMount: "always",
+    enabled,
   })
 }
