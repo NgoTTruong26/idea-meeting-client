@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 import { FaHashtag } from "react-icons/fa6"
 import { HiDotsVertical } from "react-icons/hi"
 import { useParams } from "react-router-dom"
-import { useUser } from "store/user"
 import { GroupMessageFromSocket } from "types/messageFromSocket"
 import { WsEvent } from "types/ws"
 import GroupChatChannelContent from "../components/groupChatMessages/GroupChatChannelContent"
@@ -14,8 +13,6 @@ import { GroupMessageParams } from "../route"
 import { useGetGroupChannel } from "../services/getGroup"
 
 export default function ChatGroupMessages() {
-  const { user } = useUser()
-
   const { groupMessageChannelId = "", groupId = "" } =
     useParams<keyof GroupMessageParams>()
 

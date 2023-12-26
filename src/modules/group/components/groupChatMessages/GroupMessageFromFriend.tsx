@@ -9,12 +9,19 @@ interface Props {
   profile: UserProfile
   message: string
   isPrevsMessageFromMe: boolean
+  isPrevsMessageOtherFriend: boolean
   updatedAt: string
 }
 
 const GroupMessageFromFriend = forwardRef(
   (
-    { message, profile, isPrevsMessageFromMe, updatedAt }: Props,
+    {
+      message,
+      profile,
+      isPrevsMessageFromMe,
+      isPrevsMessageOtherFriend,
+      updatedAt,
+    }: Props,
     ref: LegacyRef<HTMLDivElement>,
   ) => {
     const time =
@@ -29,12 +36,15 @@ const GroupMessageFromFriend = forwardRef(
     return (
       <div
         ref={ref}
-        className={clsx("w-full", isPrevsMessageFromMe ? "mb-3" : "mb-1")}
+        className={clsx(
+          "w-full",
+          isPrevsMessageFromMe || isPrevsMessageOtherFriend ? "mb-3" : "mb-1",
+        )}
       >
         <div className="flex ">
           <div className="space-y-1">
             <div className="grid grid-cols-[48px,1fr,62px]">
-              {isPrevsMessageFromMe ? (
+              {isPrevsMessageFromMe || isPrevsMessageOtherFriend ? (
                 <div className="flex items-end px-2">
                   <Tooltip placement="right" content={profile.fullName}>
                     <Avatar

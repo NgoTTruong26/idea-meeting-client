@@ -3,6 +3,7 @@ import { useUser } from "store/user"
 
 import { GetGroupChannelResponse } from "modules/group/services/getGroup"
 import { useGetGroupMessageListChannel } from "modules/group/services/getGroupMessage"
+import { useEffect } from "react"
 import { GroupMessageFromSocket } from "types/messageFromSocket"
 import GroupMessageFromFriend from "./GroupMessageFromFriend"
 import GroupMessageFromMe from "./GroupMessageFromMe"
@@ -30,13 +31,11 @@ export default function GroupChatChannelContent({
 
   const { ref, inView } = useInView()
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (inView) {
-      fetchNextPage()
+      getGroupMessageListChannel.fetchNextPage()
     }
-  }, [fetchNextPage, inView])
-
-  */
+  }, [getGroupMessageListChannel.fetchNextPage, inView])
 
   console.log(getGroupMessageListChannel.data)
 
@@ -62,6 +61,11 @@ export default function GroupChatChannelContent({
             profile={message.user.profile}
             isPrevsMessageFromMe={
               messages[idx - 1] ? messages[idx - 1].userId === user.id : true
+            }
+            isPrevsMessageOtherFriend={
+              messages[idx - 1] &&
+              messages[idx - 1].userId !== user.id &&
+              messages[idx - 1].userId !== message.userId
             }
             updatedAt={message.updatedAt}
           />
@@ -117,6 +121,17 @@ export default function GroupChatChannelContent({
                     : page.data[idx - 1]
                     ? page.data[idx - 1].userId === user.id
                     : true
+                }
+                isPrevsMessageOtherFriend={
+                  idx === 0 &&
+                  pageIdx > 0 &&
+                  getGroupMessageListChannel.data.pages[pageIdx - 1]?.data[
+                    getGroupMessageListChannel.data.pages[pageIdx - 1]!.data
+                      .length - 1
+                  ].userId !== message.userId
+                    ? true
+                    : page.data[idx - 1] &&
+                      page.data[idx - 1].userId !== message.userId
                 }
                 updatedAt={message.updatedAt}
               />
