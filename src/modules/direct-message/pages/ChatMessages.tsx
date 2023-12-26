@@ -27,7 +27,7 @@ export default function ChatMessages() {
   const { id: friendId = "" } = useParams<keyof DirectMessageParams>()
   console.log(friendId)
 
-  const friend = useGetFriend({ targetId: friendId })
+  const friend = useGetFriend({ targetId: friendId }, user.id)
 
   const handleIncomingMessage = (message: MessageFromSocket) => {
     if ([user.id, friendId].includes(message.userId)) {
@@ -73,6 +73,8 @@ export default function ChatMessages() {
   if (!friend.data) {
     return <div></div>
   }
+
+  console.log(friend.data.directMessageChannelId, "a")
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">

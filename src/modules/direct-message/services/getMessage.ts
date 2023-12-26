@@ -63,6 +63,7 @@ export async function getGetMessageListFromFriend({
   ...params
 }: GetMessageListFromFriendRequest) {
   try {
+    console.log(directMessageChannelId, 678)
     return (
       await api.get<GetMessageListFromFriendResponse>(
         `/direct-message-channel/${directMessageChannelId}/message`,
@@ -74,12 +75,20 @@ export async function getGetMessageListFromFriend({
   }
 }
 
-export function useGetMessageListFromFriend({
-  directMessageChannelId,
-  take = 20,
-}: GetMessageListFromFriendRequest) {
+export function useGetMessageListFromFriend(
+  { directMessageChannelId, take = 20, page }: GetMessageListFromFriendRequest,
+  userId: string,
+) {
+  console.log(directMessageChannelId, 123)
+
   return useInfiniteQuery({
-    queryKey: ["get-message-from-friend", directMessageChannelId, take],
+    queryKey: [
+      "get-message-from-friend",
+      userId,
+      directMessageChannelId,
+      take,
+      page,
+    ],
 
     queryFn: async ({ pageParam: { page } }) =>
       await getGetMessageListFromFriend({

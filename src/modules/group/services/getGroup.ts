@@ -99,7 +99,6 @@ export function useGetGroupProfile({ groupId }: GetGroupProfileRequest) {
   return useQuery({
     queryKey: ["get-group", groupId],
     queryFn: async () => await getGroupProfile(groupId),
-    refetchOnMount: "always",
   })
 }
 
@@ -200,7 +199,7 @@ export function useGetGroupChannel(
       params.groupMessageChannelId,
     ],
     queryFn: async () => await getGroupChannel(params),
-    refetchOnMount: "always",
+
     enabled,
   })
 }

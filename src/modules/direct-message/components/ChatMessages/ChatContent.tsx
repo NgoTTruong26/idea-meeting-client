@@ -29,9 +29,14 @@ export default function ChatContent({
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useGetMessageListFromFriend({
-    directMessageChannelId,
-  })
+  } = useGetMessageListFromFriend(
+    {
+      directMessageChannelId,
+    },
+    user.id,
+  )
+
+  console.log(directMessageChannelId, 123456)
 
   const { ref, inView } = useInView()
 

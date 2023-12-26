@@ -1,4 +1,5 @@
 import { Divider, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
+import { queryClient } from "configs/queryClient"
 import CreateGroupModal from "modules/group/components/CreateGroupModal"
 import { useGetGroupList } from "modules/group/services/getGroup"
 import { TbLogout } from "react-icons/tb"
@@ -53,7 +54,10 @@ export default function Sidebar() {
         <SidebarItem
           label="Log Out"
           children={<TbLogout size={22} className="text-primary" />}
-          handleClick={clear}
+          handleClick={() => {
+            queryClient.clear()
+            clear()
+          }}
         />
       </div>
 

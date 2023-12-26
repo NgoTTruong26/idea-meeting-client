@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import { GroupMessageFromSocket } from "types/messageFromSocket"
 import { WsEvent } from "types/ws"
+import GroupChatChannelContent from "../components/groupChatMessages/GroupChatChannelContent"
 import GroupMessageInput from "../components/groupChatMessages/GroupMessageInput"
 import { GroupMessageParams } from "../route"
 import { useGetGroupChannel } from "../services/getGroup"
@@ -28,15 +29,15 @@ export default function ChatGroupMessages() {
   console.log(groupMessageChannelId)
 
   const handleIncomingMessage = (message: GroupMessageFromSocket) => {
-    console.log(message)
+    console.log(groupId)
 
-    if (groupId === message.groupMessageChannelId) {
+    if (groupMessageChannelId === message.groupMessageChannelId) {
       console.log("set message")
       setMessages((prev) => [message, ...prev])
     }
   }
 
-  console.log(groupChannel.data)
+  console.log(groupChannel.data, messages)
 
   useEffect(() => {
     socket.on(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
@@ -74,6 +75,14 @@ export default function ChatGroupMessages() {
       </div>
 
       <div className="h-full bg-purple-50 pb-5 overflow-y-auto flex flex-col-reverse">
+        {!!groupChannel.data?.id && !!groupChannel.data?.groupId && (
+          <GroupChatChannelContent
+            groupChannel={groupChannel.data}
+            groupId={groupChannel.data.groupId}
+            groupMessageChannelId={groupChannel.data.id}
+            messages={messages}
+          />
+        )}
         {/* {!!friend.data.directMessageChannelId ? (
       <ChatContent
         directMessageChannelId={friend.data.directMessageChannelId}

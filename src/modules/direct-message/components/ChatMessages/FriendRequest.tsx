@@ -93,7 +93,7 @@ export default function FriendRequest({
               {
                 onSuccess: () => {
                   queryClient.refetchQueries({
-                    queryKey: ["get-friend", profile.userId],
+                    queryKey: ["get-friend"],
                   })
                 },
               },

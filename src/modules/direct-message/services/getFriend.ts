@@ -73,10 +73,9 @@ export async function getFriend(targetId: string) {
   }
 }
 
-export function useGetFriend({ targetId }: GetFriendRequest) {
+export function useGetFriend({ targetId }: GetFriendRequest, userId: string) {
   return useQuery({
-    queryKey: ["get-friend", targetId],
+    queryKey: ["get-friend", userId, targetId],
     queryFn: async () => await getFriend(targetId),
-    refetchOnMount: "always",
   })
 }

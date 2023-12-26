@@ -64,6 +64,5 @@ export function useGetUserList(
       }
     },
     enabled,
-    refetchOnMount: "always",
   })
 }
