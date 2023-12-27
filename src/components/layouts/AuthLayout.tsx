@@ -1,6 +1,8 @@
 import axios from "axios"
+import LoadingPage from "components/common/LoadingPage"
 import { socket } from "configs/socket"
 import { nav } from "constants/nav"
+import { useGetUserProfile } from "modules/user/services/getUserProfile"
 import Peer from "peerjs"
 import { PropsWithChildren, useEffect } from "react"
 import { Navigate } from "react-router"
@@ -8,8 +10,20 @@ import { usePeer } from "store/peer"
 import { useUser } from "store/user"
 
 export default function AuthLayout({ children }: PropsWithChildren) {
-  const { user, auth } = useUser()
+  const { user, auth, setUser } = useUser()
+  const getUserProfile = useGetUserProfile()
   const peer = usePeer()
+
+  useEffect(() => {
+    if (auth.accessToken)
+      getUserProfile.mutate(undefined, {
+        onSuccess(data) {
+          if (data.profile.fullName) {
+            setUser(data)
+          }
+        },
+      })
+  }, [auth, setUser])
 
   useEffect(() => {
     if (user.id) {
@@ -39,6 +53,10 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       peer.clear()
     }
   }, [user.id, peer.set, peer.clear])
+
+  if (getUserProfile.isPending || getUserProfile.isIdle) {
+    return <LoadingPage />
+  }
 
   return user.id ? children : <Navigate to={nav.AUTH + nav.SIGN_IN} replace />
 }

@@ -6,6 +6,9 @@ export interface Group {
   name: string
   imageUrl: string
   ownerId: string
+  inviteCode: string
+  inviteCodeMaxNumberOfUses: number
+  inviteCodeNumberOfUses: number
   _count: {
     users: number
     channels: number
