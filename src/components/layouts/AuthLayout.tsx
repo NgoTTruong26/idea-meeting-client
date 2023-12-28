@@ -4,12 +4,14 @@ import { socket } from "configs/socket"
 import { nav } from "constants/nav"
 import { useGetUserProfile } from "modules/user/services/getUserProfile"
 import Peer from "peerjs"
-import { PropsWithChildren, useEffect } from "react"
+import { PropsWithChildren, useEffect, useState } from "react"
 import { Navigate } from "react-router"
 import { usePeer } from "store/peer"
 import { useUser } from "store/user"
 
 export default function AuthLayout({ children }: PropsWithChildren) {
+  const [loading, setLoading] = useState<boolean>(true)
+
   const { user, auth, setUser } = useUser()
   const getUserProfile = useGetUserProfile()
   const peer = usePeer()
@@ -24,6 +26,16 @@ export default function AuthLayout({ children }: PropsWithChildren) {
         },
       })
   }, [auth, setUser])
+
+  useEffect(() => {
+    if (
+      getUserProfile.isSuccess ||
+      getUserProfile.isError ||
+      !auth.accessToken
+    ) {
+      setLoading(false)
+    }
+  }, [getUserProfile.isSuccess, getUserProfile.isError, auth.accessToken])
 
   useEffect(() => {
     if (user.id) {
@@ -54,9 +66,9 @@ export default function AuthLayout({ children }: PropsWithChildren) {
     }
   }, [user.id, peer.set, peer.clear])
 
-  if (getUserProfile.isPending || getUserProfile.isIdle) {
-    return <LoadingPage />
+  if (!loading) {
+    return user.id ? children : <Navigate to={nav.AUTH + nav.SIGN_IN} replace />
   }
 
-  return user.id ? children : <Navigate to={nav.AUTH + nav.SIGN_IN} replace />
+  return <LoadingPage />
 }

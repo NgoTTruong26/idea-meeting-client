@@ -6,5 +6,13 @@ export default function InviteCode() {
 
   console.log(inviteCode)
 
-  return <div>Loading</div>
+  return (
+    <div className="flex justify-center items-center">
+      <img
+        src="/images/sign-in-bg.jpg"
+        alt=""
+        className="w-full max-w-md md:max-w-3xl"
+      />
+    </div>
+  )
 }

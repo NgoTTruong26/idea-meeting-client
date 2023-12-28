@@ -110,14 +110,18 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
             name="inviteCodeMaxNumberOfUses"
             t="select"
             options={selectList}
-            label="Max number of Uses"
-            defaultSelectedKeys={["0"]}
+            label="Max number of uses"
+            placeholder="Select max number of uses"
           />
           <div className="text-zinc-500">
-            Your invite link expires after{" "}
-            {groupProfile.inviteCodeMaxNumberOfUses -
-              groupProfile.inviteCodeNumberOfUses}{" "}
-            uses.
+            {groupProfile.inviteCodeMaxNumberOfUses > 0
+              ? `Your invite link expires after 
+            ${
+              groupProfile.inviteCodeMaxNumberOfUses -
+              groupProfile.inviteCodeNumberOfUses
+            } 
+            uses.`
+              : "Your invite link has unlimited uses"}
           </div>
         </ModalBody>
         <ModalFooter>
