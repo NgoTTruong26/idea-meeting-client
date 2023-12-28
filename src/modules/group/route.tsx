@@ -1,7 +1,7 @@
 import AuthLayout from "components/layouts/AuthLayout"
 import HomeLayout from "components/layouts/home"
 import { nav } from "constants/nav"
-import { RouteObject } from "react-router-dom"
+import { Outlet, RouteObject } from "react-router-dom"
 import ChatGroupMessages from "./pages/ChatGroupMessages"
 import DirectGroupMessages from "./pages/DirectGroupMessages"
 import InviteCode from "./pages/InviteCode"
@@ -33,8 +33,19 @@ export const directGroupMessageRoute: RouteObject = {
         },
       ],
     },
+  ],
+}
+
+export const joinGroupRoute: RouteObject = {
+  path: nav.GROUP.slice(1) + nav.JOIN,
+  element: (
+    <AuthLayout>
+      <Outlet />
+    </AuthLayout>
+  ),
+  children: [
     {
-      path: "join/:inviteCode",
+      path: ":inviteCode",
       Component: InviteCode,
     },
   ],
