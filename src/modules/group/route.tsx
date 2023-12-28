@@ -4,6 +4,7 @@ import { nav } from "constants/nav"
 import { Outlet, RouteObject } from "react-router-dom"
 import ChatGroupMessages from "./pages/ChatGroupMessages"
 import DirectGroupMessages from "./pages/DirectGroupMessages"
+import HomeGroupChannel from "./pages/HomeGroupChannel"
 import InviteCode from "./pages/InviteCode"
 
 export interface GroupMessageParams {
@@ -27,6 +28,10 @@ export const directGroupMessageRoute: RouteObject = {
       path: ":groupId",
       Component: DirectGroupMessages,
       children: [
+        {
+          path: "",
+          Component: HomeGroupChannel,
+        },
         {
           path: ":groupMessageChannelId",
           Component: ChatGroupMessages,

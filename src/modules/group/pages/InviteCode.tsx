@@ -8,14 +8,20 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react"
+import LoadingPage from "components/common/LoadingPage"
 import { useEffect } from "react"
 import { toast } from "react-hot-toast"
-import { useNavigate, useParams } from "react-router-dom"
+import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { JoinGroupParams } from "../route"
 import { useAcceptInvite } from "../services/acceptInvite"
+import { useGetGroupProfileByInviteCode } from "../services/getGroupProfileByInviteCode"
 
 export default function InviteCode() {
-  const { inviteCode } = useParams<keyof JoinGroupParams>()
+  const { inviteCode = "" } = useParams<keyof JoinGroupParams>()
+
+  const getGroupProfileByInviteCode = useGetGroupProfileByInviteCode({
+    inviteCode,
+  })
 
   const navigate = useNavigate()
 
@@ -23,7 +29,7 @@ export default function InviteCode() {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-  console.log(inviteCode)
+  console.log(inviteCode, getGroupProfileByInviteCode.data)
 
   useEffect(() => {
     onOpen()
@@ -39,11 +45,15 @@ export default function InviteCode() {
             toast.success("Join group successfully")
           },
           onError: () => {
-            navigate("/group")
+            navigate("/")
           },
         },
       )
     }
+  }
+
+  if (getGroupProfileByInviteCode.isError) {
+    return <Navigate to={"/"} replace />
   }
 
   return (
@@ -60,39 +70,48 @@ export default function InviteCode() {
         onOpenChange={onOpenChange}
         isDismissable={false}
         hideCloseButton
+        className="max-h-96"
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-2 items-center pb-0">
-            <Avatar
-              src="https://i.pravatar.cc/150?u=a04258114e29026708c"
-              className="w-20 h-20"
-            />
-            <div className="text-zinc-500 font-normal">
-              Chú thích Lisa2 invited you to join
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <div className="flex gap-2 items-center justify-center">
-              <Avatar
-                src="https://i.pravatar.cc/150?u=a04258114e29026708c"
-                radius="lg"
-                size="md"
-              />
-              <div className="text-xl font-semibold text-zinc-700">
-                Máy chủ của Trường
-              </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color="primary"
-              onPress={handleAccept}
-              fullWidth
-              isLoading={acceptInvite.isPending}
-            >
-              Accept Invite
-            </Button>
-          </ModalFooter>
+          {getGroupProfileByInviteCode.status === "pending" ? (
+            <LoadingPage />
+          ) : (
+            !!getGroupProfileByInviteCode.data && (
+              <>
+                <ModalHeader className="flex flex-col gap-2 items-center pb-0">
+                  <Avatar
+                    src="https://i.pravatar.cc/150?u=a04258114e29026708c"
+                    className="w-20 h-20"
+                  />
+                  <div className="text-zinc-500 font-normal">
+                    Chú thích Lisa2 invited you to join
+                  </div>
+                </ModalHeader>
+                <ModalBody>
+                  <div className="flex gap-2 items-center justify-center">
+                    <Avatar
+                      src={getGroupProfileByInviteCode.data.imageUrl}
+                      radius="lg"
+                      size="md"
+                    />
+                    <div className="text-xl font-semibold text-zinc-700">
+                      {getGroupProfileByInviteCode.data.name}
+                    </div>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="primary"
+                    onPress={handleAccept}
+                    fullWidth
+                    isLoading={acceptInvite.isPending}
+                  >
+                    Accept Invite
+                  </Button>
+                </ModalFooter>
+              </>
+            )
+          )}
         </ModalContent>
       </Modal>
     </div>
