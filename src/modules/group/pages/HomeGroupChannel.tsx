@@ -27,9 +27,10 @@ export default function HomeGroupChannel() {
   const disclosureUpdateGroup = useDisclosure()
 
   return (
-    <div className="flex justify-center items-center py-10">
-      <div className="flex justify-center items-center max-w-3xl w-full min-h-[750px] bg-[url('/images/sign-in-bg.jpg')] bg-cover bg-center">
-        <div className="flex flex-col items-center max-w-sm w-full space-y-6 mx-5">
+    <div className="relative flex justify-center items-center py-10">
+      <div className="absolute flex justify-center items-center max-w-3xl w-full h-full max-h-[750px] bg-[url('/images/sign-in-bg.jpg')] bg-cover bg-center"></div>
+      <div className="flex justify-center items-center w-full backdrop-blur-xl h-full">
+        <div className="flex flex-col items-center max-w-xl w-full space-y-6 p-8 rounded-3xl">
           <div className="text-3xl font-bold">
             Welcome to {groupProfile.name}
           </div>
@@ -37,45 +38,44 @@ export default function HomeGroupChannel() {
             {id === groupProfile.ownerId && (
               <>
                 <Button
-                  variant="flat"
-                  color="default"
+                  variant="bordered"
+                  color="primary"
                   onClick={disclosureUpdateGroup.onOpen}
                   fullWidth
                   startContent={<TbEdit size={25} />}
                   endContent={<IoIosArrowForward size={20} />}
-                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
                 >
                   <div className="flex-1 flex justify-start mx-2 font-semibold">
                     Edit Group Profile
                   </div>
                 </Button>
                 <Button
-                  variant="flat"
-                  color="default"
+                  variant="bordered"
+                  color="primary"
                   onClick={disclosureAddChatChannel.onOpen}
                   fullWidth
                   startContent={<MdAddToPhotos size={25} />}
                   endContent={<IoIosArrowForward size={20} />}
-                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
                 >
                   <div className="flex-1 flex justify-start mx-2 font-semibold">
                     Add Chat Channel
                   </div>
                 </Button>
                 <Button
-                  variant="flat"
-                  color="default"
+                  variant="bordered"
+                  color="primary"
                   onClick={disclosureAddMembers.onOpen}
                   fullWidth
                   startContent={<MdPersonAddAlt size={25} />}
                   endContent={<IoIosArrowForward size={20} />}
-                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
                 >
                   <div className="flex-1 flex justify-start mx-2 font-semibold">
                     Add Members
                   </div>
                 </Button>
-
                 <Modal
                   size="md"
                   className="max-h-[600px]"
@@ -121,24 +121,22 @@ export default function HomeGroupChannel() {
                 </Modal>
               </>
             )}
-
             <Button
-              variant="flat"
-              color="default"
+              variant="bordered"
+              color="primary"
               /*  onPress={disclosureUpdateGroup.onOpen} */
               fullWidth
               startContent={<MdGroups2 size={25} />}
               endContent={<IoIosArrowForward size={20} />}
-              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
             >
               <div className="flex-1 flex justify-start mx-2 font-semibold">
                 Members list
               </div>
             </Button>
-
             {id === groupProfile.ownerId ? (
               <Button
-                variant="flat"
+                variant="bordered"
                 color="danger"
                 /* onPress={() => handleOpen(b)} */
                 fullWidth
@@ -152,7 +150,7 @@ export default function HomeGroupChannel() {
               </Button>
             ) : (
               <Button
-                variant="flat"
+                variant="bordered"
                 color="danger"
                 /* onPress={() => handleOpen(b)} */
                 fullWidth

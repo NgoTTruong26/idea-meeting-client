@@ -22,32 +22,33 @@ export default function Home() {
   const countFriendRequestToMe = useCountFriendRequestToMe()
 
   return (
-    <div className="flex justify-center items-center py-10">
-      <div className="flex justify-center items-center max-w-3xl w-full min-h-[750px] bg-[url('/images/sign-in-bg.jpg')] bg-cover bg-center">
-        <div className="flex flex-col items-center max-w-sm w-full space-y-6 mx-5">
+    <div className="relative flex justify-center items-center py-10">
+      <div className="absolute flex justify-center items-center max-w-3xl w-full h-full max-h-[750px] bg-[url('/images/sign-in-bg.jpg')] bg-cover bg-center"></div>
+      <div className="flex justify-center items-center w-full backdrop-blur-xl h-full">
+        <div className="flex flex-col items-center max-w-xl w-full space-y-6 p-8 rounded-3xl">
           <div className="text-3xl font-bold ">Welcome to IdeaM</div>
           <div className="w-full space-y-2">
             <Button
-              variant="flat"
-              color="default"
+              variant="bordered"
+              color="primary"
               onPress={disclosureCreateGroup.onOpen}
               fullWidth
               startContent={<AiOutlineUsergroupAdd size={25} />}
               endContent={<IoIosArrowForward size={20} />}
-              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
             >
               <div className="flex-1 flex justify-start mx-2 font-semibold">
                 Create your group
               </div>
             </Button>
             <Button
-              variant="flat"
-              color="default"
+              variant="bordered"
+              color="primary"
               onPress={disclosureSearchFriend.onOpen}
               fullWidth
               startContent={<RiUserSearchLine size={25} />}
               endContent={<IoIosArrowForward size={20} />}
-              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
             >
               <div className="flex-1 flex justify-start mx-2 font-semibold">
                 Search for friends
@@ -63,13 +64,13 @@ export default function Home() {
               }}
             >
               <Button
-                variant="flat"
-                color="default"
+                variant="bordered"
+                color="primary"
                 onClick={disclosureFriendRequest.onOpen}
                 fullWidth
                 startContent={<RiUserSharedLine size={25} />}
                 endContent={<IoIosArrowForward size={20} />}
-                className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+                className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
               >
                 <div className="flex-1 flex justify-start mx-2 font-semibold">
                   Friend request
@@ -77,13 +78,13 @@ export default function Home() {
               </Button>
             </Badge>
             <Button
-              variant="flat"
-              color="default"
+              variant="bordered"
+              color="primary"
               /* onPress={() => handleOpen(b)} */
               fullWidth
               startContent={<TbUserEdit size={25} />}
               endContent={<IoIosArrowForward size={20} />}
-              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
             >
               <div className="flex-1 flex justify-start mx-2 font-semibold">
                 Update profile
@@ -92,7 +93,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       <Modal
         hideCloseButton
         isOpen={disclosureSearchFriend.isOpen}
