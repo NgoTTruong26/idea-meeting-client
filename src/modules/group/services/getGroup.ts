@@ -69,6 +69,7 @@ export interface GetGroupChatChannelListResponse extends BaseGetList {
 export interface GetGroupChatChannelListRequest {
   groupId?: string
   take?: number
+  page?: number
 }
 
 export interface GetGroupChannelRequest {
@@ -137,14 +138,16 @@ export function useGetGroupList({ take = 20 }: GetGroupListRequest) {
   })
 }
 
-export async function getGroupChatChannelList(
-  groupId: string,
-  pageParam: PageParam,
-  take: number,
-) {
+export async function getGroupChatChannelList({
+  groupId,
+  ...params
+}: GetGroupChatChannelListRequest) {
   return (
     await api.get<GetGroupChatChannelListResponse>(
-      `/group-message-channel/${groupId}?page=${pageParam.page}&take=${take}`,
+      `/group-message-channel/${groupId}`,
+      {
+        params,
+      },
     )
   ).data
 }
@@ -156,8 +159,8 @@ export function useGetGroupChatChannelList({
   return useInfiniteQuery({
     queryKey: ["get-group-chat-channel-list", groupId, take],
 
-    queryFn: async ({ pageParam }) =>
-      await getGroupChatChannelList(groupId, pageParam, take),
+    queryFn: async ({ pageParam: { page } }) =>
+      await getGroupChatChannelList({ groupId, take, page }),
 
     initialPageParam: {
       page: 1,

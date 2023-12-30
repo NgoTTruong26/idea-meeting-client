@@ -13,10 +13,12 @@ import { toast } from "react-hot-toast"
 import { AiOutlineUsergroupAdd } from "react-icons/ai"
 import { colors } from "styles/theme"
 import * as yup from "yup"
-import { CreateGroupRequest, useCreateGroup } from "../services/createGroup"
+import { GetGroupProfileResponse } from "../services/getGroup"
+import { UpdateGroupRequest, useUpdateGroup } from "../services/updateGroup"
 
 interface Props {
   onClose: () => void
+  groupProfile: GetGroupProfileResponse
 }
 
 const formSchema = yup.object({
@@ -24,15 +26,18 @@ const formSchema = yup.object({
   name: yup.string().label("Group Name").required(),
 })
 
-export default function CreateGroupModal({ onClose }: Props) {
-  const [imageUrl, setImageUrl] = useState<string>()
+export default function UpdateGroupProfileModal({
+  onClose,
+  groupProfile,
+}: Props) {
+  const [imageUrl, setImageUrl] = useState<string>(groupProfile.imageUrl)
 
   const methods = useForm<
-    Required<Pick<CreateGroupRequest, "name" | "imageUrl">>
+    Required<Pick<UpdateGroupRequest, "name" | "imageUrl">>
   >({
     defaultValues: {
-      name: "",
-      imageUrl: "https://discord.com/assets/1697e65656e69f0dbdbd.png",
+      name: groupProfile.name,
+      imageUrl: imageUrl,
     },
     resolver: yupResolver(formSchema),
   })
@@ -49,40 +54,43 @@ export default function CreateGroupModal({ onClose }: Props) {
     onSuccess,
   })
 
-  const createGroup = useCreateGroup()
+  const updateGroup = useUpdateGroup()
 
-  const onSubmit = (data: CreateGroupRequest) => {
+  const onSubmit = (data: UpdateGroupRequest) => {
     if (imageUrl) {
-      createGroup.mutate(
-        { ...data, imageUrl },
+      updateGroup.mutate(
+        { ...data, groupId: groupProfile.id, imageUrl },
         {
           onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ["get-group-list"] })
-            toast.success("Create group success")
+            queryClient.refetchQueries({ queryKey: ["get-group"] })
+            toast.success("Update group profile success")
             onClose()
           },
         },
       )
+
       return
     }
-    createGroup.mutate(data, {
-      onSuccess: () => {
-        queryClient.refetchQueries({ queryKey: ["get-group-list"] })
-        toast.success("Create group success")
-        onClose()
+
+    updateGroup.mutate(
+      { ...data, groupId: groupProfile.id },
+      {
+        onSuccess: () => {
+          queryClient.refetchQueries({ queryKey: ["get-group-list"] })
+          queryClient.refetchQueries({ queryKey: ["get-group"] })
+          toast.success("Update group profile success")
+          onClose()
+        },
       },
-    })
+    )
   }
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <ModalHeader className="flex items-center flex-col gap-1">
-          <div className="text-center">Customize your group</div>
-          <div className="text-center text-base font-normal text-zinc-600">
-            Personalize your group by naming it and adding an icon. You can
-            change at any time.
-          </div>
+          <div className="text-center">Update your group</div>
         </ModalHeader>
         <ModalBody className="space-y-4">
           <div className="flex justify-center">
@@ -124,9 +132,9 @@ export default function CreateGroupModal({ onClose }: Props) {
           <Button
             type="submit"
             color="primary"
-            isLoading={createGroup.isPending}
+            isLoading={updateGroup.isPending}
           >
-            Action
+            Submit
           </Button>
         </ModalFooter>
       </form>

@@ -1,30 +1,34 @@
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react"
 import Field from "components/core/field"
-import { queryClient } from "configs/queryClient"
 import {
   CreateChatChannelRequest,
   useCreateChatChannel,
 } from "modules/group/services/createGroup"
+import { GetGroupChatChannelResponse } from "modules/group/services/getGroup"
 
 import { FormProvider, useForm } from "react-hook-form"
-import { toast } from "react-hot-toast"
 import { FaHashtag } from "react-icons/fa6"
 import * as yup from "yup"
 
 interface Props {
   onClose: () => void
   groupId: string
+  groupChannel: GetGroupChatChannelResponse
 }
 
 const formSchema = yup.object({
   name: yup.string().label("Channel Name").required(),
 })
 
-export default function AddChatChannelModal({ onClose, groupId }: Props) {
+export default function EditChatChannelModal({
+  onClose,
+  groupId,
+  groupChannel,
+}: Props) {
   const methods = useForm<Required<Pick<CreateChatChannelRequest, "name">>>({
     defaultValues: {
-      name: "",
+      name: groupChannel.name,
     },
     resolver: yupResolver(formSchema),
   })
@@ -32,7 +36,7 @@ export default function AddChatChannelModal({ onClose, groupId }: Props) {
   const createChatChannel = useCreateChatChannel()
 
   const onSubmit = (data: CreateChatChannelRequest) => {
-    createChatChannel.mutate(
+    /* createChatChannel.mutate(
       { ...data, groupId },
       {
         onSuccess: () => {
@@ -43,14 +47,14 @@ export default function AddChatChannelModal({ onClose, groupId }: Props) {
           onClose()
         },
       },
-    )
+    ) */
   }
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <ModalHeader className="flex flex-col gap-1">
-          Create Channel
+          Edit Channel
           <span className="text-xs text-zinc-500">In the chat channel</span>
         </ModalHeader>
         <ModalBody>

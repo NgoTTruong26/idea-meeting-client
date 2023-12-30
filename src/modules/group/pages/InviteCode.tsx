@@ -8,10 +8,11 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react"
+import Empty from "components/common/Empty"
 import LoadingPage from "components/common/LoadingPage"
 import { useEffect } from "react"
 import { toast } from "react-hot-toast"
-import { Navigate, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { JoinGroupParams } from "../route"
 import { useAcceptInvite } from "../services/acceptInvite"
 import { useGetGroupProfileByInviteCode } from "../services/getGroupProfileByInviteCode"
@@ -52,10 +53,6 @@ export default function InviteCode() {
     }
   }
 
-  if (getGroupProfileByInviteCode.isError) {
-    return <Navigate to={"/"} replace />
-  }
-
   return (
     <div className="max-h-screen h-screen flex justify-center items-center">
       <img
@@ -65,52 +62,68 @@ export default function InviteCode() {
       />
 
       <Modal
-        size="lg"
+        size={!getGroupProfileByInviteCode.data ? "md" : "lg"}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         isDismissable={false}
         hideCloseButton
-        className="max-h-96"
+        className="max-h-96 min-h-[200px]"
       >
         <ModalContent>
           {getGroupProfileByInviteCode.status === "pending" ? (
             <LoadingPage />
-          ) : (
-            !!getGroupProfileByInviteCode.data && (
-              <>
-                <ModalHeader className="flex flex-col gap-2 items-center pb-0">
+          ) : !!getGroupProfileByInviteCode.data ? (
+            <>
+              <ModalHeader className="flex flex-col gap-2 items-center pb-0">
+                <Avatar
+                  src="https://i.pravatar.cc/150?u=a04258114e29026708c"
+                  className="w-20 h-20"
+                />
+                <div className="text-zinc-500 font-normal">
+                  Chú thích Lisa2 invited you to join
+                </div>
+              </ModalHeader>
+              <ModalBody>
+                <div className="flex gap-2 items-center justify-center">
                   <Avatar
-                    src="https://i.pravatar.cc/150?u=a04258114e29026708c"
-                    className="w-20 h-20"
+                    src={getGroupProfileByInviteCode.data.imageUrl}
+                    radius="lg"
+                    size="md"
                   />
-                  <div className="text-zinc-500 font-normal">
-                    Chú thích Lisa2 invited you to join
+                  <div className="text-xl font-semibold text-zinc-700">
+                    {getGroupProfileByInviteCode.data.name}
                   </div>
-                </ModalHeader>
-                <ModalBody>
-                  <div className="flex gap-2 items-center justify-center">
-                    <Avatar
-                      src={getGroupProfileByInviteCode.data.imageUrl}
-                      radius="lg"
-                      size="md"
-                    />
-                    <div className="text-xl font-semibold text-zinc-700">
-                      {getGroupProfileByInviteCode.data.name}
-                    </div>
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color="primary"
-                    onPress={handleAccept}
-                    fullWidth
-                    isLoading={acceptInvite.isPending}
-                  >
-                    Accept Invite
-                  </Button>
-                </ModalFooter>
-              </>
-            )
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="primary"
+                  onPress={handleAccept}
+                  fullWidth
+                  isLoading={acceptInvite.isPending}
+                >
+                  Accept Invite
+                </Button>
+              </ModalFooter>
+            </>
+          ) : (
+            <>
+              <ModalBody>
+                <div className="flex flex-1 items-center h-full justify-center">
+                  <Empty text={"An error occurred, please try again"} />
+                </div>
+              </ModalBody>
+              <ModalFooter className="pt-0">
+                <Button
+                  color="primary"
+                  onPress={() => navigate("/")}
+                  fullWidth
+                  isLoading={acceptInvite.isPending}
+                >
+                  Return Home Page
+                </Button>
+              </ModalFooter>
+            </>
           )}
         </ModalContent>
       </Modal>

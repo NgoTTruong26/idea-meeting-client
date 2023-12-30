@@ -62,13 +62,6 @@ export default function ChatGroupMessages() {
             </Button>
           </div>
         </div>
-        {/* {!friend.data.isFriendship && (
-      <FriendRequest
-        profile={friend.data.profile}
-        friendshipRequestFromMe={friend.data.friendshipRequestFromMe}
-        friendshipRequestToMe={friend.data.friendshipRequestToMe}
-      />
-    )} */}
       </div>
 
       <div className="h-full bg-purple-50 pb-5 overflow-y-auto flex flex-col-reverse">
@@ -80,32 +73,8 @@ export default function ChatGroupMessages() {
             messages={messages}
           />
         )}
-        {/* {!!friend.data.directMessageChannelId ? (
-      <ChatContent
-        directMessageChannelId={friend.data.directMessageChannelId}
-        messages={messages}
-        profile={friend.data.profile}
-        isOnline={friend.data.isOnline}
-      />
-    ) : (
-      <div className="flex-1">
-        <IntroduceFriend
-          {...friend.data.profile}
-          isOnline={friend.data.isOnline}
-        />
-      </div>
-    )} */}
       </div>
 
-      {/* {!!friend.data.isFriendship && !!friend.data.directMessageChannelId ? (
-    <MessageInput
-      directMessageChannelId={friend.data.directMessageChannelId}
-    />
-  ) : (
-    <div className="flex justify-center text-center p-6 w-full bg-default-100">
-      You need to be friends with {friend.data.profile.fullName} to text
-    </div>
-  )} */}
       {groupChannel.data && (
         <GroupMessageInput groupMessageChannelId={groupChannel.data.id} />
       )}

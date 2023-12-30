@@ -18,14 +18,16 @@ import { RiSettings5Fill } from "react-icons/ri"
 import { TbEdit } from "react-icons/tb"
 import { useNavigate, useParams } from "react-router-dom"
 import AddChatChannelModal from "./AddChatChannelModal"
+import EditChatChannelModal from "./EditChatChannelModal"
 
 interface Props {
   groupId: string
-  ownerId: boolean
+  isOwner: boolean
 }
 
-export default function ChatChannels({ groupId, ownerId }: Props) {
+export default function ChatChannels({ groupId, isOwner }: Props) {
   const disclosureAddChatChannel = useDisclosure()
+  const disclosureEditChatChannel = useDisclosure()
 
   const navigate = useNavigate()
 
@@ -41,14 +43,30 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
     <div className="space-y-2">
       <div className="flex gap-4 items-center justify-between pr-4">
         <span className="text-lg">Chat channels</span>
-        <Button
-          isIconOnly
-          variant="light"
-          className="h-fit min-w-fit w-4"
-          onPress={disclosureAddChatChannel.onOpen}
-        >
-          <MdAdd size={16} />
-        </Button>
+        {isOwner && (
+          <>
+            <Button
+              isIconOnly
+              variant="light"
+              className="h-fit min-w-fit w-4"
+              onPress={disclosureAddChatChannel.onOpen}
+            >
+              <MdAdd size={16} />
+            </Button>
+
+            <Modal
+              size="lg"
+              isOpen={disclosureAddChatChannel.isOpen}
+              onClose={disclosureAddChatChannel.onClose}
+            >
+              <ModalContent>
+                {(onClose) => (
+                  <AddChatChannelModal onClose={onClose} groupId={groupId} />
+                )}
+              </ModalContent>
+            </Modal>
+          </>
+        )}
       </div>
       <div>
         {getGroupChatChannelList.data ? (
@@ -70,7 +88,7 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
                   </span>
                   <span>{chatChannel.name}</span>
                 </div>
-                {ownerId && (
+                {isOwner && (
                   <>
                     <Dropdown>
                       <DropdownTrigger>
@@ -86,6 +104,7 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
                         <DropdownItem
                           key="edit_chat_channel"
                           endContent={<TbEdit size={18} />}
+                          onClick={disclosureEditChatChannel.onOpen}
                         >
                           Edit Chat Channel
                         </DropdownItem>
@@ -99,6 +118,22 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
                         </DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
+
+                    <Modal
+                      size="lg"
+                      isOpen={disclosureEditChatChannel.isOpen}
+                      onClose={disclosureEditChatChannel.onClose}
+                    >
+                      <ModalContent>
+                        {(onClose) => (
+                          <EditChatChannelModal
+                            onClose={onClose}
+                            groupId={groupId}
+                            groupChannel={chatChannel}
+                          />
+                        )}
+                      </ModalContent>
+                    </Modal>
                   </>
                 )}
               </div>
@@ -108,17 +143,6 @@ export default function ChatChannels({ groupId, ownerId }: Props) {
           <></>
         )}
       </div>
-      <Modal
-        size="lg"
-        isOpen={disclosureAddChatChannel.isOpen}
-        onClose={disclosureAddChatChannel.onClose}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <AddChatChannelModal onClose={onClose} groupId={groupId} />
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   )
 }
