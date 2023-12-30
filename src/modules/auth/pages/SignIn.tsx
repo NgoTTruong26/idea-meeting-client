@@ -3,7 +3,7 @@ import { useGoogleLogin } from "@react-oauth/google"
 import LoadingPage from "components/common/LoadingPage"
 import { nav } from "constants/nav"
 import { useGetUserProfile } from "modules/user/services/getUserProfile"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
@@ -12,6 +12,8 @@ import { useGoogleSignIn } from "../services/googleSignIn"
 
 export default function SignIn() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+  const [loading, setLoading] = useState<boolean>(true)
 
   const navigate = useNavigate()
   const user = useUser()
@@ -53,7 +55,13 @@ export default function SignIn() {
       })
   }, [user.auth, user.setUser])
 
-  return getUserProfile.isPending ? (
+  useEffect(() => {
+    if (getUserProfile.isSuccess || getUserProfile.isError) {
+      setLoading(false)
+    }
+  }, [getUserProfile.isSuccess, getUserProfile.isError])
+
+  return loading ? (
     <LoadingPage />
   ) : (
     <div className="min-h-screen grid md:grid-cols-2 place-items-center p-4">
