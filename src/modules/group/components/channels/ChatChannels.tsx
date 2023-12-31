@@ -10,7 +10,11 @@ import {
 } from "@nextui-org/react"
 import clsx from "clsx"
 import { GroupMessageParams } from "modules/group/route"
-import { useGetGroupChatChannelList } from "modules/group/services/getGroup"
+import {
+  GetGroupChatChannelResponse,
+  useGetGroupChatChannelList,
+} from "modules/group/services/getGroup"
+import { useState } from "react"
 import { FaHashtag } from "react-icons/fa6"
 import { ImBin } from "react-icons/im"
 import { MdAdd } from "react-icons/md"
@@ -26,10 +30,11 @@ interface Props {
 }
 
 export default function ChatChannels({ groupId, isOwner }: Props) {
+  const navigate = useNavigate()
+  const [chatChannel, setChatChannel] = useState<GetGroupChatChannelResponse>()
+
   const disclosureAddChatChannel = useDisclosure()
   const disclosureEditChatChannel = useDisclosure()
-
-  const navigate = useNavigate()
 
   const { groupMessageChannelId } = useParams<keyof GroupMessageParams>()
 
@@ -38,6 +43,8 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
   const handleClick = (groupChatChannelId: string) => {
     navigate(groupChatChannelId)
   }
+
+  console.log(groupId, 4893)
 
   return (
     <div className="space-y-2">
@@ -104,7 +111,10 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
                         <DropdownItem
                           key="edit_chat_channel"
                           endContent={<TbEdit size={18} />}
-                          onClick={disclosureEditChatChannel.onOpen}
+                          onClick={() => {
+                            setChatChannel(chatChannel)
+                            disclosureEditChatChannel.onOpen()
+                          }}
                         >
                           Edit Chat Channel
                         </DropdownItem>
@@ -118,22 +128,6 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
                         </DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
-
-                    <Modal
-                      size="lg"
-                      isOpen={disclosureEditChatChannel.isOpen}
-                      onClose={disclosureEditChatChannel.onClose}
-                    >
-                      <ModalContent>
-                        {(onClose) => (
-                          <EditChatChannelModal
-                            onClose={onClose}
-                            groupId={groupId}
-                            groupChannel={chatChannel}
-                          />
-                        )}
-                      </ModalContent>
-                    </Modal>
                   </>
                 )}
               </div>
@@ -141,6 +135,23 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
           )
         ) : (
           <></>
+        )}
+        {chatChannel && (
+          <Modal
+            size="lg"
+            isOpen={disclosureEditChatChannel.isOpen}
+            onClose={disclosureEditChatChannel.onClose}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <EditChatChannelModal
+                  onClose={onClose}
+                  groupId={groupId}
+                  groupChannel={chatChannel}
+                />
+              )}
+            </ModalContent>
+          </Modal>
         )}
       </div>
     </div>
