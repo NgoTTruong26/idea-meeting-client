@@ -13,6 +13,7 @@ import { useUser } from "store/user"
 import AddMembersModal from "../components/AddMembersModal"
 import UpdateGroupProfileModal from "../components/UpdateGroupProfileModal"
 import AddChatChannelModal from "../components/channels/AddChatChannelModal"
+import MembersListModal from "../components/groupChatMessages/MembersListModal"
 import { GetGroupProfileResponse } from "../services/getGroup"
 
 export default function HomeGroupChannel() {
@@ -25,6 +26,7 @@ export default function HomeGroupChannel() {
   const disclosureAddMembers = useDisclosure()
   const disclosureAddChatChannel = useDisclosure()
   const disclosureUpdateGroup = useDisclosure()
+  const disclosureGetMembersList = useDisclosure()
 
   return (
     <div className="relative flex justify-center items-center py-10">
@@ -38,8 +40,8 @@ export default function HomeGroupChannel() {
             {id === groupProfile.ownerId && (
               <>
                 <Button
-                  variant="bordered"
-                  color="primary"
+                  variant="flat"
+                  color="default"
                   onClick={disclosureUpdateGroup.onOpen}
                   fullWidth
                   startContent={<TbEdit size={25} />}
@@ -51,8 +53,8 @@ export default function HomeGroupChannel() {
                   </div>
                 </Button>
                 <Button
-                  variant="bordered"
-                  color="primary"
+                  variant="flat"
+                  color="default"
                   onClick={disclosureAddChatChannel.onOpen}
                   fullWidth
                   startContent={<MdAddToPhotos size={25} />}
@@ -64,8 +66,8 @@ export default function HomeGroupChannel() {
                   </div>
                 </Button>
                 <Button
-                  variant="bordered"
-                  color="primary"
+                  variant="flat"
+                  color="default"
                   onClick={disclosureAddMembers.onOpen}
                   fullWidth
                   startContent={<MdPersonAddAlt size={25} />}
@@ -122,9 +124,9 @@ export default function HomeGroupChannel() {
               </>
             )}
             <Button
-              variant="bordered"
-              color="primary"
-              /*  onPress={disclosureUpdateGroup.onOpen} */
+              variant="flat"
+              color="default"
+              onClick={disclosureGetMembersList.onOpen}
               fullWidth
               startContent={<MdGroups2 size={25} />}
               endContent={<IoIosArrowForward size={20} />}
@@ -136,7 +138,7 @@ export default function HomeGroupChannel() {
             </Button>
             {id === groupProfile.ownerId ? (
               <Button
-                variant="bordered"
+                variant="flat"
                 color="danger"
                 /* onPress={() => handleOpen(b)} */
                 fullWidth
@@ -150,7 +152,7 @@ export default function HomeGroupChannel() {
               </Button>
             ) : (
               <Button
-                variant="bordered"
+                variant="flat"
                 color="danger"
                 /* onPress={() => handleOpen(b)} */
                 fullWidth
@@ -163,6 +165,22 @@ export default function HomeGroupChannel() {
                 </div>
               </Button>
             )}
+
+            <Modal
+              isOpen={disclosureGetMembersList.isOpen}
+              onClose={disclosureGetMembersList.onClose}
+              size="lg"
+              className="max-h-[600px]"
+            >
+              <ModalContent>
+                {(onClose) => (
+                  <MembersListModal
+                    onClose={onClose}
+                    groupId={groupProfile.id}
+                  />
+                )}
+              </ModalContent>
+            </Modal>
           </div>
         </div>
       </div>

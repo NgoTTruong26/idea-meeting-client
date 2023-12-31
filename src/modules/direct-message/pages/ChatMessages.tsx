@@ -5,8 +5,7 @@ import { socket } from "configs/socket"
 import { DirectCallChannelType } from "modules/direct-call/types/direct-call-channel"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { HiDotsVertical } from "react-icons/hi"
-import { MdPhone, MdVideocam } from "react-icons/md"
+import { MdPhone } from "react-icons/md"
 import { useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
@@ -108,25 +107,24 @@ export default function ChatMessages() {
               </div>
             </div>
           </div>
-          <div
-            className={clsx("flex text-primary-500", "[&>button]:rounded-full")}
-          >
-            <Button
-              isIconOnly
-              variant="light"
-              color="primary"
-              size="lg"
-              onClick={handleRequestCall}
+          {!!friend.data.isFriendship && (
+            <div
+              className={clsx(
+                "flex text-primary-500",
+                "[&>button]:rounded-full",
+              )}
             >
-              <MdPhone size="25" />
-            </Button>
-            <Button isIconOnly variant="light" color="primary" size="lg">
-              <MdVideocam size="25" />
-            </Button>
-            <Button isIconOnly variant="light" color="primary" size="lg">
-              <HiDotsVertical size="25" />
-            </Button>
-          </div>
+              <Button
+                isIconOnly
+                variant="light"
+                color="primary"
+                size="lg"
+                onClick={handleRequestCall}
+              >
+                <MdPhone size="25" />
+              </Button>
+            </div>
+          )}
         </div>
         {!friend.data.isFriendship && (
           <FriendRequest

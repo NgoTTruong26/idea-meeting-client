@@ -29,8 +29,8 @@ export default function Home() {
           <div className="text-3xl font-bold ">Welcome to IdeaM</div>
           <div className="w-full space-y-2">
             <Button
-              variant="bordered"
-              color="primary"
+              variant="flat"
+              color="default"
               onPress={disclosureCreateGroup.onOpen}
               fullWidth
               startContent={<AiOutlineUsergroupAdd size={25} />}
@@ -42,8 +42,8 @@ export default function Home() {
               </div>
             </Button>
             <Button
-              variant="bordered"
-              color="primary"
+              variant="flat"
+              color="default"
               onPress={disclosureSearchFriend.onOpen}
               fullWidth
               startContent={<RiUserSearchLine size={25} />}
@@ -64,8 +64,8 @@ export default function Home() {
               }}
             >
               <Button
-                variant="bordered"
-                color="primary"
+                variant="flat"
+                color="default"
                 onClick={disclosureFriendRequest.onOpen}
                 fullWidth
                 startContent={<RiUserSharedLine size={25} />}
@@ -78,8 +78,8 @@ export default function Home() {
               </Button>
             </Badge>
             <Button
-              variant="bordered"
-              color="primary"
+              variant="flat"
+              color="default"
               /* onPress={() => handleOpen(b)} */
               fullWidth
               startContent={<TbUserEdit size={25} />}

@@ -24,9 +24,15 @@ export function useCreateGroup() {
   })
 }
 
-export async function createChatChannel(data: CreateChatChannelRequest) {
+export async function createChatChannel({
+  groupId,
+  ...data
+}: CreateChatChannelRequest) {
   return (
-    await api.post<CreateChatChannelResponse>("/group-message-channel", data)
+    await api.post<CreateChatChannelResponse>(
+      `/group-message-channel/${groupId}`,
+      data,
+    )
   ).data
 }
 

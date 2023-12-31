@@ -54,7 +54,7 @@ export default function SearchFriendModal({ onClose }: Props) {
         />
       </ModalHeader>
       <ModalBody className="overflow-hidden">
-        <div className="flex-1 overflow-y-auto space-y-2">
+        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
           {!searchCharacters ? (
             <div className="flex flex-col items-center">
               <Avatar
@@ -83,7 +83,7 @@ export default function SearchFriendModal({ onClose }: Props) {
                 >
                   <User
                     name={user.fullName}
-                    description={user.gender?.toLowerCase()}
+                    description={user.gender?.toLowerCase() || "Not Yet Added"}
                     avatarProps={{
                       src: user.avatarUrl,
                       size: "lg",
