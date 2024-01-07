@@ -6,7 +6,7 @@ import { DirectCallChannelType } from "modules/direct-call/types/direct-call-cha
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { MdPhone } from "react-icons/md"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
 import { WsEvent, WsResponse } from "types/ws"
@@ -20,6 +20,7 @@ import { useGetFriend } from "../services/getFriend"
 
 export default function ChatMessages() {
   const { user } = useUser()
+  const navigate = useNavigate()
 
   const [messages, setMessages] = useState<MessageFromSocket[]>([])
 
@@ -68,6 +69,12 @@ export default function ChatMessages() {
       queryKey: ["get-message-from-friend"],
     })
   }, [friendId])
+
+  useEffect(() => {
+    if (friend.isError) {
+      navigate("/")
+    }
+  }, [friend.isError])
 
   if (!friend.data) {
     return <div></div>

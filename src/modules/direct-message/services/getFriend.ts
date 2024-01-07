@@ -42,6 +42,7 @@ export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
         ).data
       } catch (error) {
         toast.error("Can't get friend list")
+        throw error
       }
     },
     initialPageParam: {
@@ -62,6 +63,7 @@ export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
         page: page + 1,
       }
     },
+    retry: 0,
   })
 }
 
@@ -70,6 +72,7 @@ export async function getFriend(targetId: string) {
     return (await api.get<GetFriendResponse>(`/user/${targetId}`)).data
   } catch (error) {
     toast.error("Can't get friend")
+    throw error
   }
 }
 
@@ -77,5 +80,6 @@ export function useGetFriend({ targetId }: GetFriendRequest, userId?: string) {
   return useQuery({
     queryKey: ["get-friend", userId, targetId],
     queryFn: async () => await getFriend(targetId),
+    retry: 0,
   })
 }

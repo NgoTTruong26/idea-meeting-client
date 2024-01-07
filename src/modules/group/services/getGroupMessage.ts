@@ -54,6 +54,7 @@ export async function getGroupMessageListChannel({
     ).data
   } catch (error) {
     toast.error("Can't get Message")
+    throw error
   }
 }
 

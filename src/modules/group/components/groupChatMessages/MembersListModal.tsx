@@ -10,6 +10,8 @@ import {
 import { useGetGroupMembersList } from "modules/group/services/getGroupMembers"
 import LoadingSearchFriend from "modules/user/components/LoadingSearchFriend"
 import { FaCrown } from "react-icons/fa6"
+import { ImBin } from "react-icons/im"
+import { TbMessageCircle2Filled } from "react-icons/tb"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
 
@@ -83,22 +85,34 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                   />
                   <div className="flex gap-2">
                     {user.user.profile.userId !== id && (
-                      <Button
-                        onClick={() => {
-                          navigate(
-                            `/direct-message/${user.user.profile.userId}`,
-                          )
-                        }}
-                        variant="bordered"
-                        color="primary"
-                      >
-                        Message
-                      </Button>
+                      <Tooltip content="Message" className="capitalize">
+                        <Button
+                          isIconOnly
+                          onClick={() => {
+                            navigate(
+                              `/direct-message/${user.user.profile.userId}`,
+                            )
+                          }}
+                          variant="flat"
+                          color="primary"
+                          radius="full"
+                        >
+                          <TbMessageCircle2Filled size={20} />
+                        </Button>
+                      </Tooltip>
                     )}
                     {isOwner && user.user.profile.userId !== id && (
-                      <Button onClick={() => {}} variant="flat" color="danger">
-                        Delete
-                      </Button>
+                      <Tooltip content="Delete" className="capitalize">
+                        <Button
+                          isIconOnly
+                          onClick={() => {}}
+                          variant="flat"
+                          color="danger"
+                          radius="full"
+                        >
+                          <ImBin size={20} />
+                        </Button>
+                      </Tooltip>
                     )}
                   </div>
                 </div>
@@ -115,7 +129,7 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="light" onPress={onClose}>
+        <Button color="danger" variant="flat" onPress={onClose}>
           Close
         </Button>
       </ModalFooter>

@@ -9,7 +9,7 @@ import {
   ModalContent,
   useDisclosure,
 } from "@nextui-org/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AiOutlineUser } from "react-icons/ai"
 import { FaCrown } from "react-icons/fa6"
 import {
@@ -21,7 +21,7 @@ import {
   MdPersonAddAlt,
 } from "react-icons/md"
 import { TbEdit } from "react-icons/tb"
-import { Outlet, useParams } from "react-router-dom"
+import { Outlet, useNavigate, useParams } from "react-router-dom"
 import { useUser } from "store/user"
 import AddMembersModal from "../components/AddMembersModal"
 import UpdateGroupProfileModal from "../components/UpdateGroupProfileModal"
@@ -33,6 +33,7 @@ import { useGetGroupProfile } from "../services/getGroup"
 
 export default function DirectGroupMessages() {
   const { user } = useUser()
+  const navigate = useNavigate()
 
   const disclosureAddMembers = useDisclosure()
   const disclosureAddChatChannel = useDisclosure()
@@ -48,6 +49,13 @@ export default function DirectGroupMessages() {
   const handleOpenChange = (isOpen: boolean) => {
     setShowDropdown(isOpen)
   }
+
+  useEffect(() => {
+    if (groupProfile.isError) {
+      navigate("/")
+      return
+    }
+  }, [groupProfile.isError])
 
   return (
     <div className="grid grid-cols-[22rem,1fr]">

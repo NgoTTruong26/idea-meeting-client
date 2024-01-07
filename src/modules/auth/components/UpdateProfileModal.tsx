@@ -16,6 +16,7 @@ import { FormProvider, useForm } from "react-hook-form"
 import { AiOutlineUser } from "react-icons/ai"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
+import { UserProfile } from "types/user"
 import * as yup from "yup"
 
 const formSchema = yup.object({
@@ -24,12 +25,14 @@ const formSchema = yup.object({
   gender: yup.string().label("Gender").required(),
 })
 
-export default function UpdateProfileModal() {
+interface Props extends Partial<UserProfile> {}
+
+export default function UpdateProfileModal(profile: Props) {
   const { user } = useUser()
 
   const navigate = useNavigate()
 
-  const [avatarUrl, setAvatarUrl] = useState<string>()
+  const [avatarUrl, setAvatarUrl] = useState<string>(profile.avatarUrl || "")
 
   const onSuccess = (data: AxiosResponse<string>) => {
     setAvatarUrl(data.data)
@@ -48,8 +51,8 @@ export default function UpdateProfileModal() {
     Required<Omit<UpdateUserProfileRequest, "userId" | "avatarUrl">>
   >({
     defaultValues: {
-      fullName: "",
-      gender: "",
+      fullName: profile.fullName,
+      gender: profile.gender,
     },
     resolver: yupResolver(formSchema),
   })
@@ -112,6 +115,11 @@ export default function UpdateProfileModal() {
                 name="gender"
                 t="select"
                 label="Gender"
+                defaultSelectedKeys={
+                  !!methods.getValues("gender")
+                    ? [methods.getValues("gender")]
+                    : undefined
+                }
                 options={[
                   { label: "Male", value: "MALE" },
                   { label: "Female", value: "FEMALE" },

@@ -56,10 +56,14 @@ export default function SignIn() {
   }, [user.auth, user.setUser])
 
   useEffect(() => {
-    if (getUserProfile.isSuccess || getUserProfile.isError) {
+    if (
+      getUserProfile.isSuccess ||
+      getUserProfile.isError ||
+      !user.auth.accessToken
+    ) {
       setLoading(false)
     }
-  }, [getUserProfile.isSuccess, getUserProfile.isError])
+  }, [getUserProfile.isSuccess, getUserProfile.isError, user.auth.accessToken])
 
   return loading ? (
     <LoadingPage />
@@ -104,7 +108,7 @@ export default function SignIn() {
         onOpenChange={onOpenChange}
         isDismissable={false}
         hideCloseButton
-        size="md"
+        size="lg"
         classNames={{
           wrapper: "max-sm:items-center",
         }}

@@ -98,6 +98,7 @@ export default function FriendRequest({
               { toUserId: profile.userId },
               {
                 onSuccess: () => {
+                  toast.success(`Sent request to ${profile.fullName}`)
                   queryClient.refetchQueries({
                     queryKey: ["get-friend"],
                   })

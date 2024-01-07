@@ -5,21 +5,29 @@ import {
   ModalContent,
   useDisclosure,
 } from "@nextui-org/react"
+import UpdateProfileModal from "modules/auth/components/UpdateProfileModal"
 import CreateGroupModal from "modules/group/components/CreateGroupModal"
+import JoinGroupModal from "modules/group/components/JoinGroupModal"
 import SearchFriendModal from "modules/user/components/SearchFriendModal"
 import { AiOutlineUsergroupAdd } from "react-icons/ai"
 import { IoIosArrowForward } from "react-icons/io"
 import { RiUserSearchLine, RiUserSharedLine } from "react-icons/ri"
 import { TbUserEdit } from "react-icons/tb"
+import { useUser } from "store/user"
 import FriendRequestModal from "../components/PrivateChannels/FriendRequestModal"
 import { useCountFriendRequestToMe } from "../services/countFriendRequestToMe"
 
 export default function Home() {
+  const {
+    user: { profile },
+  } = useUser()
+
   const disclosureSearchFriend = useDisclosure()
   const disclosureCreateGroup = useDisclosure()
   const disclosureFriendRequest = useDisclosure()
-
   const countFriendRequestToMe = useCountFriendRequestToMe()
+  const disclosureJoinGroup = useDisclosure()
+  const disclosureUpdateProfile = useDisclosure()
 
   return (
     <div className="relative flex justify-center items-center py-10">
@@ -44,7 +52,7 @@ export default function Home() {
             <Button
               variant="flat"
               color="default"
-              /* onPress={disclosureCreateGroup.onOpen} */
+              onPress={disclosureJoinGroup.onOpen}
               fullWidth
               startContent={<AiOutlineUsergroupAdd size={25} />}
               endContent={<IoIosArrowForward size={20} />}
@@ -93,7 +101,7 @@ export default function Home() {
             <Button
               variant="flat"
               color="default"
-              /* onPress={() => handleOpen(b)} */
+              onPress={disclosureUpdateProfile.onOpen}
               fullWidth
               startContent={<TbUserEdit size={25} />}
               endContent={<IoIosArrowForward size={20} />}
@@ -118,6 +126,16 @@ export default function Home() {
         </ModalContent>
       </Modal>
       <Modal
+        isOpen={disclosureJoinGroup.isOpen}
+        onClose={disclosureJoinGroup.onClose}
+        size="lg"
+        className="max-h-[600px]"
+      >
+        <ModalContent>
+          {(onClose) => <JoinGroupModal onClose={onClose} />}
+        </ModalContent>
+      </Modal>
+      <Modal
         size="lg"
         isOpen={disclosureCreateGroup.isOpen}
         onClose={disclosureCreateGroup.onClose}
@@ -134,6 +152,18 @@ export default function Home() {
           <FriendRequestModal
             countFriendRequestToMe={countFriendRequestToMe.data}
           />
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={disclosureUpdateProfile.isOpen}
+        onOpenChange={disclosureUpdateProfile.onOpenChange}
+        size="lg"
+        classNames={{
+          wrapper: "max-sm:items-center",
+        }}
+      >
+        <ModalContent>
+          <UpdateProfileModal {...profile} />
         </ModalContent>
       </Modal>
     </div>

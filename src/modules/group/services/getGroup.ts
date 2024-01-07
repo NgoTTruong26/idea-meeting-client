@@ -93,6 +93,7 @@ export async function getGroupProfile(groupId: string) {
     return (await api.get<GetGroupProfileResponse>(`/group/${groupId}`)).data
   } catch (error) {
     toast.error("Can't get group")
+    throw error
   }
 }
 
@@ -100,6 +101,8 @@ export function useGetGroupProfile({ groupId }: GetGroupProfileRequest) {
   return useQuery({
     queryKey: ["get-group", groupId],
     queryFn: async () => await getGroupProfile(groupId),
+    refetchInterval: 5000,
+    retry: 0,
   })
 }
 

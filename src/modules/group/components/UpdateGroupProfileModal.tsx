@@ -132,7 +132,7 @@ export default function UpdateGroupProfileModal({
           <Button
             type="submit"
             color="primary"
-            isLoading={updateGroup.isPending}
+            isLoading={updateGroup.isPending || isPendingUpload}
           >
             Submit
           </Button>

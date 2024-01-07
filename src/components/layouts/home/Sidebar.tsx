@@ -1,5 +1,6 @@
 import { Divider, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
 import { queryClient } from "configs/queryClient"
+import UpdateProfileModal from "modules/auth/components/UpdateProfileModal"
 import CreateGroupModal from "modules/group/components/CreateGroupModal"
 import { useGetGroupList } from "modules/group/services/getGroup"
 import { TbLogout } from "react-icons/tb"
@@ -8,8 +9,12 @@ import { useUser } from "store/user"
 import SidebarItem from "./SidebarItem"
 
 export default function Sidebar() {
-  const { clear } = useUser()
+  const {
+    clear,
+    user: { profile },
+  } = useUser()
 
+  const disclosureUpdateProfile = useDisclosure()
   const disclosureAddGroup = useDisclosure()
 
   const getGetGroupList = useGetGroupList({})
@@ -19,7 +24,10 @@ export default function Sidebar() {
   return (
     <div className="flex flex-col justify-between bg-slate-200 py-2 max-h-screen overflow-hidden">
       <div className="space-y-2  max-h-[calc(100vh - 30px)] overflow-x-hidden overflow-y-auto pb-6">
-        <SidebarItem label="Update Profile" handleClick={() => {}} />
+        <SidebarItem
+          label="Update Profile"
+          handleClick={disclosureUpdateProfile.onOpen}
+        />
         <SidebarItem
           label="Direct Messages"
           handleClick={() => {
@@ -61,6 +69,18 @@ export default function Sidebar() {
         />
       </div>
 
+      <Modal
+        isOpen={disclosureUpdateProfile.isOpen}
+        onOpenChange={disclosureUpdateProfile.onOpenChange}
+        size="lg"
+        classNames={{
+          wrapper: "max-sm:items-center",
+        }}
+      >
+        <ModalContent>
+          <UpdateProfileModal {...profile} />
+        </ModalContent>
+      </Modal>
       <Modal
         size="lg"
         isOpen={disclosureAddGroup.isOpen}
