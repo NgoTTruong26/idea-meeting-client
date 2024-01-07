@@ -1,4 +1,5 @@
 import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
+import { FaCrown } from "react-icons/fa6"
 import { ImBin } from "react-icons/im"
 import { IoIosArrowForward, IoIosLogOut } from "react-icons/io"
 import {
@@ -76,6 +77,21 @@ export default function HomeGroupChannel() {
                 >
                   <div className="flex-1 flex justify-start mx-2 font-semibold">
                     Add Members
+                  </div>
+                </Button>
+                <Button
+                  variant="flat"
+                  color="default"
+                  onClick={disclosureGetMembersList.onOpen}
+                  fullWidth
+                  startContent={
+                    <FaCrown size={25} className="text-yellow-500" />
+                  }
+                  endContent={<IoIosArrowForward size={20} />}
+                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
+                >
+                  <div className="flex-1 flex justify-start mx-2 font-semibold">
+                    Transfer Ownership
                   </div>
                 </Button>
                 <Modal
@@ -169,12 +185,13 @@ export default function HomeGroupChannel() {
             <Modal
               isOpen={disclosureGetMembersList.isOpen}
               onClose={disclosureGetMembersList.onClose}
-              size="lg"
+              size="xl"
               className="max-h-[600px]"
             >
               <ModalContent>
                 {(onClose) => (
                   <MembersListModal
+                    isOwner={id === groupProfile.ownerId}
                     onClose={onClose}
                     groupId={groupProfile.id}
                   />

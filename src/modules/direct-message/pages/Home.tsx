@@ -44,6 +44,19 @@ export default function Home() {
             <Button
               variant="flat"
               color="default"
+              /* onPress={disclosureCreateGroup.onOpen} */
+              fullWidth
+              startContent={<AiOutlineUsergroupAdd size={25} />}
+              endContent={<IoIosArrowForward size={20} />}
+              className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
+            >
+              <div className="flex-1 flex justify-start mx-2 font-semibold">
+                Join group
+              </div>
+            </Button>
+            <Button
+              variant="flat"
+              color="default"
               onPress={disclosureSearchFriend.onOpen}
               fullWidth
               startContent={<RiUserSearchLine size={25} />}

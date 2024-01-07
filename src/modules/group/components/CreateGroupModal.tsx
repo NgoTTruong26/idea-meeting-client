@@ -124,7 +124,7 @@ export default function CreateGroupModal({ onClose }: Props) {
           <Button
             type="submit"
             color="primary"
-            isLoading={createGroup.isPending}
+            isLoading={createGroup.isPending || isPendingUpload}
           >
             Action
           </Button>

@@ -36,16 +36,16 @@ export default function FriendRequest({
   const cancel = useMutation({
     mutationFn: cancelFriendRequest,
     onSuccess() {
-      toast.success(`Canceled friend request from '${profile.fullName}'`)
+      toast.success(`Canceled friend request`)
       queryClient.invalidateQueries({
         queryKey: ["countFriendRequestToMe"],
       })
       queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
-      queryClient.refetchQueries({ queryKey: ["get-friend", profile.userId] })
+      queryClient.refetchQueries({ queryKey: ["get-friend"] })
     },
   })
 
-  const { mutate: sendFriendRequest } = useSendFriendRequest()
+  const sendFriendRequest = useSendFriendRequest()
 
   return friendshipRequestFromMe ? (
     <div className="flex justify-between gap-5 w-full py-4 px-6 bg-default-100">
@@ -81,14 +81,20 @@ export default function FriendRequest({
         <span>Send friend request to {profile.fullName}</span>
       </div>
       {friendshipRequestToMe ? (
-        <Button variant="flat" color="danger">
+        <Button
+          variant="flat"
+          color="danger"
+          isLoading={cancel.isPending}
+          onClick={() => cancel.mutate(profile.userId)}
+        >
           Cancel request
         </Button>
       ) : (
         <Button
           variant="flat"
+          isLoading={sendFriendRequest.isPending}
           onClick={() =>
-            sendFriendRequest(
+            sendFriendRequest.mutate(
               { toUserId: profile.userId },
               {
                 onSuccess: () => {

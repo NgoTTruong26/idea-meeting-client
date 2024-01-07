@@ -57,7 +57,6 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
   })
 
   const onSubmit = (data: GenerateInviteCodeRequest) => {
-    console.log(data)
     if (
       !!data.inviteCodeMaxNumberOfUses &&
       data.inviteCodeMaxNumberOfUses > 0
@@ -75,7 +74,7 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
       return
     }
     mutate(
-      { groupId: groupProfile.id, inviteCodeMaxNumberOfUses: undefined },
+      { groupId: groupProfile.id, ...data },
       {
         onSuccess: () => {
           queryClient.refetchQueries({

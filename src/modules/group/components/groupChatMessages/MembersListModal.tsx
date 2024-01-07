@@ -3,19 +3,23 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Tooltip,
   User,
 } from "@nextui-org/react"
+
 import { useGetGroupMembersList } from "modules/group/services/getGroupMembers"
 import LoadingSearchFriend from "modules/user/components/LoadingSearchFriend"
+import { FaCrown } from "react-icons/fa6"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
 
 interface Props {
+  isOwner: boolean
   groupId: string
   onClose: () => void
 }
 
-export default function MembersListModal({ onClose, groupId }: Props) {
+export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
   const navigate = useNavigate()
 
   const getGroupMembersList = useGetGroupMembersList({ groupId })
@@ -41,9 +45,28 @@ export default function MembersListModal({ onClose, groupId }: Props) {
                 >
                   <User
                     name={
-                      user.user.profile.userId !== id
-                        ? user.user.profile.fullName
-                        : `Me (${user.user.profile.fullName})`
+                      <div className="relative flex items-center gap-2">
+                        <div>
+                          {user.user.profile.userId !== id
+                            ? user.user.profile.fullName
+                            : `Me (${user.user.profile.fullName})`}
+                        </div>
+
+                        {user.isOwner && (
+                          <Tooltip
+                            content={"Group Owner"}
+                            className="relative capitalize"
+                          >
+                            <Button
+                              isIconOnly
+                              variant="light"
+                              className="h-fit min-w-fit w-fit"
+                            >
+                              <FaCrown size={18} className="text-yellow-500" />
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </div>
                     }
                     description={
                       user.user.profile.gender?.toLowerCase() || "Not Yet Added"
@@ -58,17 +81,26 @@ export default function MembersListModal({ onClose, groupId }: Props) {
                       description: "capitalize",
                     }}
                   />
-                  {user.user.profile.userId !== id && (
-                    <Button
-                      onClick={() => {
-                        navigate(`/direct-message/${user.user.profile.userId}`)
-                      }}
-                      variant="bordered"
-                      color="primary"
-                    >
-                      Send Message
-                    </Button>
-                  )}
+                  <div className="flex gap-2">
+                    {user.user.profile.userId !== id && (
+                      <Button
+                        onClick={() => {
+                          navigate(
+                            `/direct-message/${user.user.profile.userId}`,
+                          )
+                        }}
+                        variant="bordered"
+                        color="primary"
+                      >
+                        Message
+                      </Button>
+                    )}
+                    {isOwner && user.user.profile.userId !== id && (
+                      <Button onClick={() => {}} variant="flat" color="danger">
+                        Delete
+                      </Button>
+                    )}
+                  </div>
                 </div>
               )),
             )
