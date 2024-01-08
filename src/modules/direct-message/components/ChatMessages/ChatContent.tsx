@@ -12,26 +12,31 @@ import MessageFromMe from "./MessageFromMe"
 interface Props {
   directMessageChannelId: string
   messages: MessageFromSocket[]
-  friendProfile: UserProfile
+  profile: UserProfile
   isOnline: boolean
 }
 
 export default function ChatContent({
   directMessageChannelId,
   messages,
-  friendProfile,
+  profile,
   isOnline,
 }: Props) {
-  const { id } = useUser()
+  const { user } = useUser()
 
   const {
     data: dataResponse,
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useGetMessageListFromFriend({
-    directMessageChannelId,
-  })
+  } = useGetMessageListFromFriend(
+    {
+      directMessageChannelId,
+    },
+    user.id,
+  )
+
+  console.log(directMessageChannelId, 123456)
 
   const { ref, inView } = useInView()
 
@@ -48,38 +53,42 @@ export default function ChatContent({
   return (
     <>
       {messages.map((message, idx) =>
-        message.userId === id ? (
+        message.userId === user.id &&
+        message.directMessageChannelId === directMessageChannelId ? (
           <MessageFromMe
             key={idx}
             id={`${idx}`}
             message={message.value}
             isPrevsMessageFromMe={
-              messages[idx - 1] ? messages[idx - 1].userId === id : true
+              messages[idx - 1] ? messages[idx - 1].userId === user.id : true
             }
             updatedAt={message.updatedAt}
           />
         ) : (
-          <MessageFromFriend
-            key={idx}
-            id={`${idx}`}
-            message={message.value}
-            profile={friendProfile}
-            isPrevsMessageFromMe={
-              messages[idx - 1] ? messages[idx - 1].userId === id : true
-            }
-            updatedAt={message.updatedAt}
-          />
+          message.userId === profile.userId &&
+          message.directMessageChannelId === directMessageChannelId && (
+            <MessageFromFriend
+              key={idx}
+              id={`${idx}`}
+              message={message.value}
+              profile={profile}
+              isPrevsMessageFromMe={
+                messages[idx - 1] ? messages[idx - 1].userId === user.id : true
+              }
+              updatedAt={message.updatedAt}
+            />
+          )
         ),
       )}
       {dataResponse.pages.map(
         (page, pageIdx) =>
           page &&
           page.data.map((message, idx) =>
-            message.userId === id ? (
+            message.userId === user.id ? (
               <MessageFromMe
                 ref={
                   pageIdx === dataResponse.pages.length - 1 &&
-                  idx === page.data.length / 2
+                  idx >= Math.ceil(page.data.length * 0.6)
                     ? ref
                     : undefined
                 }
@@ -87,46 +96,48 @@ export default function ChatContent({
                 id={message.id}
                 message={message.value}
                 isPrevsMessageFromMe={
-                  page.data[idx - 1] ? page.data[idx - 1].userId === id : true
-                }
-                updatedAt={message.updatedAt}
-              />
-            ) : (
-              <MessageFromFriend
-                ref={
-                  pageIdx === dataResponse.pages.length - 1 &&
-                  idx === page.data.length / 2
-                    ? ref
-                    : undefined
-                }
-                key={message.id}
-                id={message.id}
-                message={message.value}
-                profile={message.user.profile}
-                isPrevsMessageFromMe={
-                  (idx === 0 &&
-                    messages.length > 0 &&
-                    messages[messages.length - 1].userId !== id) ||
-                  (idx === 0 &&
-                    pageIdx > 0 &&
-                    dataResponse.pages[pageIdx - 1]?.data[
-                      dataResponse.pages[pageIdx - 1]!.data.length - 1
-                    ].userId !== id)
-                    ? false
-                    : page.data[idx - 1]
-                    ? page.data[idx - 1].userId === id
+                  page.data[idx - 1]
+                    ? page.data[idx - 1].userId === user.id
                     : true
                 }
                 updatedAt={message.updatedAt}
               />
+            ) : (
+              message.userId === profile.userId && (
+                <MessageFromFriend
+                  ref={
+                    pageIdx === dataResponse.pages.length - 1 &&
+                    idx >= Math.ceil(page.data.length * 0.6)
+                      ? ref
+                      : undefined
+                  }
+                  key={message.id}
+                  id={message.id}
+                  message={message.value}
+                  profile={message.user.profile}
+                  isPrevsMessageFromMe={
+                    (idx === 0 &&
+                      messages.length > 0 &&
+                      messages[messages.length - 1].userId !== user.id) ||
+                    (idx === 0 &&
+                      pageIdx > 0 &&
+                      dataResponse.pages[pageIdx - 1]?.data[
+                        dataResponse.pages[pageIdx - 1]!.data.length - 1
+                      ].userId !== user.id)
+                      ? false
+                      : page.data[idx - 1]
+                      ? page.data[idx - 1].userId === user.id
+                      : true
+                  }
+                  updatedAt={message.updatedAt}
+                />
+              )
             ),
           ),
       )}
 
       {isFetchingNextPage && <LoadingChatContent />}
-      {!hasNextPage && (
-        <IntroduceFriend {...friendProfile} isOnline={isOnline} />
-      )}
+      {!hasNextPage && <IntroduceFriend {...profile} isOnline={isOnline} />}
     </>
   )
 }

@@ -1,12 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button } from "@nextui-org/react"
 import Field from "components/core/field"
-import { SocketEvent, socket } from "configs/socket"
+import { socket } from "configs/socket"
 import { useEffect } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { GoSmiley } from "react-icons/go"
 import { LuSend } from "react-icons/lu"
 import { MdOutlineAttachFile } from "react-icons/md"
+import { WsEvent } from "types/ws"
 import { removeWhiteSpace } from "utils/removeWhiteSpace"
 import * as yup from "yup"
 import {
@@ -21,7 +22,6 @@ interface Props {
 }
 
 const formSchema = yup.object().shape({
-  directMessageChannelId: yup.string().required(),
   type: yup.string<MessageType>().required(),
   value: yup
     .string()
@@ -30,21 +30,23 @@ const formSchema = yup.object().shape({
 })
 
 export default function MessageInput({ directMessageChannelId }: Props) {
-  const methods = useForm<Required<FormValues>>({
-    defaultValues: {
-      directMessageChannelId,
-      type: "TEXT",
-      value: "",
+  const methods = useForm<Required<Omit<FormValues, "directMessageChannelId">>>(
+    {
+      defaultValues: {
+        type: "TEXT",
+        value: "",
+      },
+      resolver: yupResolver(formSchema),
     },
-    resolver: yupResolver(formSchema),
-  })
+  )
 
   const handleSubmit = methods.handleSubmit((data) => {
-    socket.emit<string>(SocketEvent.CREATE_DIRECT_MESSAGE, data)
+    socket.emit(WsEvent.CREATE_DIRECT_MESSAGE, {
+      ...data,
+      directMessageChannelId,
+    })
 
     methods.reset()
-
-    console.log(data)
   })
 
   useEffect(() => {

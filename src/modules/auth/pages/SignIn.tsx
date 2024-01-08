@@ -1,6 +1,9 @@
-import { Button } from "@nextui-org/react"
+import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
 import { useGoogleLogin } from "@react-oauth/google"
-import { useState } from "react"
+import LoadingPage from "components/common/LoadingPage"
+import { nav } from "constants/nav"
+import { useGetUserProfile } from "modules/user/services/getUserProfile"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
@@ -8,37 +11,63 @@ import UpdateProfileModal from "../components/UpdateProfileModal"
 import { useGoogleSignIn } from "../services/googleSignIn"
 
 export default function SignIn() {
-  const [showModalUpdate, setShowModalUpdate] = useState<boolean>(false)
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+  const [loading, setLoading] = useState<boolean>(true)
 
   const navigate = useNavigate()
+  const user = useUser()
   const googleSignIn = useGoogleSignIn()
-  const { setUser } = useUser()
+  const getUserProfile = useGetUserProfile()
   const handleGoogleSignIn = useGoogleLogin({
     flow: "auth-code",
     async onSuccess({ code }) {
       const data = await googleSignIn.mutateAsync({ code })
-      console.log(data.user.id)
 
-      setUser({
+      user.setAuth({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
-        profile: data.user.profile,
-        email: data.user.email,
-        id: data.user.id,
       })
 
-      if (!data.user.profile?.fullName) {
-        return setShowModalUpdate(true)
-      }
+      user.setUser(data.user)
 
-      navigate("/direct-message")
+      if (!data.user.profile?.fullName) onOpen()
+      else {
+        navigate(nav.DIRECT_MESSAGE)
+      }
     },
     onError() {
       toast.error("Can't sign in with Google")
     },
   })
 
-  return (
+  useEffect(() => {
+    if (user.auth.accessToken)
+      getUserProfile.mutate(undefined, {
+        onSuccess(data) {
+          if (data.profile.fullName) {
+            user.setUser(data)
+            navigate(nav.DIRECT_MESSAGE, {
+              replace: true,
+            })
+          }
+        },
+      })
+  }, [user.auth, user.setUser])
+
+  useEffect(() => {
+    if (
+      getUserProfile.isSuccess ||
+      getUserProfile.isError ||
+      !user.auth.accessToken
+    ) {
+      setLoading(false)
+    }
+  }, [getUserProfile.isSuccess, getUserProfile.isError, user.auth.accessToken])
+
+  return loading ? (
+    <LoadingPage />
+  ) : (
     <div className="min-h-screen grid md:grid-cols-2 place-items-center p-4">
       <img
         src="/images/sign-in-bg.jpg"
@@ -74,7 +103,20 @@ export default function SignIn() {
           </Button>
         </div>
       </div>
-      <UpdateProfileModal showModalUpdate={showModalUpdate} />
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={false}
+        hideCloseButton
+        size="lg"
+        classNames={{
+          wrapper: "max-sm:items-center",
+        }}
+      >
+        <ModalContent>
+          <UpdateProfileModal />
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

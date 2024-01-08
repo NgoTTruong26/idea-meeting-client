@@ -1,25 +1,14 @@
 import axios, { AxiosError, AxiosHeaders } from "axios"
-import { User } from "types/user"
-import { StorageValue } from "zustand/middleware"
-
-interface RefreshTokenResponse {
-  accessToken: string
-}
+import { refreshToken } from "modules/auth/services/refreshToken"
+import toast from "react-hot-toast"
+import { useUser } from "store/user"
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 })
 
 api.interceptors.request.use((config) => {
-  const userStorage = localStorage.getItem("user")
-
-  if (!userStorage) return config
-
-  const accessToken = (JSON.parse(userStorage) as StorageValue<User>).state
-    .accessToken
-
-  console.log(8091283)
-
+  const accessToken = useUser.getState().auth.accessToken
   if (accessToken)
     (config.headers as AxiosHeaders).set(
       "Authorization",
@@ -37,38 +26,19 @@ api.interceptors.response.use(
       error.response?.status === 401 &&
       config?.url !== "/auth/user/refresh-token"
     ) {
-      const userStorage = localStorage.getItem("user")
-
-      if (!userStorage) return Promise.reject(error)
-
-      const refreshToken = (JSON.parse(userStorage) as StorageValue<User>).state
-        .refreshToken
-
-      if (!refreshToken) {
+      const userAuth = useUser.getState().auth
+      if (!userAuth.refreshToken) {
         return Promise.reject(error)
       }
-
-      const accessToken = (
-        await api.post<RefreshTokenResponse>("/auth/user/refresh-token", {
-          refreshToken,
-        })
-      ).data.accessToken
-
-      console.log(accessToken, 2)
-
-      if (accessToken) {
-        config?.headers.set("Authorization", `Bearer ${accessToken}`)
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...(JSON.parse(userStorage) as StorageValue<User>),
-            state: {
-              ...(JSON.parse(userStorage) as StorageValue<User>).state,
-              accessToken,
-            },
-          } as StorageValue<User>),
-        )
-        return api(config!)
+      try {
+        const data = await refreshToken({ refreshToken: userAuth.refreshToken })
+        if (data) {
+          useUser.getState().setAuth(data)
+          return api(config!)
+        }
+      } catch (error) {
+        toast.error("Session expired, please re-login")
+        useUser.getState().clear()
       }
     }
     return Promise.reject(error)

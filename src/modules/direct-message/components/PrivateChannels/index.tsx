@@ -1,23 +1,35 @@
-import { Tab, Tabs } from "@nextui-org/react"
-import Input from "components/core/field/Input"
+import {
+  Button,
+  Modal,
+  ModalContent,
+  Tab,
+  Tabs,
+  useDisclosure,
+} from "@nextui-org/react"
+import SearchFriendModal from "modules/user/components/SearchFriendModal"
 import { LuSearch } from "react-icons/lu"
 import Chat from "./Chat"
 import FriendList from "./FriendList"
+import FriendRequestList from "./FriendRequestList"
 
 export default function PrivateChannels() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
-    <div className="h-screen px-4 pb-5 border-x-2 bg-gray-50 space-y-5 overflow-y-auto">
-      <div className="sticky top-0 pt-5 pb-2 bg-gray-50 z-20">
+    <div className="h-screen px-4 pb-5 border-x-2 bg-white space-y-2 overflow-y-auto">
+      <div className="sticky top-0 pt-5 pb-2 bg-white z-20 space-y-2">
         <div className="text-3xl font-bold">Chats</div>
-        <div className="mt-5">
-          <Input
-            t="input"
-            placeholder="Search"
-            variant="bordered"
-            endContent={<LuSearch />}
-            size="lg"
-          />
-        </div>
+        <Button
+          variant="flat"
+          color="default"
+          onPress={onOpen}
+          className="justify-start"
+          startContent={<LuSearch size={20} />}
+          fullWidth
+          size="lg"
+        >
+          Search your friends...
+        </Button>
       </div>
       <div>
         <Tabs
@@ -36,10 +48,25 @@ export default function PrivateChannels() {
             <Chat />
           </Tab>
           <Tab key="friends" title="Friends">
-            <FriendList />
+            <div>
+              <FriendRequestList />
+              <FriendList />
+            </div>
           </Tab>
         </Tabs>
       </div>
+
+      <Modal
+        hideCloseButton
+        isOpen={isOpen}
+        onClose={onClose}
+        className="max-w-lg max-h-[600px]"
+        isDismissable={false}
+      >
+        <ModalContent>
+          {(onClose) => <SearchFriendModal onClose={onClose} />}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

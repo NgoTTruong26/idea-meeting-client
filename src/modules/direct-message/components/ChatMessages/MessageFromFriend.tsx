@@ -1,5 +1,5 @@
-import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
+import Avatar from "components/core/Avatar"
 import Tooltip from "components/core/Tooltip"
 import { LegacyRef, forwardRef } from "react"
 import { UserProfile } from "types/user"
@@ -37,7 +37,11 @@ const MessageFromFriend = forwardRef(
               {isPrevsMessageFromMe ? (
                 <div className="flex items-end px-2">
                   <Tooltip placement="right" content={profile.fullName}>
-                    <Avatar src={profile.avatarUrl} size="sm" />
+                    <Avatar
+                      name={profile.fullName}
+                      src={profile.avatarUrl}
+                      size="sm"
+                    />
                   </Tooltip>
                 </div>
               ) : (

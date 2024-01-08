@@ -1,27 +1,95 @@
-import { Divider } from "@nextui-org/react"
-import { AiOutlineUsergroupAdd } from "react-icons/ai"
-import { colors } from "styles/theme"
+import { Divider, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
+import { queryClient } from "configs/queryClient"
+import UpdateProfileModal from "modules/auth/components/UpdateProfileModal"
+import CreateGroupModal from "modules/group/components/CreateGroupModal"
+import { useGetGroupList } from "modules/group/services/getGroup"
+import { TbLogout } from "react-icons/tb"
+import { useNavigate } from "react-router-dom"
+import { useUser } from "store/user"
 import SidebarItem from "./SidebarItem"
 
 export default function Sidebar() {
+  const {
+    clear,
+    user: { profile },
+  } = useUser()
+
+  const disclosureUpdateProfile = useDisclosure()
+  const disclosureAddGroup = useDisclosure()
+
+  const getGetGroupList = useGetGroupList({})
+
+  const navigate = useNavigate()
+
   return (
-    <div className="py-2 bg-slate-200 space-y-2 max-h-[calc(100vh - 60px)] pb-12 overflow-x-hidden overflow-y-auto">
-      <SidebarItem label="Direct Messages" />
-      <div className="flex justify-center">
-        <Divider className="w-8" />
-      </div>
-      {Array.from({
-        length: 10,
-      }).map((_, idx) => (
+    <div className="flex flex-col justify-between bg-slate-200 py-2 max-h-screen overflow-hidden">
+      <div className="space-y-2  max-h-[calc(100vh - 30px)] overflow-x-hidden overflow-y-auto pb-6">
         <SidebarItem
-          label={String(idx)}
-          src="https://picsum.photos/200/300"
-          key={idx}
+          label="Update Profile"
+          handleClick={disclosureUpdateProfile.onOpen}
         />
-      ))}
-      <SidebarItem label="Add a group">
-        <AiOutlineUsergroupAdd size={24} color={colors.primary[500]} />
-      </SidebarItem>
+        <SidebarItem
+          label="Direct Messages"
+          handleClick={() => {
+            navigate(`/direct-message`)
+          }}
+        />
+        <div className="flex justify-center">
+          <Divider className="w-8" />
+        </div>
+        {getGetGroupList.data?.pages.map((page) =>
+          page.data.map((group, idx) => (
+            <SidebarItem
+              handleClick={() => {
+                navigate(`/group/${group.group.id}`)
+              }}
+              label={group.group.name}
+              src={group.group.imageUrl}
+              key={idx}
+            />
+          )),
+        )}
+
+        <SidebarItem
+          label="Add Group"
+          handleClick={disclosureAddGroup.onOpen}
+        />
+      </div>
+      <div className="space-y-2">
+        <div className="flex justify-center">
+          <Divider className="w-8" />
+        </div>
+        <SidebarItem
+          label="Log Out"
+          children={<TbLogout size={22} className="text-primary" />}
+          handleClick={() => {
+            queryClient.clear()
+            clear()
+          }}
+        />
+      </div>
+
+      <Modal
+        isOpen={disclosureUpdateProfile.isOpen}
+        onOpenChange={disclosureUpdateProfile.onOpenChange}
+        size="lg"
+        classNames={{
+          wrapper: "max-sm:items-center",
+        }}
+      >
+        <ModalContent>
+          <UpdateProfileModal {...profile} />
+        </ModalContent>
+      </Modal>
+      <Modal
+        size="lg"
+        isOpen={disclosureAddGroup.isOpen}
+        onClose={disclosureAddGroup.onClose}
+      >
+        <ModalContent>
+          {(onClose) => <CreateGroupModal onClose={onClose} />}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

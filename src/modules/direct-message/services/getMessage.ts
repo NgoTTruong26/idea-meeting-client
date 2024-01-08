@@ -8,6 +8,7 @@ import { MessageType } from "./sendMessage"
 export interface GetMessageListFromFriendRequest {
   directMessageChannelId: string
   take?: number
+  page?: number
 }
 
 export interface GetMessageFromFriendResponse {
@@ -30,7 +31,7 @@ export interface GetDirectMessageRequest {
   take?: number
 }
 
-export interface GetLastMessage {
+export interface GetLastMessageResponse {
   id: string
   createdAt: string
   updatedAt: string
@@ -50,30 +51,52 @@ export interface GetDirectMessageResponse {
     isOnline: boolean
     profile: UserProfile
   }
-  lastMessage: GetLastMessage
+  lastMessage: GetLastMessageResponse
 }
 
 export interface GetDirectMessageListResponse extends BaseGetList {
   data: GetDirectMessageResponse[]
 }
 
-export function useGetMessageListFromFriend({
+export async function getGetMessageListFromFriend({
   directMessageChannelId,
-  take = 20,
+  ...params
 }: GetMessageListFromFriendRequest) {
+  try {
+    console.log(directMessageChannelId, 678)
+    return (
+      await api.get<GetMessageListFromFriendResponse>(
+        `/direct-message-channel/${directMessageChannelId}/message`,
+        { params },
+      )
+    ).data
+  } catch (error) {
+    toast.error("Can't get Message")
+  }
+}
+
+export function useGetMessageListFromFriend(
+  { directMessageChannelId, take = 20, page }: GetMessageListFromFriendRequest,
+  userId: string,
+) {
+  console.log(directMessageChannelId, 123)
+
   return useInfiniteQuery({
-    queryKey: ["get-message-from-friend", directMessageChannelId, take],
-    queryFn: async ({ pageParam }) => {
-      try {
-        return (
-          await api.get<GetMessageListFromFriendResponse>(
-            `/direct-message-channel/${directMessageChannelId}?page=${pageParam.page}&take=${take}`,
-          )
-        ).data
-      } catch (error) {
-        toast.error("Can't get Message")
-      }
-    },
+    queryKey: [
+      "get-message-from-friend",
+      userId,
+      directMessageChannelId,
+      take,
+      page,
+    ],
+
+    queryFn: async ({ pageParam: { page } }) =>
+      await getGetMessageListFromFriend({
+        directMessageChannelId,
+        page,
+        take,
+      }),
+
     initialPageParam: {
       page: 1,
     } as PageParam,
@@ -98,15 +121,22 @@ export function useGetMessageListFromFriend({
 export function useGetDirectMessage({ take = 20 }: GetDirectMessageRequest) {
   return useInfiniteQuery({
     queryKey: ["get-direct-message", take],
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({ pageParam: { page } }) => {
       try {
         return (
           await api.get<GetDirectMessageListResponse>(
-            `/direct-message-channel?page=${pageParam.page}&take=${take}`,
+            `/direct-message-channel`,
+            {
+              params: {
+                take,
+                page,
+              },
+            },
           )
         ).data
       } catch (error) {
         toast.error("Can't get Message")
+        throw error
       }
     },
     initialPageParam: {
@@ -127,5 +157,6 @@ export function useGetDirectMessage({ take = 20 }: GetDirectMessageRequest) {
         page: page + 1,
       }
     },
+    refetchInterval: 10000,
   })
 }

@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { toast } from "react-hot-toast"
-import { FriendshipRequest } from "types/friendship"
+import { Friend } from "types/friend"
 import { BaseGetList, PageParam } from "types/getList"
 import { UserProfile } from "types/user"
 
@@ -10,7 +10,7 @@ export interface GetFriendListRequest {
 }
 
 export interface GetFriendListResponse extends BaseGetList {
-  data: UserProfile[]
+  data: Friend[]
 }
 
 export interface GetFriendRequest {
@@ -19,25 +19,30 @@ export interface GetFriendRequest {
 
 export interface GetFriendResponse {
   profile: UserProfile
+  wsId: string
   isOnline: boolean
   isFriendship: boolean
-  friendshipRequestFromMe: FriendshipRequest[]
-  friendshipRequestToMe: FriendshipRequest[]
-  directMessageChannelId: string
+  friendshipRequestFromMe: boolean
+  friendshipRequestToMe: boolean
+  directMessageChannelId?: string
 }
 
 export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
   return useInfiniteQuery({
-    queryKey: ["get-friend-list", take],
-    queryFn: async ({ pageParam }) => {
+    queryKey: ["getFriendList", take],
+    queryFn: async ({ pageParam: { page } }) => {
       try {
         return (
-          await api.get<GetFriendListResponse>(
-            `/friend?page=${pageParam.page}&take=${take}`,
-          )
+          await api.get<GetFriendListResponse>(`/friend`, {
+            params: {
+              page,
+              take,
+            },
+          })
         ).data
       } catch (error) {
         toast.error("Can't get friend list")
+        throw error
       }
     },
     initialPageParam: {
@@ -58,19 +63,24 @@ export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
         page: page + 1,
       }
     },
+    retry: 0,
+    refetchInterval: 10000,
   })
 }
 
-export function useGetFriend({ targetId }: GetFriendRequest) {
+export async function getFriend(targetId: string) {
+  try {
+    return (await api.get<GetFriendResponse>(`/user/${targetId}`)).data
+  } catch (error) {
+    toast.error("Can't get friend")
+    throw error
+  }
+}
+
+export function useGetFriend({ targetId }: GetFriendRequest, userId?: string) {
   return useQuery({
-    queryKey: ["get-friend", targetId],
-    queryFn: async () => {
-      try {
-        return (await api.get<GetFriendResponse>(`/user/${targetId}`)).data
-      } catch (error) {
-        toast.error("Can't get friend")
-      }
-    },
-    refetchOnMount: "always",
+    queryKey: ["getFriend", userId, targetId],
+    queryFn: async () => await getFriend(targetId),
+    retry: 0,
   })
 }

@@ -5,4 +5,5 @@ export const nav = {
   DIRECT_MESSAGE: "/direct-message",
 
   GROUP: "/group",
+  JOIN: "/join",
 }
