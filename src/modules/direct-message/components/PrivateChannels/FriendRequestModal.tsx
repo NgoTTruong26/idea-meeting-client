@@ -8,9 +8,9 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Empty from "components/common/Empty"
 import { nav } from "constants/nav"
-import { acceptFriendRequest } from "modules/direct-message/services/acceptFriendRequest"
-import { cancelFriendRequest } from "modules/direct-message/services/cancelFriendRequest"
-import { useGetFriendRequestToMeList } from "modules/direct-message/services/getFriendRequestToMeList"
+import { acceptFriendRequest } from "modules/friend/services/acceptFriendRequest"
+import { cancelFriendRequest } from "modules/friend/services/cancelFriendRequest"
+import { useGetFriendRequestToMeList } from "modules/friend/services/getFriendRequestToMeList"
 import { useEffect } from "react"
 import toast from "react-hot-toast"
 import { useInView } from "react-intersection-observer"
@@ -73,7 +73,7 @@ function FriendRequestRow({ data, refetch }: FriendRequestRowProps) {
         queryKey: ["countFriendRequestToMe"],
       })
       queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
-      queryClient.refetchQueries({ queryKey: ["get-friend-list"] })
+      queryClient.refetchQueries({ queryKey: ["getFriendList"] })
       refetch()
     },
   })

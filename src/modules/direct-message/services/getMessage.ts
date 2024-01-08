@@ -121,15 +121,22 @@ export function useGetMessageListFromFriend(
 export function useGetDirectMessage({ take = 20 }: GetDirectMessageRequest) {
   return useInfiniteQuery({
     queryKey: ["get-direct-message", take],
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({ pageParam: { page } }) => {
       try {
         return (
           await api.get<GetDirectMessageListResponse>(
-            `/direct-message-channel?page=${pageParam.page}&take=${take}`,
+            `/direct-message-channel`,
+            {
+              params: {
+                take,
+                page,
+              },
+            },
           )
         ).data
       } catch (error) {
         toast.error("Can't get Message")
+        throw error
       }
     },
     initialPageParam: {
@@ -150,5 +157,6 @@ export function useGetDirectMessage({ take = 20 }: GetDirectMessageRequest) {
         page: page + 1,
       }
     },
+    refetchInterval: 10000,
   })
 }

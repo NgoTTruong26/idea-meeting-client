@@ -29,7 +29,7 @@ export interface GetFriendResponse {
 
 export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
   return useInfiniteQuery({
-    queryKey: ["get-friend-list", take],
+    queryKey: ["getFriendList", take],
     queryFn: async ({ pageParam: { page } }) => {
       try {
         return (
@@ -64,6 +64,7 @@ export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
       }
     },
     retry: 0,
+    refetchInterval: 10000,
   })
 }
 
@@ -78,7 +79,7 @@ export async function getFriend(targetId: string) {
 
 export function useGetFriend({ targetId }: GetFriendRequest, userId?: string) {
   return useQuery({
-    queryKey: ["get-friend", userId, targetId],
+    queryKey: ["getFriend", userId, targetId],
     queryFn: async () => await getFriend(targetId),
     retry: 0,
   })

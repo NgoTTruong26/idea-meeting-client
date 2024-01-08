@@ -6,7 +6,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react"
 
-import { useCountFriendRequestToMe } from "modules/direct-message/services/countFriendRequestToMe"
+import { useCountFriendRequestToMe } from "modules/friend/services/countFriendRequestToMe"
 
 import FriendRequestModal from "./FriendRequestModal"
 

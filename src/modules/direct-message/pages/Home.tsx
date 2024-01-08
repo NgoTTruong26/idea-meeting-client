@@ -14,8 +14,8 @@ import { IoIosArrowForward } from "react-icons/io"
 import { RiUserSearchLine, RiUserSharedLine } from "react-icons/ri"
 import { TbUserEdit } from "react-icons/tb"
 import { useUser } from "store/user"
+import { useCountFriendRequestToMe } from "../../friend/services/countFriendRequestToMe"
 import FriendRequestModal from "../components/PrivateChannels/FriendRequestModal"
-import { useCountFriendRequestToMe } from "../services/countFriendRequestToMe"
 
 export default function Home() {
   const {

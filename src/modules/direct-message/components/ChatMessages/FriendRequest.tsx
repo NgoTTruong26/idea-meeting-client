@@ -1,8 +1,8 @@
 import { Button } from "@nextui-org/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { acceptFriendRequest } from "modules/direct-message/services/acceptFriendRequest"
-import { cancelFriendRequest } from "modules/direct-message/services/cancelFriendRequest"
-import { useSendFriendRequest } from "modules/direct-message/services/sendFriendRequest"
+import { acceptFriendRequest } from "modules/friend/services/acceptFriendRequest"
+import { cancelFriendRequest } from "modules/friend/services/cancelFriendRequest"
+import { useSendFriendRequest } from "modules/friend/services/sendFriendRequest"
 import { toast } from "react-hot-toast"
 import { MdOutlinePersonAddAlt } from "react-icons/md"
 import { UserProfile } from "types/user"
@@ -28,8 +28,8 @@ export default function FriendRequest({
         queryKey: ["countFriendRequestToMe"],
       })
       queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
-      queryClient.refetchQueries({ queryKey: ["get-friend", profile.userId] })
-      queryClient.refetchQueries({ queryKey: ["get-friend-list"] })
+      queryClient.refetchQueries({ queryKey: ["getFriend", profile.userId] })
+      queryClient.refetchQueries({ queryKey: ["getFriendList"] })
     },
   })
 
@@ -41,7 +41,7 @@ export default function FriendRequest({
         queryKey: ["countFriendRequestToMe"],
       })
       queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
-      queryClient.refetchQueries({ queryKey: ["get-friend"] })
+      queryClient.refetchQueries({ queryKey: ["getFriend"] })
     },
   })
 
@@ -100,7 +100,7 @@ export default function FriendRequest({
                 onSuccess: () => {
                   toast.success(`Sent request to ${profile.fullName}`)
                   queryClient.refetchQueries({
-                    queryKey: ["get-friend"],
+                    queryKey: ["getFriend"],
                   })
                 },
               },

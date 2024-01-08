@@ -11,12 +11,12 @@ import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
 import { WsEvent, WsResponse } from "types/ws"
 import { handleWsError } from "utils/ws"
+import { useGetFriend } from "../../friend/services/getFriend"
 import ChatContent from "../components/ChatMessages/ChatContent"
 import FriendRequest from "../components/ChatMessages/FriendRequest"
 import IntroduceFriend from "../components/ChatMessages/IntroduceFriend"
 import MessageInput from "../components/ChatMessages/MessageInput"
 import { DirectMessageParams } from "../route"
-import { useGetFriend } from "../services/getFriend"
 
 export default function ChatMessages() {
   const { user } = useUser()
@@ -79,8 +79,6 @@ export default function ChatMessages() {
   if (!friend.data) {
     return <div></div>
   }
-
-  console.log(friend.data.directMessageChannelId, "a")
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">
