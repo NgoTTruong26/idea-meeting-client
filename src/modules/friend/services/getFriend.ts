@@ -82,5 +82,6 @@ export function useGetFriend({ targetId }: GetFriendRequest, userId?: string) {
     queryKey: ["getFriend", userId, targetId],
     queryFn: async () => await getFriend(targetId),
     retry: 0,
+    refetchInterval: 10000,
   })
 }

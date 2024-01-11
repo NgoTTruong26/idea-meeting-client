@@ -23,18 +23,11 @@ export default function ChatGroupMessages() {
 
   const [messages, setMessages] = useState<GroupMessageFromSocket[]>([])
 
-  console.log(groupMessageChannelId)
-
   const handleIncomingMessage = (message: GroupMessageFromSocket) => {
-    console.log(groupId)
-
     if (groupMessageChannelId === message.groupMessageChannelId) {
-      console.log("set message")
       setMessages((prev) => [message, ...prev])
     }
   }
-
-  console.log(groupChannel.data, messages)
 
   useEffect(() => {
     socket.on(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
@@ -42,7 +35,7 @@ export default function ChatGroupMessages() {
     return () => {
       socket.off(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
     }
-  }, [socket, groupMessageChannelId, groupId])
+  }, [socket, groupMessageChannelId, groupId, handleIncomingMessage])
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">

@@ -33,7 +33,7 @@ const formSchema = yup.object({
 export default function AddMembersModal({ onClose, groupProfile }: Props) {
   const selectList: SelectOption[] = useMemo<SelectOption[]>(
     () =>
-      Array.from({ length: 5 }).map((val, idx) =>
+      Array.from({ length: 5 }).map((_, idx) =>
         idx === 0
           ? {
               label: "No limit",

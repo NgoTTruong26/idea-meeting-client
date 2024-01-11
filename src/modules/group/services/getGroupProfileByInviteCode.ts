@@ -14,7 +14,7 @@ export interface GetGroupProfileByInviteCodeResponse {
   imageUrl: string
   ownerId: string
   inviteCode: string
-  inviteCodeNumberOfUses: any
+  inviteCodeNumberOfUses: number
   inviteCodeMaxNumberOfUses: number
 }
 

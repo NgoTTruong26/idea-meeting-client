@@ -37,7 +37,7 @@ export default function AddChatChannelModal({ onClose, groupId }: Props) {
       {
         onSuccess: () => {
           queryClient.refetchQueries({
-            queryKey: ["get-group-chat-channel-list"],
+            queryKey: ["getGroupChatChannelList"],
           })
           toast.success("Create chat channel success")
           onClose()

@@ -20,7 +20,6 @@ import { UserProfile } from "types/user"
 import * as yup from "yup"
 
 const formSchema = yup.object({
-  avatarUrl: yup.string(),
   fullName: yup.string().label("Full name").required().min(6),
   gender: yup.string().label("Gender").required(),
 })
@@ -51,10 +50,11 @@ export default function UpdateProfileModal(profile: Props) {
     Required<Omit<UpdateUserProfileRequest, "userId" | "avatarUrl">>
   >({
     defaultValues: {
-      fullName: profile.fullName,
-      gender: profile.gender,
+      fullName: profile.fullName || "",
+      gender: profile.gender || "",
     },
     resolver: yupResolver(formSchema),
+    mode: "onChange",
   })
 
   const { mutate, isPending: isPendingUpdate } = useUpdateUserProfile()
@@ -75,7 +75,7 @@ export default function UpdateProfileModal(profile: Props) {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <ModalHeader className="flex flex-col gap-1 ">
-            Create Profile
+            Update Profile
           </ModalHeader>
           <ModalBody>
             <div className="flex justify-center">
@@ -116,7 +116,7 @@ export default function UpdateProfileModal(profile: Props) {
                 t="select"
                 label="Gender"
                 defaultSelectedKeys={
-                  !!methods.getValues("gender")
+                  methods.getValues("gender")
                     ? [methods.getValues("gender")]
                     : undefined
                 }
@@ -134,7 +134,12 @@ export default function UpdateProfileModal(profile: Props) {
               size="lg"
               type="submit"
               color="primary"
-              isLoading={isPendingUpdate}
+              isLoading={isPendingUpdate || isPendingUpload}
+              isDisabled={
+                !methods.formState.isDirty ||
+                !methods.formState.isValid ||
+                !avatarUrl
+              }
             >
               Submit
             </Button>

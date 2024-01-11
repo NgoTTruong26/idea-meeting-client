@@ -38,7 +38,7 @@ export interface GetLastMessageResponse {
   isDeleted: boolean
   type: MessageType
   value: string
-  duration: any
+  duration: number
   userId: string
   directMessageChannelId: string
   user: Pick<User, "profile">
@@ -63,7 +63,6 @@ export async function getGetMessageListFromFriend({
   ...params
 }: GetMessageListFromFriendRequest) {
   try {
-    console.log(directMessageChannelId, 678)
     return (
       await api.get<GetMessageListFromFriendResponse>(
         `/direct-message-channel/${directMessageChannelId}/message`,
@@ -79,8 +78,6 @@ export function useGetMessageListFromFriend(
   { directMessageChannelId, take = 20, page }: GetMessageListFromFriendRequest,
   userId: string,
 ) {
-  console.log(directMessageChannelId, 123)
-
   return useInfiniteQuery({
     queryKey: [
       "get-message-from-friend",
@@ -157,6 +154,5 @@ export function useGetDirectMessage({ take = 20 }: GetDirectMessageRequest) {
         page: page + 1,
       }
     },
-    refetchInterval: 10000,
   })
 }

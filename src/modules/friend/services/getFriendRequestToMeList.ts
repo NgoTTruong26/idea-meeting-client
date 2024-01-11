@@ -25,5 +25,6 @@ export function useGetFriendRequestToMeList(params: PaginationDto) {
     },
     getNextPageParam: ({ meta: { page, take, total } }) =>
       page * take > total ? undefined : { nextPage: page + 1 },
+    refetchInterval: 10000,
   })
 }

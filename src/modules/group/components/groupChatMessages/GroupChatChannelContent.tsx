@@ -37,8 +37,6 @@ export default function GroupChatChannelContent({
     }
   }, [getGroupMessageListChannel.fetchNextPage, inView])
 
-  console.log(getGroupMessageListChannel.data)
-
   return (
     <>
       {messages.map((message, idx) =>

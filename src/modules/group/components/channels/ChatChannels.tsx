@@ -44,8 +44,6 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
     navigate(groupChatChannelId)
   }
 
-  console.log(groupId, 4893)
-
   return (
     <div className="space-y-2">
       <div className="flex gap-4 items-center justify-between pr-4">

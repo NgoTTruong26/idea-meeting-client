@@ -8,5 +8,6 @@ export function useCountFriendRequestToMe() {
   return useQuery({
     queryKey: ["countFriendRequestToMe"],
     queryFn: countFriendRequestToMe,
+    refetchInterval: 10000,
   })
 }

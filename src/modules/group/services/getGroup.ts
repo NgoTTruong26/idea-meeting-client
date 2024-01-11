@@ -160,7 +160,7 @@ export function useGetGroupChatChannelList({
   take = 10,
 }: GetGroupChatChannelListRequest) {
   return useInfiniteQuery({
-    queryKey: ["get-group-chat-channel-list", groupId, take],
+    queryKey: ["getGroupChatChannelList", groupId, take],
 
     queryFn: async ({ pageParam: { page } }) =>
       await getGroupChatChannelList({ groupId, take, page }),
@@ -199,11 +199,7 @@ export function useGetGroupChannel(
   enabled: boolean,
 ) {
   return useQuery({
-    queryKey: [
-      "get-group-Channel",
-      params.groupId,
-      params.groupMessageChannelId,
-    ],
+    queryKey: ["getGroupChannel", params.groupId, params.groupMessageChannelId],
     queryFn: async () => await getGroupChannel(params),
 
     enabled,

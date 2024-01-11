@@ -1,13 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react"
 import Field from "components/core/field"
+import { queryClient } from "configs/queryClient"
+
 import {
-  CreateChatChannelRequest,
-  useCreateChatChannel,
-} from "modules/group/services/createGroup"
+  EditChatChannelRequest,
+  useEditChatChannel,
+} from "modules/group/services/editChatChannel"
 import { GetGroupChatChannelResponse } from "modules/group/services/getGroup"
 
 import { FormProvider, useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import { FaHashtag } from "react-icons/fa6"
 import * as yup from "yup"
 
@@ -26,28 +29,31 @@ export default function EditChatChannelModal({
   groupId,
   groupChannel,
 }: Props) {
-  const methods = useForm<Required<Pick<CreateChatChannelRequest, "name">>>({
+  const methods = useForm<Required<Pick<EditChatChannelRequest, "name">>>({
     defaultValues: {
       name: groupChannel.name,
     },
     resolver: yupResolver(formSchema),
   })
 
-  const createChatChannel = useCreateChatChannel()
+  const editChatChannel = useEditChatChannel()
 
-  const onSubmit = (data: CreateChatChannelRequest) => {
-    /* createChatChannel.mutate(
-      { ...data, groupId },
+  const onSubmit = (data: EditChatChannelRequest) => {
+    editChatChannel.mutate(
+      { ...data, groupId, id: groupChannel.id },
       {
         onSuccess: () => {
           queryClient.refetchQueries({
-            queryKey: ["get-group-chat-channel-list"],
+            queryKey: ["getGroupChatChannelList"],
           })
-          toast.success("Create group success")
+          queryClient.refetchQueries({
+            queryKey: ["getGroupChannel"],
+          })
+          toast.success("Edit group success")
           onClose()
         },
       },
-    ) */
+    )
   }
 
   return (
@@ -90,7 +96,11 @@ export default function EditChatChannelModal({
           <Button color="danger" variant="light" onPress={onClose}>
             Close
           </Button>
-          <Button type="submit" color="primary">
+          <Button
+            type="submit"
+            color="primary"
+            isLoading={editChatChannel.isPending}
+          >
             Submit
           </Button>
         </ModalFooter>

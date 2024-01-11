@@ -64,7 +64,7 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       socket.disconnect()
       peer.clear()
     }
-  }, [user.id, peer.set, peer.clear])
+  }, [peer.set, peer.clear])
 
   if (!loading) {
     return user.id ? children : <Navigate to={nav.AUTH + nav.SIGN_IN} replace />
