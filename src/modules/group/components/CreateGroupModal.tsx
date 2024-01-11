@@ -35,6 +35,7 @@ export default function CreateGroupModal({ onClose }: Props) {
       imageUrl: "https://discord.com/assets/1697e65656e69f0dbdbd.png",
     },
     resolver: yupResolver(formSchema),
+    mode: "onChange",
   })
 
   const onSuccess = (data: AxiosResponse<string>) => {
@@ -125,6 +126,11 @@ export default function CreateGroupModal({ onClose }: Props) {
             type="submit"
             color="primary"
             isLoading={createGroup.isPending || isPendingUpload}
+            isDisabled={
+              !methods.formState.isValid ||
+              !methods.formState.isDirty ||
+              !imageUrl
+            }
           >
             Action
           </Button>

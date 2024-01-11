@@ -136,8 +136,8 @@ export default function UpdateProfileModal(profile: Props) {
               color="primary"
               isLoading={isPendingUpdate || isPendingUpload}
               isDisabled={
-                !methods.formState.isDirty ||
                 !methods.formState.isValid ||
+                !methods.formState.isDirty ||
                 !avatarUrl
               }
             >
