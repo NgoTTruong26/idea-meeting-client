@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react"
 import Field from "components/core/field"
+import { queryClient } from "configs/queryClient"
 import { FormProvider, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
@@ -39,6 +40,7 @@ export default function JoinGroupModal({ onClose }: Props) {
       inviteCode: "",
     },
     resolver: yupResolver(formSchema),
+    mode: "onChange",
   })
 
   const onSubmit = ({ inviteCode }: AcceptInviteRequest) => {
@@ -51,6 +53,9 @@ export default function JoinGroupModal({ onClose }: Props) {
       { inviteCode },
       {
         onSuccess: (data) => {
+          queryClient.refetchQueries({
+            queryKey: ["getGroupList"],
+          })
           navigate(`/group/${data.groupId}`)
           toast.success("Join group successfully")
         },
@@ -97,6 +102,7 @@ export default function JoinGroupModal({ onClose }: Props) {
             type="submit"
             color="primary"
             isLoading={acceptInvite.isPending}
+            isDisabled={!methods.formState.isDirty}
           >
             Join Group
           </Button>

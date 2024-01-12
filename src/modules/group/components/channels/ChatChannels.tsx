@@ -6,6 +6,7 @@ import {
   DropdownTrigger,
   Modal,
   ModalContent,
+  Spinner,
   useDisclosure,
 } from "@nextui-org/react"
 import clsx from "clsx"
@@ -150,6 +151,11 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
               )}
             </ModalContent>
           </Modal>
+        )}
+        {getGroupChatChannelList.isLoading && (
+          <div className="flex justify-center">
+            <Spinner />
+          </div>
         )}
       </div>
     </div>

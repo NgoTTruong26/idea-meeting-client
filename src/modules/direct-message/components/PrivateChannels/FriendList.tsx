@@ -173,7 +173,7 @@ export default function FriendList() {
           </Modal>
         </>
       )}
-      {(friendList.isLoading || friendList.isFetching) && (
+      {friendList.isLoading && (
         <div className="flex justify-center">
           <Spinner />
         </div>

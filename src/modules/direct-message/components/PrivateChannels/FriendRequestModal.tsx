@@ -47,8 +47,7 @@ export default function FriendRequestModal({ countFriendRequestToMe }: Props) {
           <Empty text="No friend requests" />
         )}
         <div ref={ref}></div>
-        {(friendRequestToMeList.isLoading ||
-          friendRequestToMeList.isFetching) && (
+        {friendRequestToMeList.isLoading && (
           <div className="flex justify-center">
             <Spinner />
           </div>

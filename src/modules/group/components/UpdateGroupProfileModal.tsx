@@ -63,7 +63,7 @@ export default function UpdateGroupProfileModal({
         { ...data, groupId: groupProfile.id, imageUrl },
         {
           onSuccess: () => {
-            queryClient.refetchQueries({ queryKey: ["get-group-list"] })
+            queryClient.refetchQueries({ queryKey: ["getGroupList"] })
             queryClient.refetchQueries({ queryKey: ["get-group"] })
             toast.success("Update group profile success")
             onClose()
@@ -78,7 +78,7 @@ export default function UpdateGroupProfileModal({
       { ...data, groupId: groupProfile.id },
       {
         onSuccess: () => {
-          queryClient.refetchQueries({ queryKey: ["get-group-list"] })
+          queryClient.refetchQueries({ queryKey: ["getGroupList"] })
           queryClient.refetchQueries({ queryKey: ["get-group"] })
           toast.success("Update group profile success")
           onClose()

@@ -101,7 +101,7 @@ export function useGetGroupProfile({ groupId }: GetGroupProfileRequest) {
   return useQuery({
     queryKey: ["get-group", groupId],
     queryFn: async () => await getGroupProfile(groupId),
-    refetchInterval: 5000,
+    refetchInterval: 10000,
     retry: 0,
   })
 }
@@ -116,7 +116,7 @@ export async function getGetGroupList(pageParam: PageParam, take: number) {
 
 export function useGetGroupList({ take = 20 }: GetGroupListRequest) {
   return useInfiniteQuery({
-    queryKey: ["get-group-list", take],
+    queryKey: ["getGroupList", take],
 
     queryFn: async ({ pageParam }) => await getGetGroupList(pageParam, take),
 
@@ -183,6 +183,7 @@ export function useGetGroupChatChannelList({
         page: page + 1,
       }
     },
+    refetchInterval: 10000,
   })
 }
 

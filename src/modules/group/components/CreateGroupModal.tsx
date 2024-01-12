@@ -20,19 +20,15 @@ interface Props {
 }
 
 const formSchema = yup.object({
-  imageUrl: yup.string().required(),
   name: yup.string().label("Group Name").required(),
 })
 
 export default function CreateGroupModal({ onClose }: Props) {
   const [imageUrl, setImageUrl] = useState<string>()
 
-  const methods = useForm<
-    Required<Pick<CreateGroupRequest, "name" | "imageUrl">>
-  >({
+  const methods = useForm<Required<Pick<CreateGroupRequest, "name">>>({
     defaultValues: {
       name: "",
-      imageUrl: "https://discord.com/assets/1697e65656e69f0dbdbd.png",
     },
     resolver: yupResolver(formSchema),
     mode: "onChange",
@@ -40,6 +36,7 @@ export default function CreateGroupModal({ onClose }: Props) {
 
   const onSuccess = (data: AxiosResponse<string>) => {
     setImageUrl(data.data)
+
     return data.data
   }
 
@@ -58,7 +55,7 @@ export default function CreateGroupModal({ onClose }: Props) {
         { ...data, imageUrl },
         {
           onSuccess: () => {
-            queryClient.refetchQueries({ queryKey: ["get-group-list"] })
+            queryClient.refetchQueries({ queryKey: ["getGroupList"] })
             toast.success("Create group success")
             onClose()
           },
@@ -66,13 +63,6 @@ export default function CreateGroupModal({ onClose }: Props) {
       )
       return
     }
-    createGroup.mutate(data, {
-      onSuccess: () => {
-        queryClient.refetchQueries({ queryKey: ["get-group-list"] })
-        toast.success("Create group success")
-        onClose()
-      },
-    })
   }
 
   return (
@@ -125,12 +115,8 @@ export default function CreateGroupModal({ onClose }: Props) {
           <Button
             type="submit"
             color="primary"
+            isDisabled={!methods.formState.isValid || !imageUrl}
             isLoading={createGroup.isPending || isPendingUpload}
-            isDisabled={
-              !methods.formState.isValid ||
-              !methods.formState.isDirty ||
-              !imageUrl
-            }
           >
             Action
           </Button>
