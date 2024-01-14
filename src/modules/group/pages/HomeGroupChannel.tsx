@@ -31,7 +31,7 @@ export default function HomeGroupChannel() {
     <div className="relative flex justify-center items-center">
       <div className="absolute flex justify-center items-center max-w-3xl w-full h-full max-h-[750px] bg-[url('/images/sign-in-bg.jpg')] bg-cover bg-center"></div>
       <div className="flex justify-center items-center w-full backdrop-blur-xl h-full">
-        <div className="flex flex-col items-center max-w-xl w-full space-y-6 p-8 rounded-3xl">
+        <div className="flex flex-col items-center max-w-xl w-full space-y-6 p-8 rounded-3xl overflow-y-auto max-h-screen">
           <div className="text-3xl font-bold">
             Welcome to {groupProfile.name}
           </div>
