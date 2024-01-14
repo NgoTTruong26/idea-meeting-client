@@ -10,12 +10,16 @@ import {
   useDisclosure,
 } from "@nextui-org/react"
 import clsx from "clsx"
+import DialogModal from "components/common/DialogModal"
+import { queryClient } from "configs/queryClient"
 import { GroupMessageParams } from "modules/group/route"
+import { useDeleteGroupChannel } from "modules/group/services/deleteGroupChannel"
 import {
   GetGroupChatChannelResponse,
   useGetGroupChatChannelList,
 } from "modules/group/services/getGroup"
 import { useState } from "react"
+import { toast } from "react-hot-toast"
 import { FaHashtag } from "react-icons/fa6"
 import { ImBin } from "react-icons/im"
 import { MdAdd } from "react-icons/md"
@@ -36,10 +40,13 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
 
   const disclosureAddChatChannel = useDisclosure()
   const disclosureEditChatChannel = useDisclosure()
+  const disclosureDialogDeleteGroupChannel = useDisclosure()
 
   const { groupMessageChannelId } = useParams<keyof GroupMessageParams>()
 
   const getGroupChatChannelList = useGetGroupChatChannelList({ groupId })
+
+  const deleteGroupChannel = useDeleteGroupChannel()
 
   const handleClick = (groupChatChannelId: string) => {
     navigate(groupChatChannelId)
@@ -122,6 +129,10 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
                           className="text-danger"
                           color="danger"
                           endContent={<ImBin size="18" />}
+                          onClick={() => {
+                            setChatChannel(chatChannel)
+                            disclosureDialogDeleteGroupChannel.onOpen()
+                          }}
                         >
                           Delete Channel
                         </DropdownItem>
@@ -136,21 +147,66 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
           <></>
         )}
         {chatChannel && (
-          <Modal
-            size="lg"
-            isOpen={disclosureEditChatChannel.isOpen}
-            onClose={disclosureEditChatChannel.onClose}
-          >
-            <ModalContent>
-              {(onClose) => (
-                <EditChatChannelModal
-                  onClose={onClose}
-                  groupId={groupId}
-                  groupChannel={chatChannel}
-                />
-              )}
-            </ModalContent>
-          </Modal>
+          <>
+            <Modal
+              size="lg"
+              isOpen={disclosureEditChatChannel.isOpen}
+              onClose={disclosureEditChatChannel.onClose}
+            >
+              <ModalContent>
+                {(onClose) => (
+                  <EditChatChannelModal
+                    onClose={onClose}
+                    groupId={groupId}
+                    groupChannel={chatChannel}
+                  />
+                )}
+              </ModalContent>
+            </Modal>
+
+            <Modal
+              size="lg"
+              isDismissable={false}
+              isOpen={disclosureDialogDeleteGroupChannel.isOpen}
+              onClose={disclosureDialogDeleteGroupChannel.onClose}
+            >
+              <ModalContent>
+                {(onClose) => (
+                  <DialogModal
+                    textHeader={`Remove Group Channel '${chatChannel.name}'`}
+                    body={
+                      <span>
+                        Are you sure you want to permanently remove chat channel{" "}
+                        <strong>{chatChannel.name}</strong> from your group?
+                      </span>
+                    }
+                    btnAcceptProps={{
+                      children: "Remove Group Channel",
+                      isLoading: deleteGroupChannel.isPending,
+                      onClick: () =>
+                        deleteGroupChannel.mutate(
+                          { groupId, groupMessageChannelId: chatChannel.id },
+                          {
+                            onSuccess: () => {
+                              toast.success("Remove Group Channel successfully")
+                              queryClient
+                                .refetchQueries({
+                                  queryKey: ["getGroupChatChannelList"],
+                                })
+                                .then(() => {
+                                  navigate(`/group/${groupId}`)
+                                  onClose()
+                                })
+                            },
+                          },
+                        ),
+                    }}
+                    onClose={onClose}
+                  />
+                )}
+              </ModalContent>
+            </Modal>
+          </>
         )}
         {getGroupChatChannelList.isLoading && (
           <div className="flex justify-center">

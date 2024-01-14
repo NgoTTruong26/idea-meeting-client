@@ -43,14 +43,17 @@ export default function EditChatChannelModal({
       { ...data, groupId, id: groupChannel.id },
       {
         onSuccess: () => {
-          queryClient.refetchQueries({
-            queryKey: ["getGroupChatChannelList"],
+          Promise.all([
+            queryClient.refetchQueries({
+              queryKey: ["getGroupChatChannelList"],
+            }),
+            queryClient.refetchQueries({
+              queryKey: ["getGroupChannel", groupId, groupChannel.id],
+            }),
+          ]).then(() => {
+            toast.success("Edit group success")
+            onClose()
           })
-          queryClient.refetchQueries({
-            queryKey: ["getGroupChannel", groupId, groupChannel.id],
-          })
-          toast.success("Edit group success")
-          onClose()
         },
       },
     )

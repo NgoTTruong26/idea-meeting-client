@@ -206,14 +206,17 @@ export default function FriendList() {
                     onClick: () =>
                       deleteFriend.mutate(friendProfile.userId, {
                         onSuccess: () => {
-                          toast.success("Delete friends successfully")
-                          queryClient.refetchQueries({
-                            queryKey: ["getFriendList"],
+                          Promise.all([
+                            queryClient.refetchQueries({
+                              queryKey: ["getFriendList"],
+                            }),
+                            queryClient.refetchQueries({
+                              queryKey: ["getFriend"],
+                            }),
+                          ]).then(() => {
+                            toast.success("Delete friends successfully")
+                            onClose()
                           })
-                          queryClient.refetchQueries({
-                            queryKey: ["getFriend"],
-                          })
-                          onClose()
                         },
                       }),
                   }}

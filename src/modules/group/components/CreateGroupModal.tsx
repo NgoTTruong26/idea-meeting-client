@@ -55,9 +55,12 @@ export default function CreateGroupModal({ onClose }: Props) {
         { ...data, imageUrl },
         {
           onSuccess: () => {
-            queryClient.refetchQueries({ queryKey: ["getGroupList"] })
-            toast.success("Create group success")
-            onClose()
+            queryClient
+              .refetchQueries({ queryKey: ["getGroupList"] })
+              .then(() => {
+                toast.success("Create group success")
+                onClose()
+              })
           },
         },
       )

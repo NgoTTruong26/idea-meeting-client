@@ -36,11 +36,14 @@ export default function AddChatChannelModal({ onClose, groupId }: Props) {
       { ...data, groupId },
       {
         onSuccess: () => {
-          queryClient.refetchQueries({
-            queryKey: ["getGroupChatChannelList"],
-          })
-          toast.success("Create chat channel success")
-          onClose()
+          queryClient
+            .refetchQueries({
+              queryKey: ["getGroupChatChannelList"],
+            })
+            .then(() => {
+              toast.success("Create chat channel success")
+              onClose()
+            })
         },
       },
     )
@@ -86,7 +89,11 @@ export default function AddChatChannelModal({ onClose, groupId }: Props) {
           <Button color="danger" variant="light" onPress={onClose}>
             Close
           </Button>
-          <Button type="submit" color="primary">
+          <Button
+            type="submit"
+            color="primary"
+            isLoading={createChatChannel.isPending}
+          >
             Submit
           </Button>
         </ModalFooter>

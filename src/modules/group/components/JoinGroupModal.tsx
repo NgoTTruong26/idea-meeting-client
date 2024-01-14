@@ -53,11 +53,14 @@ export default function JoinGroupModal({ onClose }: Props) {
       { inviteCode },
       {
         onSuccess: (data) => {
-          queryClient.refetchQueries({
-            queryKey: ["getGroupList"],
-          })
-          navigate(`/group/${data.groupId}`)
-          toast.success("Join group successfully")
+          queryClient
+            .refetchQueries({
+              queryKey: ["getGroupList"],
+            })
+            .then(() => {
+              navigate(`/group/${data.groupId}`)
+              toast.success("Join group successfully")
+            })
         },
       },
     )

@@ -198,14 +198,17 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                       { groupId, targetId: userTransfer.userId },
                       {
                         onSuccess: () => {
-                          toast.success("Delete friends successfully")
-                          queryClient.refetchQueries({
-                            queryKey: ["getGroup"],
+                          Promise.all([
+                            queryClient.refetchQueries({
+                              queryKey: ["getGroup"],
+                            }),
+                            queryClient.refetchQueries({
+                              queryKey: ["getGroupMembersList"],
+                            }),
+                          ]).then(() => {
+                            toast.success("Delete friends successfully")
+                            onClose()
                           })
-                          queryClient.refetchQueries({
-                            queryKey: ["getGroupMembersList"],
-                          })
-                          onClose()
                         },
                       },
                     ),
