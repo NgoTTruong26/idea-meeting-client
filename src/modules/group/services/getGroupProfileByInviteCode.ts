@@ -1,22 +1,13 @@
 import { useQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
+import { Group } from "types/group"
 
 export interface GetGroupProfileByInviteCodeRequest {
   inviteCode: string
 }
 
-export interface GetGroupProfileByInviteCodeResponse {
-  id: string
-  createdAt: string
-  updatedAt: string
-  isDeleted: boolean
-  name: string
-  imageUrl: string
-  ownerId: string
-  inviteCode: string
-  inviteCodeNumberOfUses: number
-  inviteCodeMaxNumberOfUses: number
-}
+export interface GetGroupProfileByInviteCodeResponse
+  extends Omit<Group, "_count"> {}
 
 export async function getGroupProfileByInviteCode({
   inviteCode,

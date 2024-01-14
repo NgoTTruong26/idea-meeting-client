@@ -66,7 +66,7 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
         {
           onSuccess: () => {
             queryClient.refetchQueries({
-              queryKey: ["get-group", groupProfile.id],
+              queryKey: ["getGroup", groupProfile.id],
             })
           },
         },
@@ -78,7 +78,7 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
       {
         onSuccess: () => {
           queryClient.refetchQueries({
-            queryKey: ["get-group", groupProfile.id],
+            queryKey: ["getGroup", groupProfile.id],
           })
         },
       },
@@ -131,7 +131,7 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
             isLoading={
               isPending ||
               !!queryClient.isFetching({
-                queryKey: ["get-group", groupProfile.id],
+                queryKey: ["getGroup", groupProfile.id],
               })
             }
           >

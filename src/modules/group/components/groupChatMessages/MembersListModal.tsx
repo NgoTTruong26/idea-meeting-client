@@ -1,20 +1,29 @@
 import {
   Button,
+  Modal,
   ModalBody,
+  ModalContent,
   ModalFooter,
   ModalHeader,
   Tooltip,
   User,
+  useDisclosure,
 } from "@nextui-org/react"
+import DialogModal from "components/common/DialogModal"
+import { queryClient } from "configs/queryClient"
 
 import { useGetGroupMembersList } from "modules/group/services/getGroupMembers"
+import { useTransferOwnership } from "modules/group/services/transferOwnership"
 import LoadingSearchFriend from "modules/user/components/LoadingSearchFriend"
+import { useState } from "react"
+import { toast } from "react-hot-toast"
 import { FaCrown } from "react-icons/fa6"
 import { ImBin } from "react-icons/im"
 import { RiShieldStarFill } from "react-icons/ri"
 import { TbMessageCircle2Filled } from "react-icons/tb"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
+import { UserProfile } from "types/user"
 
 interface Props {
   isOwner: boolean
@@ -25,11 +34,22 @@ interface Props {
 export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
   const navigate = useNavigate()
 
+  const [userTransfer, setUserTransfer] = useState<UserProfile>()
+
+  const disclosureDialogTransferOwnership = useDisclosure()
+
   const getGroupMembersList = useGetGroupMembersList({ groupId })
+
+  const transferOwnership = useTransferOwnership()
 
   const {
     user: { id },
   } = useUser()
+
+  const onClickTransferOwnership = (userProfile: UserProfile) => {
+    setUserTransfer(userProfile)
+    disclosureDialogTransferOwnership.onOpen()
+  }
 
   return (
     <>
@@ -105,12 +125,14 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                     {isOwner && user.user.profile.userId !== id && (
                       <>
                         <Tooltip
-                          content="Appoint as administrator"
+                          content="transfer ownership"
                           className="capitalize"
                         >
                           <Button
                             isIconOnly
-                            onClick={() => {}}
+                            onClick={() =>
+                              onClickTransferOwnership(user.user.profile)
+                            }
                             variant="flat"
                             color="primary"
                             radius="full"
@@ -150,6 +172,50 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
           Close
         </Button>
       </ModalFooter>
+
+      {isOwner && userTransfer && (
+        <Modal
+          size="lg"
+          isDismissable={false}
+          isOpen={disclosureDialogTransferOwnership.isOpen}
+          onClose={disclosureDialogTransferOwnership.onClose}
+        >
+          <ModalContent>
+            {(onClose) => (
+              <DialogModal
+                textHeader={`Transfer Ownership to '${userTransfer.fullName}'`}
+                body={
+                  <span>
+                    Are you sure you want to transfer ownership to{" "}
+                    <strong>{userTransfer.fullName}</strong>?
+                  </span>
+                }
+                btnAcceptProps={{
+                  children: "Accept",
+                  isLoading: transferOwnership.isPending,
+                  onClick: () =>
+                    transferOwnership.mutate(
+                      { groupId, targetId: userTransfer.userId },
+                      {
+                        onSuccess: () => {
+                          toast.success("Delete friends successfully")
+                          queryClient.refetchQueries({
+                            queryKey: ["getGroup"],
+                          })
+                          queryClient.refetchQueries({
+                            queryKey: ["getGroupMembersList"],
+                          })
+                          onClose()
+                        },
+                      },
+                    ),
+                }}
+                onClose={onClose}
+              />
+            )}
+          </ModalContent>
+        </Modal>
+      )}
     </>
   )
 }

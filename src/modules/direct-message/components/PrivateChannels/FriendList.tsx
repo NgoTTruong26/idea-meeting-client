@@ -10,13 +10,15 @@ import {
   useDisclosure,
 } from "@nextui-org/react"
 import clsx from "clsx"
+import DialogModal from "components/common/DialogModal"
 import Empty from "components/common/Empty"
 import Avatar from "components/core/Avatar"
+import { queryClient } from "configs/queryClient"
 import { socket } from "configs/socket"
 import { nav } from "constants/nav"
 import { DirectCallChannelType } from "modules/direct-call/types/direct-call-channel"
 import { DirectMessageParams } from "modules/direct-message/route"
-import DialogDeleteFriendModal from "modules/friend/components/DialogDeleteFriendModal"
+import { useDeleteFriend } from "modules/friend/services/deleteFriend"
 import { useGetFriendList } from "modules/friend/services/getFriend"
 import SearchFriendModal from "modules/user/components/SearchFriendModal"
 import { useMemo, useState } from "react"
@@ -39,6 +41,7 @@ export default function FriendList() {
   const navigate = useNavigate()
   const { id } = useParams<keyof DirectMessageParams>()
   const friendList = useGetFriendList({})
+  const deleteFriend = useDeleteFriend()
 
   const countFriendList = useMemo(() => {
     if (!friendList.data) return undefined
@@ -182,14 +185,39 @@ export default function FriendList() {
         <>
           <Modal
             size="lg"
+            isDismissable={false}
             isOpen={disclosureDialogDeleteFriend.isOpen}
             onClose={disclosureDialogDeleteFriend.onClose}
           >
             <ModalContent>
               {(onClose) => (
-                <DialogDeleteFriendModal
+                <DialogModal
+                  textHeader={`Remove '${friendProfile.fullName}'`}
+                  body={
+                    <span>
+                      Are you sure you want to permanently remove{" "}
+                      <strong>{friendProfile.fullName}</strong> from your
+                      friends?
+                    </span>
+                  }
+                  btnAcceptProps={{
+                    children: "Remove Friend",
+                    isLoading: deleteFriend.isPending,
+                    onClick: () =>
+                      deleteFriend.mutate(friendProfile.userId, {
+                        onSuccess: () => {
+                          toast.success("Delete friends successfully")
+                          queryClient.refetchQueries({
+                            queryKey: ["getFriendList"],
+                          })
+                          queryClient.refetchQueries({
+                            queryKey: ["getFriend"],
+                          })
+                          onClose()
+                        },
+                      }),
+                  }}
                   onClose={onClose}
-                  profile={friendProfile}
                 />
               )}
             </ModalContent>

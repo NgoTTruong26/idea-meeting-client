@@ -99,7 +99,7 @@ export async function getGroupProfile(groupId: string) {
 
 export function useGetGroupProfile({ groupId }: GetGroupProfileRequest) {
   return useQuery({
-    queryKey: ["get-group", groupId],
+    queryKey: ["getGroup", groupId],
     queryFn: async () => await getGroupProfile(groupId),
     refetchInterval: 10000,
     retry: 0,
