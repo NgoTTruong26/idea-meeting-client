@@ -47,7 +47,7 @@ export default function EditChatChannelModal({
             queryKey: ["getGroupChatChannelList"],
           })
           queryClient.refetchQueries({
-            queryKey: ["getGroupChannel"],
+            queryKey: ["getGroupChannel", groupId, groupChannel.id],
           })
           toast.success("Edit group success")
           onClose()
