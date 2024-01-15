@@ -18,7 +18,7 @@ export default function DirectMessages() {
     return () => {
       socket.off(WsEvent.CREATE_DIRECT_MESSAGE, handleIncomingMessage)
     }
-  }, [socket, handleIncomingMessage])
+  }, [handleIncomingMessage])
 
   return (
     <div className="grid grid-cols-[22rem,1fr] ">

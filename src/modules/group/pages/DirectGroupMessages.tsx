@@ -54,7 +54,7 @@ export default function DirectGroupMessages() {
       navigate("/")
       return
     }
-  }, [groupProfile.isError])
+  }, [groupProfile.isError, navigate])
 
   return (
     <div className="grid grid-cols-[22rem,1fr]">

@@ -35,7 +35,7 @@ export default function ChatGroupMessages() {
     if (groupChannel.isError) {
       navigate("/")
     }
-  }, [groupChannel.isError])
+  }, [groupChannel.isError, navigate])
 
   useEffect(() => {
     socket.on(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
@@ -43,7 +43,7 @@ export default function ChatGroupMessages() {
     return () => {
       socket.off(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
     }
-  }, [socket, groupMessageChannelId, groupId, handleIncomingMessage])
+  }, [groupMessageChannelId, groupId, handleIncomingMessage])
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">
