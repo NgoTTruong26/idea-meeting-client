@@ -1,6 +1,4 @@
 import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
-import { FaCrown } from "react-icons/fa6"
-import { ImBin } from "react-icons/im"
 import { IoIosArrowForward, IoIosLogOut } from "react-icons/io"
 import {
   MdAddToPhotos,
@@ -30,10 +28,10 @@ export default function HomeGroupChannel() {
   const disclosureGetMembersList = useDisclosure()
 
   return (
-    <div className="relative flex justify-center items-center py-10">
+    <div className="relative flex justify-center items-center">
       <div className="absolute flex justify-center items-center max-w-3xl w-full h-full max-h-[750px] bg-[url('/images/sign-in-bg.jpg')] bg-cover bg-center"></div>
       <div className="flex justify-center items-center w-full backdrop-blur-xl h-full">
-        <div className="flex flex-col items-center max-w-xl w-full space-y-6 p-8 rounded-3xl">
+        <div className="flex flex-col items-center max-w-xl w-full space-y-6 p-8 rounded-3xl overflow-y-auto max-h-screen">
           <div className="text-3xl font-bold">
             Welcome to {groupProfile.name}
           </div>
@@ -79,21 +77,7 @@ export default function HomeGroupChannel() {
                     Add Members
                   </div>
                 </Button>
-                <Button
-                  variant="flat"
-                  color="default"
-                  onClick={disclosureGetMembersList.onOpen}
-                  fullWidth
-                  startContent={
-                    <FaCrown size={25} className="text-yellow-500" />
-                  }
-                  endContent={<IoIosArrowForward size={20} />}
-                  className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl text-black"
-                >
-                  <div className="flex-1 flex justify-start mx-2 font-semibold">
-                    Transfer Ownership
-                  </div>
-                </Button>
+
                 <Modal
                   size="md"
                   className="max-h-[600px]"
@@ -152,21 +136,7 @@ export default function HomeGroupChannel() {
                 Members list
               </div>
             </Button>
-            {id === groupProfile.ownerId ? (
-              <Button
-                variant="flat"
-                color="danger"
-                /* onPress={() => handleOpen(b)} */
-                fullWidth
-                startContent={<MdOutlineGroupRemove size={25} />}
-                endContent={<ImBin size={20} />}
-                className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
-              >
-                <div className="flex-1 flex justify-start mx-2 font-semibold">
-                  Delete group
-                </div>
-              </Button>
-            ) : (
+            {id !== groupProfile.ownerId && (
               <Button
                 variant="flat"
                 color="danger"

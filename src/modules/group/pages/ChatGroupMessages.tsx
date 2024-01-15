@@ -4,7 +4,7 @@ import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
 import { FaHashtag } from "react-icons/fa6"
 import { HiDotsVertical } from "react-icons/hi"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { GroupMessageFromSocket } from "types/messageFromSocket"
 import { WsEvent } from "types/ws"
 import GroupChatChannelContent from "../components/groupChatMessages/GroupChatChannelContent"
@@ -16,6 +16,8 @@ export default function ChatGroupMessages() {
   const { groupMessageChannelId = "", groupId = "" } =
     useParams<keyof GroupMessageParams>()
 
+  const navigate = useNavigate()
+
   const groupChannel = useGetGroupChannel(
     { groupId, groupMessageChannelId },
     !!groupId && !!groupMessageChannelId,
@@ -23,18 +25,17 @@ export default function ChatGroupMessages() {
 
   const [messages, setMessages] = useState<GroupMessageFromSocket[]>([])
 
-  console.log(groupMessageChannelId)
-
   const handleIncomingMessage = (message: GroupMessageFromSocket) => {
-    console.log(groupId)
-
     if (groupMessageChannelId === message.groupMessageChannelId) {
-      console.log("set message")
       setMessages((prev) => [message, ...prev])
     }
   }
 
-  console.log(groupChannel.data, messages)
+  useEffect(() => {
+    if (groupChannel.isError) {
+      navigate("/")
+    }
+  }, [groupChannel.isError, navigate])
 
   useEffect(() => {
     socket.on(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
@@ -42,7 +43,7 @@ export default function ChatGroupMessages() {
     return () => {
       socket.off(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
     }
-  }, [socket, groupMessageChannelId, groupId])
+  }, [groupMessageChannelId, groupId, handleIncomingMessage])
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">

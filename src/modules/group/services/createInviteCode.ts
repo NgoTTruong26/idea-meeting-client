@@ -1,22 +1,12 @@
 import { useMutation } from "@tanstack/react-query"
 import { api } from "configs/api"
+import { Group } from "types/group"
 
 export interface GenerateInviteCodeRequest {
   inviteCodeMaxNumberOfUses?: number
 }
 
-export interface GenerateInviteCodeResponse {
-  id: string
-  createdAt: string
-  updatedAt: string
-  isDeleted: boolean
-  name: string
-  imageUrl: string
-  ownerId: string
-  inviteCode: string
-  inviteCodeNumberOfUses: number
-  inviteCodeMaxNumberOfUses: number
-}
+export interface GenerateInviteCodeResponse extends Omit<Group, "_count"> {}
 
 interface Props extends GenerateInviteCodeRequest {
   groupId: string

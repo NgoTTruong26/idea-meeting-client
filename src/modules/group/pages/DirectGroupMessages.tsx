@@ -11,7 +11,6 @@ import {
 } from "@nextui-org/react"
 import { useEffect, useState } from "react"
 import { AiOutlineUser } from "react-icons/ai"
-import { FaCrown } from "react-icons/fa6"
 import {
   MdAddToPhotos,
   MdGroups2,
@@ -55,7 +54,7 @@ export default function DirectGroupMessages() {
       navigate("/")
       return
     }
-  }, [groupProfile.isError])
+  }, [groupProfile.isError, navigate])
 
   return (
     <div className="grid grid-cols-[22rem,1fr]">
@@ -121,22 +120,6 @@ export default function DirectGroupMessages() {
                     onClick={disclosureGetMembersList.onOpen}
                   >
                     Members List
-                  </DropdownItem>
-                  <DropdownItem
-                    endContent={
-                      <FaCrown size={18} className="text-yellow-500" />
-                    }
-                    onClick={disclosureGetMembersList.onOpen}
-                  >
-                    Transfer Ownership
-                  </DropdownItem>
-                  <DropdownItem
-                    color="danger"
-                    endContent={<MdOutlineGroupRemove size={18} />}
-                    /* onClick={disclosureAddMembers.onOpen} */
-                    className="text-danger"
-                  >
-                    Delete Group
                   </DropdownItem>
                 </DropdownMenu>
               ) : (

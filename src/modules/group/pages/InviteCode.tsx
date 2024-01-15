@@ -10,7 +10,6 @@ import {
 } from "@nextui-org/react"
 import Empty from "components/common/Empty"
 import LoadingPage from "components/common/LoadingPage"
-import { useEffect } from "react"
 import { toast } from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
 import { JoinGroupParams } from "../route"
@@ -28,13 +27,9 @@ export default function InviteCode() {
 
   const acceptInvite = useAcceptInvite()
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
-
-  console.log(inviteCode, getGroupProfileByInviteCode.data)
-
-  useEffect(() => {
-    onOpen()
-  }, [])
+  const { isOpen, onOpenChange } = useDisclosure({
+    defaultOpen: true,
+  })
 
   const handleAccept = () => {
     if (inviteCode) {
@@ -73,7 +68,7 @@ export default function InviteCode() {
           {(onClose) =>
             getGroupProfileByInviteCode.status === "pending" ? (
               <LoadingPage />
-            ) : !!getGroupProfileByInviteCode.data ? (
+            ) : getGroupProfileByInviteCode.data ? (
               <>
                 <ModalHeader className="flex flex-col gap-2 items-center pb-0">
                   <Avatar

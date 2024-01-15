@@ -18,7 +18,7 @@ export default function Field(props: FieldProps) {
       control={control}
       name={name}
       render={({
-        field: { ref, ...field },
+        field: { ref, ...field }, //eslint-disable-line
         fieldState: { invalid, error },
       }) => (
         <>

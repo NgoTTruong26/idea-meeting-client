@@ -1,19 +1,29 @@
 import {
   Button,
+  Modal,
   ModalBody,
+  ModalContent,
   ModalFooter,
   ModalHeader,
   Tooltip,
   User,
+  useDisclosure,
 } from "@nextui-org/react"
+import DialogModal from "components/common/DialogModal"
+import { queryClient } from "configs/queryClient"
 
 import { useGetGroupMembersList } from "modules/group/services/getGroupMembers"
+import { useTransferOwnership } from "modules/group/services/transferOwnership"
 import LoadingSearchFriend from "modules/user/components/LoadingSearchFriend"
+import { useState } from "react"
+import { toast } from "react-hot-toast"
 import { FaCrown } from "react-icons/fa6"
 import { ImBin } from "react-icons/im"
+import { RiShieldStarFill } from "react-icons/ri"
 import { TbMessageCircle2Filled } from "react-icons/tb"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
+import { UserProfile } from "types/user"
 
 interface Props {
   isOwner: boolean
@@ -24,18 +34,29 @@ interface Props {
 export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
   const navigate = useNavigate()
 
+  const [userTransfer, setUserTransfer] = useState<UserProfile>()
+
+  const disclosureDialogTransferOwnership = useDisclosure()
+
   const getGroupMembersList = useGetGroupMembersList({ groupId })
+
+  const transferOwnership = useTransferOwnership()
 
   const {
     user: { id },
   } = useUser()
+
+  const onClickTransferOwnership = (userProfile: UserProfile) => {
+    setUserTransfer(userProfile)
+    disclosureDialogTransferOwnership.onOpen()
+  }
 
   return (
     <>
       <ModalHeader className="flex justify-center">Members List</ModalHeader>
       <ModalBody className="overflow-hidden">
         <div className="flex-1 overflow-y-auto space-y-2 pr-2">
-          {getGroupMembersList.isFetching ? (
+          {getGroupMembersList.isLoading ? (
             <LoadingSearchFriend />
           ) : !!getGroupMembersList.data &&
             getGroupMembersList.data.pages[0].data.length > 0 ? (
@@ -102,17 +123,35 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                       </Tooltip>
                     )}
                     {isOwner && user.user.profile.userId !== id && (
-                      <Tooltip content="Delete" className="capitalize">
-                        <Button
-                          isIconOnly
-                          onClick={() => {}}
-                          variant="flat"
-                          color="danger"
-                          radius="full"
+                      <>
+                        <Tooltip
+                          content="transfer ownership"
+                          className="capitalize"
                         >
-                          <ImBin size={20} />
-                        </Button>
-                      </Tooltip>
+                          <Button
+                            isIconOnly
+                            onClick={() =>
+                              onClickTransferOwnership(user.user.profile)
+                            }
+                            variant="flat"
+                            color="primary"
+                            radius="full"
+                          >
+                            <RiShieldStarFill size={20} />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip content="Delete" className="capitalize">
+                          <Button
+                            isIconOnly
+                            onClick={() => {}}
+                            variant="flat"
+                            color="danger"
+                            radius="full"
+                          >
+                            <ImBin size={20} />
+                          </Button>
+                        </Tooltip>
+                      </>
                     )}
                   </div>
                 </div>
@@ -133,6 +172,53 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
           Close
         </Button>
       </ModalFooter>
+
+      {isOwner && userTransfer && (
+        <Modal
+          size="lg"
+          isDismissable={false}
+          isOpen={disclosureDialogTransferOwnership.isOpen}
+          onClose={disclosureDialogTransferOwnership.onClose}
+        >
+          <ModalContent>
+            {(onClose) => (
+              <DialogModal
+                textHeader={`Transfer Ownership to '${userTransfer.fullName}'`}
+                body={
+                  <span>
+                    Are you sure you want to transfer ownership to{" "}
+                    <strong>{userTransfer.fullName}</strong>?
+                  </span>
+                }
+                btnAcceptProps={{
+                  children: "Accept",
+                  isLoading: transferOwnership.isPending,
+                  onClick: () =>
+                    transferOwnership.mutate(
+                      { groupId, targetId: userTransfer.userId },
+                      {
+                        onSuccess: () => {
+                          Promise.all([
+                            queryClient.refetchQueries({
+                              queryKey: ["getGroup"],
+                            }),
+                            queryClient.refetchQueries({
+                              queryKey: ["getGroupMembersList"],
+                            }),
+                          ]).then(() => {
+                            toast.success("Delete friends successfully")
+                            onClose()
+                          })
+                        },
+                      },
+                    ),
+                }}
+                onClose={onClose}
+              />
+            )}
+          </ModalContent>
+        </Modal>
+      )}
     </>
   )
 }

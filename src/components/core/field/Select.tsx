@@ -15,6 +15,8 @@ export interface SelectProps extends Omit<NextSelectProps, "children"> {
 }
 
 export default function Select({ t, options, ...props }: SelectProps) {
+  if (t !== "select") return <></>
+
   return (
     <NextSelect {...props}>
       {options.map(({ label, value }) => (
