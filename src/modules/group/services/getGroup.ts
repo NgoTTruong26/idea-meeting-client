@@ -88,11 +88,7 @@ export interface GetGroupChannelResponse {
 //hook
 
 export async function getGroupProfile(groupId: string) {
-  try {
-    return (await api.get<GetGroupProfileResponse>(`/group/${groupId}`)).data
-  } catch (error) {
-    throw error
-  }
+  return (await api.get<GetGroupProfileResponse>(`/group/${groupId}`)).data
 }
 
 export function useGetGroupProfile({ groupId }: GetGroupProfileRequest) {
@@ -186,15 +182,11 @@ export function useGetGroupChatChannelList({
 }
 
 export async function getGroupChannel(params: GetGroupChannelRequest) {
-  try {
-    return (
-      await api.get<GetGroupChannelResponse>(
-        `/group-message-channel/${params.groupId}/${params.groupMessageChannelId}`,
-      )
-    ).data
-  } catch (error) {
-    throw error
-  }
+  return (
+    await api.get<GetGroupChannelResponse>(
+      `/group-message-channel/${params.groupId}/${params.groupMessageChannelId}`,
+    )
+  ).data
 }
 
 export function useGetGroupChannel(
