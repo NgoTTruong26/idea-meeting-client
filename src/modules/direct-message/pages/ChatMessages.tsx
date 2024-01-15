@@ -25,13 +25,11 @@ export default function ChatMessages() {
   const [messages, setMessages] = useState<MessageFromSocket[]>([])
 
   const { id: friendId = "" } = useParams<keyof DirectMessageParams>()
-  console.log(friendId)
 
   const friend = useGetFriend({ targetId: friendId }, user.id)
 
   const handleIncomingMessage = (message: MessageFromSocket) => {
     if ([user.id, friendId].includes(message.userId)) {
-      console.log("set message")
       setMessages((prev) => [message, ...prev])
     }
   }
@@ -112,7 +110,7 @@ export default function ChatMessages() {
               </div>
             </div>
           </div>
-          {!!friend.data.isFriendship && (
+          {friend.data.isFriendship && (
             <div
               className={clsx(
                 "flex text-primary-500",
@@ -141,7 +139,7 @@ export default function ChatMessages() {
       </div>
 
       <div className="h-full bg-purple-50 pb-5 overflow-y-auto flex flex-col-reverse">
-        {!!friend.data.directMessageChannelId ? (
+        {friend.data.directMessageChannelId ? (
           <ChatContent
             directMessageChannelId={friend.data.directMessageChannelId}
             messages={messages}

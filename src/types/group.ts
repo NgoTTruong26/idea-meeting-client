@@ -2,7 +2,7 @@ export interface Group {
   id: string
   createdAt: string
   updatedAt: string
-  isDeleted: Boolean
+  isDeleted: boolean
   name: string
   imageUrl: string
   ownerId: string

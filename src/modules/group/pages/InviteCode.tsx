@@ -30,8 +30,6 @@ export default function InviteCode() {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-  console.log(inviteCode, getGroupProfileByInviteCode.data)
-
   useEffect(() => {
     onOpen()
   }, [])
@@ -73,7 +71,7 @@ export default function InviteCode() {
           {(onClose) =>
             getGroupProfileByInviteCode.status === "pending" ? (
               <LoadingPage />
-            ) : !!getGroupProfileByInviteCode.data ? (
+            ) : getGroupProfileByInviteCode.data ? (
               <>
                 <ModalHeader className="flex flex-col gap-2 items-center pb-0">
                   <Avatar

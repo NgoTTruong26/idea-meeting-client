@@ -69,8 +69,7 @@ export default function Chat() {
         !countdirectMessageChannelList && (
           <Empty text="No data, let's chat with friends!" />
         )}
-      {(directMessageChannelList.isLoading ||
-        directMessageChannelList.isFetching) && (
+      {directMessageChannelList.isLoading && (
         <div className="flex justify-center">
           <Spinner />
         </div>

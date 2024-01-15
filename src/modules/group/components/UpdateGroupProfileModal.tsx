@@ -40,6 +40,7 @@ export default function UpdateGroupProfileModal({
       imageUrl: imageUrl,
     },
     resolver: yupResolver(formSchema),
+    mode: "onChange",
   })
 
   const onSuccess = (data: AxiosResponse<string>) => {
@@ -62,10 +63,13 @@ export default function UpdateGroupProfileModal({
         { ...data, groupId: groupProfile.id, imageUrl },
         {
           onSuccess: () => {
-            queryClient.refetchQueries({ queryKey: ["get-group-list"] })
-            queryClient.refetchQueries({ queryKey: ["get-group"] })
-            toast.success("Update group profile success")
-            onClose()
+            Promise.all([
+              queryClient.refetchQueries({ queryKey: ["getGroupList"] }),
+              queryClient.refetchQueries({ queryKey: ["getGroup"] }),
+            ]).then(() => {
+              toast.success("Update group profile success")
+              onClose()
+            })
           },
         },
       )
@@ -77,10 +81,13 @@ export default function UpdateGroupProfileModal({
       { ...data, groupId: groupProfile.id },
       {
         onSuccess: () => {
-          queryClient.refetchQueries({ queryKey: ["get-group-list"] })
-          queryClient.refetchQueries({ queryKey: ["get-group"] })
-          toast.success("Update group profile success")
-          onClose()
+          Promise.all([
+            queryClient.refetchQueries({ queryKey: ["getGroupList"] }),
+            queryClient.refetchQueries({ queryKey: ["getGroup"] }),
+          ]).then(() => {
+            toast.success("Update group profile success")
+            onClose()
+          })
         },
       },
     )
@@ -133,6 +140,11 @@ export default function UpdateGroupProfileModal({
             type="submit"
             color="primary"
             isLoading={updateGroup.isPending || isPendingUpload}
+            isDisabled={
+              !methods.formState.isValid ||
+              !methods.formState.isDirty ||
+              !imageUrl
+            }
           >
             Submit
           </Button>

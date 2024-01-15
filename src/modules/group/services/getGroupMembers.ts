@@ -61,5 +61,6 @@ export function useGetGroupMembersList({
         page: page + 1,
       }
     },
+    refetchInterval: 10000,
   })
 }

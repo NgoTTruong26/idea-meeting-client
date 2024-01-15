@@ -36,8 +36,6 @@ export default function ChatContent({
     user.id,
   )
 
-  console.log(directMessageChannelId, 123456)
-
   const { ref, inView } = useInView()
 
   useEffect(() => {

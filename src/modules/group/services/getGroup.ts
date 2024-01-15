@@ -1,7 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { MessageType } from "modules/direct-message/services/sendMessage"
-import { toast } from "react-hot-toast"
 import { BaseGetList, PageParam } from "types/getList"
 import { Group } from "types/group"
 import { User } from "types/user"
@@ -92,16 +91,15 @@ export async function getGroupProfile(groupId: string) {
   try {
     return (await api.get<GetGroupProfileResponse>(`/group/${groupId}`)).data
   } catch (error) {
-    toast.error("Can't get group")
     throw error
   }
 }
 
 export function useGetGroupProfile({ groupId }: GetGroupProfileRequest) {
   return useQuery({
-    queryKey: ["get-group", groupId],
+    queryKey: ["getGroup", groupId],
     queryFn: async () => await getGroupProfile(groupId),
-    refetchInterval: 5000,
+    refetchInterval: 10000,
     retry: 0,
   })
 }
@@ -116,7 +114,7 @@ export async function getGetGroupList(pageParam: PageParam, take: number) {
 
 export function useGetGroupList({ take = 20 }: GetGroupListRequest) {
   return useInfiniteQuery({
-    queryKey: ["get-group-list", take],
+    queryKey: ["getGroupList", take],
 
     queryFn: async ({ pageParam }) => await getGetGroupList(pageParam, take),
 
@@ -160,7 +158,7 @@ export function useGetGroupChatChannelList({
   take = 10,
 }: GetGroupChatChannelListRequest) {
   return useInfiniteQuery({
-    queryKey: ["get-group-chat-channel-list", groupId, take],
+    queryKey: ["getGroupChatChannelList", groupId, take],
 
     queryFn: async ({ pageParam: { page } }) =>
       await getGroupChatChannelList({ groupId, take, page }),
@@ -183,15 +181,20 @@ export function useGetGroupChatChannelList({
         page: page + 1,
       }
     },
+    refetchInterval: 10000,
   })
 }
 
 export async function getGroupChannel(params: GetGroupChannelRequest) {
-  return (
-    await api.get<GetGroupChannelResponse>(
-      `/group-message-channel/${params.groupId}/${params.groupMessageChannelId}`,
-    )
-  ).data
+  try {
+    return (
+      await api.get<GetGroupChannelResponse>(
+        `/group-message-channel/${params.groupId}/${params.groupMessageChannelId}`,
+      )
+    ).data
+  } catch (error) {
+    throw error
+  }
 }
 
 export function useGetGroupChannel(
@@ -199,13 +202,8 @@ export function useGetGroupChannel(
   enabled: boolean,
 ) {
   return useQuery({
-    queryKey: [
-      "get-group-Channel",
-      params.groupId,
-      params.groupMessageChannelId,
-    ],
+    queryKey: ["getGroupChannel", params.groupId, params.groupMessageChannelId],
     queryFn: async () => await getGroupChannel(params),
-
     enabled,
   })
 }
