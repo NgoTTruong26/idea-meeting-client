@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react"
 import DialogModal from "components/common/DialogModal"
 import { queryClient } from "configs/queryClient"
+import { useDeleteMember } from "modules/group/services/deleteMember"
 
 import { useGetGroupMembersList } from "modules/group/services/getGroupMembers"
 import { useTransferOwnership } from "modules/group/services/transferOwnership"
@@ -34,21 +35,29 @@ interface Props {
 export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
   const navigate = useNavigate()
 
-  const [userTransfer, setUserTransfer] = useState<UserProfile>()
+  const [member, setMember] = useState<UserProfile>()
 
   const disclosureDialogTransferOwnership = useDisclosure()
+  const disclosureDialogDeleteMember = useDisclosure()
 
   const getGroupMembersList = useGetGroupMembersList({ groupId })
 
   const transferOwnership = useTransferOwnership()
+
+  const deleteMember = useDeleteMember()
 
   const {
     user: { id },
   } = useUser()
 
   const onClickTransferOwnership = (userProfile: UserProfile) => {
-    setUserTransfer(userProfile)
+    setMember(userProfile)
     disclosureDialogTransferOwnership.onOpen()
+  }
+
+  const onClickDeleteMember = (userProfile: UserProfile) => {
+    setMember(userProfile)
+    disclosureDialogDeleteMember.onOpen()
   }
 
   return (
@@ -143,7 +152,9 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                         <Tooltip content="Delete" className="capitalize">
                           <Button
                             isIconOnly
-                            onClick={() => {}}
+                            onClick={() =>
+                              onClickDeleteMember(user.user.profile)
+                            }
                             variant="flat"
                             color="danger"
                             radius="full"
@@ -173,51 +184,99 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
         </Button>
       </ModalFooter>
 
-      {isOwner && userTransfer && (
-        <Modal
-          size="lg"
-          isDismissable={false}
-          isOpen={disclosureDialogTransferOwnership.isOpen}
-          onClose={disclosureDialogTransferOwnership.onClose}
-        >
-          <ModalContent>
-            {(onClose) => (
-              <DialogModal
-                textHeader={`Transfer Ownership to '${userTransfer.fullName}'`}
-                body={
-                  <span>
-                    Are you sure you want to transfer ownership to{" "}
-                    <strong>{userTransfer.fullName}</strong>?
-                  </span>
-                }
-                btnAcceptProps={{
-                  children: "Accept",
-                  isLoading: transferOwnership.isPending,
-                  onClick: () =>
-                    transferOwnership.mutate(
-                      { groupId, targetId: userTransfer.userId },
-                      {
-                        onSuccess: () => {
-                          Promise.all([
-                            queryClient.refetchQueries({
-                              queryKey: ["getGroup"],
-                            }),
-                            queryClient.refetchQueries({
-                              queryKey: ["getGroupMembersList"],
-                            }),
-                          ]).then(() => {
-                            toast.success("Delete friends successfully")
-                            onClose()
-                          })
+      {isOwner && member && (
+        <>
+          <Modal
+            size="lg"
+            isDismissable={false}
+            isOpen={disclosureDialogTransferOwnership.isOpen}
+            onClose={disclosureDialogTransferOwnership.onClose}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <DialogModal
+                  textHeader={`Transfer Ownership to '${member.fullName}'`}
+                  body={
+                    <span>
+                      Are you sure you want to transfer ownership to{" "}
+                      <strong>{member.fullName}</strong>?
+                    </span>
+                  }
+                  btnAcceptProps={{
+                    children: "Accept",
+                    isLoading: transferOwnership.isPending,
+                    onClick: () =>
+                      transferOwnership.mutate(
+                        { groupId, targetId: member.userId },
+                        {
+                          onSuccess: () => {
+                            Promise.all([
+                              queryClient.refetchQueries({
+                                queryKey: ["getGroup"],
+                              }),
+                              queryClient.refetchQueries({
+                                queryKey: ["getGroupMembersList"],
+                              }),
+                            ]).then(() => {
+                              toast.success("Transfer Ownership successfully")
+                              onClose()
+                            })
+                          },
                         },
-                      },
-                    ),
-                }}
-                onClose={onClose}
-              />
-            )}
-          </ModalContent>
-        </Modal>
+                      ),
+                  }}
+                  onClose={onClose}
+                />
+              )}
+            </ModalContent>
+          </Modal>
+          <Modal
+            size="lg"
+            isDismissable={false}
+            isOpen={disclosureDialogDeleteMember.isOpen}
+            onClose={disclosureDialogDeleteMember.onClose}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <DialogModal
+                  textHeader={`Remove '${member.fullName}' From Your Group`}
+                  body={
+                    <span>
+                      Are you sure you want to remove{" "}
+                      <strong>{member.fullName}</strong> from your group?
+                    </span>
+                  }
+                  btnAcceptProps={{
+                    children: "Accept",
+                    isLoading: deleteMember.isPending,
+                    onClick: () =>
+                      deleteMember.mutate(
+                        { groupId, deleteUserId: member.userId },
+                        {
+                          onSuccess: () => {
+                            Promise.all([
+                              queryClient.refetchQueries({
+                                queryKey: ["getGroup"],
+                              }),
+                              queryClient.refetchQueries({
+                                queryKey: ["getGroupMembersList"],
+                              }),
+                            ]).then(() => {
+                              toast.success(
+                                "Delete member from your group successfully",
+                              )
+                              onClose()
+                            })
+                          },
+                        },
+                      ),
+                  }}
+                  onClose={onClose}
+                />
+              )}
+            </ModalContent>
+          </Modal>
+        </>
       )}
     </>
   )
