@@ -247,7 +247,7 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                     </span>
                   }
                   btnAcceptProps={{
-                    children: "Accept",
+                    children: "Remove Member",
                     isLoading: deleteMember.isPending,
                     onClick: () =>
                       deleteMember.mutate(

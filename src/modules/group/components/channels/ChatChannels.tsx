@@ -166,7 +166,6 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
 
             <Modal
               size="lg"
-              isDismissable={false}
               isOpen={disclosureDialogDeleteGroupChannel.isOpen}
               onClose={disclosureDialogDeleteGroupChannel.onClose}
             >

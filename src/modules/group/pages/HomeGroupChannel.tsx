@@ -1,4 +1,7 @@
 import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
+import DialogModal from "components/common/DialogModal"
+import { queryClient } from "configs/queryClient"
+import { toast } from "react-hot-toast"
 import { IoIosArrowForward, IoIosLogOut } from "react-icons/io"
 import {
   MdAddToPhotos,
@@ -7,18 +10,21 @@ import {
   MdPersonAddAlt,
 } from "react-icons/md"
 import { TbEdit } from "react-icons/tb"
-import { useOutletContext } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
 import { useUser } from "store/user"
 import AddMembersModal from "../components/AddMembersModal"
 import UpdateGroupProfileModal from "../components/UpdateGroupProfileModal"
 import AddChatChannelModal from "../components/channels/AddChatChannelModal"
 import MembersListModal from "../components/groupChatMessages/MembersListModal"
 import { GetGroupProfileResponse } from "../services/getGroup"
+import { useLeaveGroup } from "../services/leaveGroup"
 
 export default function HomeGroupChannel() {
   const {
     user: { id },
   } = useUser()
+
+  const navigate = useNavigate()
 
   const groupProfile = useOutletContext<GetGroupProfileResponse>()
 
@@ -26,6 +32,9 @@ export default function HomeGroupChannel() {
   const disclosureAddChatChannel = useDisclosure()
   const disclosureUpdateGroup = useDisclosure()
   const disclosureGetMembersList = useDisclosure()
+  const disclosureLeaveGroup = useDisclosure()
+
+  const leaveGroup = useLeaveGroup()
 
   return (
     <div className="relative flex justify-center items-center">
@@ -140,7 +149,7 @@ export default function HomeGroupChannel() {
               <Button
                 variant="flat"
                 color="danger"
-                /* onPress={() => handleOpen(b)} */
+                onClick={disclosureLeaveGroup.onOpen}
                 fullWidth
                 startContent={<MdOutlineGroupRemove size={25} />}
                 endContent={<IoIosLogOut size={20} />}
@@ -150,6 +159,53 @@ export default function HomeGroupChannel() {
                   Leave group
                 </div>
               </Button>
+            )}
+
+            {id !== groupProfile.ownerId && (
+              <Modal
+                size="lg"
+                isDismissable={false}
+                isOpen={disclosureLeaveGroup.isOpen}
+                onClose={disclosureLeaveGroup.onClose}
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <DialogModal
+                      textHeader={`Leave group '${groupProfile.name}'`}
+                      body={
+                        <span>
+                          Are you sure you want to leave group{" "}
+                          <strong>{groupProfile.name}</strong>
+                        </span>
+                      }
+                      btnAcceptProps={{
+                        children: "Leave Group",
+                        isLoading: leaveGroup.isPending,
+                        onClick: () =>
+                          leaveGroup.mutate(
+                            { groupId: groupProfile.id },
+                            {
+                              onSuccess: () => {
+                                queryClient
+                                  .refetchQueries({
+                                    queryKey: ["getGroup"],
+                                  })
+                                  .then(() => {
+                                    toast.success(
+                                      `Leave group ${groupProfile.name} successfully`,
+                                    )
+                                    onClose()
+                                    navigate("/")
+                                  })
+                              },
+                            },
+                          ),
+                      }}
+                      onClose={onClose}
+                    />
+                  )}
+                </ModalContent>
+              </Modal>
             )}
 
             <Modal
