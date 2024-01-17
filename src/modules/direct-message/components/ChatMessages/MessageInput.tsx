@@ -66,11 +66,7 @@ export default function MessageInput({ directMessageChannelId }: Props) {
   }, [methods.setFocus])
 
   const onEmojiClick = (emojiObject: EmojiObject) => {
-    console.log(emojiObject)
-
     methods.setValue("value", methods.getValues("value") + emojiObject.native)
-
-    setShowPicker(false)
   }
 
   return (
@@ -79,6 +75,7 @@ export default function MessageInput({ directMessageChannelId }: Props) {
         <div className="flex gap-2 items-center w-full py-2 px-4 bg-purple-50">
           <div className="relative flex-1">
             <Field
+              autoFocus
               name="value"
               t="hide-input-errors"
               placeholder="Write a message..."
@@ -101,11 +98,6 @@ export default function MessageInput({ directMessageChannelId }: Props) {
                     theme="light"
                     set="facebook"
                     previewPosition="none"
-                    /* onClickOutside={() => {
-                          console.log(123)
-
-                          setShowPicker(false)
-                        }} */
                     onEmojiSelect={onEmojiClick}
                   />
                 </div>
