@@ -1,12 +1,12 @@
+import Picker from "@emoji-mart/react"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button } from "@nextui-org/react"
 import Field from "components/core/field"
 import { socket } from "configs/socket"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { GoSmiley } from "react-icons/go"
 import { LuSend } from "react-icons/lu"
-import { MdOutlineAttachFile } from "react-icons/md"
 import { WsEvent } from "types/ws"
 import { removeWhiteSpace } from "utils/removeWhiteSpace"
 import * as yup from "yup"
@@ -16,6 +16,16 @@ import {
 } from "../../services/sendMessage"
 
 interface FormValues extends CreateDirectMessageRequest {}
+
+export interface EmojiObject {
+  id: string
+  name: string
+  native: string
+  unified: string
+  keywords: string[]
+  shortcodes: string
+  emoticons: string[]
+}
 
 interface Props {
   directMessageChannelId: string
@@ -30,6 +40,8 @@ const formSchema = yup.object().shape({
 })
 
 export default function MessageInput({ directMessageChannelId }: Props) {
+  const [showPicker, setShowPicker] = useState(false)
+
   const methods = useForm<Required<Omit<FormValues, "directMessageChannelId">>>(
     {
       defaultValues: {
@@ -53,25 +65,28 @@ export default function MessageInput({ directMessageChannelId }: Props) {
     methods.setFocus("value")
   }, [methods.setFocus])
 
+  const onEmojiClick = (emojiObject: EmojiObject) => {
+    console.log(emojiObject)
+
+    methods.setValue("value", methods.getValues("value") + emojiObject.native)
+
+    setShowPicker(false)
+  }
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit}>
         <div className="flex gap-2 items-center w-full py-2 px-4 bg-purple-50">
-          <div className="flex-1">
+          <div className="relative flex-1">
             <Field
               name="value"
               t="hide-input-errors"
               placeholder="Write a message..."
               variant="bordered"
-              startContent={
-                <MdOutlineAttachFile
-                  size={25}
-                  className="text-primary-500 rotate-45 mx-2 cursor-pointer"
-                />
-              }
               endContent={
                 <GoSmiley
                   size={20}
+                  onClick={() => setShowPicker(true)}
                   className="text-primary-500 cursor-pointer"
                 />
               }
@@ -79,6 +94,30 @@ export default function MessageInput({ directMessageChannelId }: Props) {
               isInvalid={false}
               errorMessage={false}
             />
+            {showPicker && (
+              <>
+                <div className="z-50 absolute bottom-14 right-0">
+                  <Picker
+                    theme="light"
+                    set="facebook"
+                    previewPosition="none"
+                    /* onClickOutside={() => {
+                          console.log(123)
+
+                          setShowPicker(false)
+                        }} */
+                    onEmojiSelect={onEmojiClick}
+                  />
+                </div>
+
+                <div
+                  onClick={() => {
+                    setShowPicker(false)
+                  }}
+                  className="z-10 fixed w-full h-full top-0 right-0"
+                ></div>
+              </>
+            )}
           </div>
           <div>
             <Button type="submit" isIconOnly color="primary" size="lg">
