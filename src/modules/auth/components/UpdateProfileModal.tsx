@@ -21,6 +21,7 @@ import { UserProfile } from "types/user"
 import * as yup from "yup"
 
 const formSchema = yup.object({
+  avatarUrl: yup.string().required(),
   fullName: yup.string().label("Full name").required().min(6),
   gender: yup.string().label("Gender").required(),
 })
@@ -36,8 +37,22 @@ export default function UpdateProfileModal({ onClose, ...profile }: Props) {
 
   const [avatarUrl, setAvatarUrl] = useState<string>(profile.avatarUrl || "")
 
+  const methods = useForm<Required<Omit<UpdateUserProfileRequest, "userId">>>({
+    defaultValues: {
+      avatarUrl: profile.avatarUrl || "",
+      fullName: profile.fullName || "",
+      gender: profile.gender || "",
+    },
+    resolver: yupResolver(formSchema),
+    mode: "onChange",
+  })
+
   const onSuccess = (data: AxiosResponse<string>) => {
     setAvatarUrl(data.data)
+    methods.setValue("avatarUrl", data.data, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
 
     return data.data
   }
@@ -49,33 +64,19 @@ export default function UpdateProfileModal({ onClose, ...profile }: Props) {
     onSuccess,
   })
 
-  const methods = useForm<
-    Required<Omit<UpdateUserProfileRequest, "userId" | "avatarUrl">>
-  >({
-    defaultValues: {
-      fullName: profile.fullName || "",
-      gender: profile.gender || "",
-    },
-    resolver: yupResolver(formSchema),
-    mode: "onChange",
-  })
-
   const { mutate, isPending: isPendingUpdate } = useUpdateUserProfile()
 
   const onSubmit = (data: UpdateUserProfileRequest) => {
-    mutate(
-      { ...data, avatarUrl },
-      {
-        onSuccess: (data) => {
-          setUser({ ...user, profile: data })
-          toast.success("Profile updated successfully")
-          onClose()
-          if (!profile.fullName) {
-            navigate("/direct-message")
-          }
-        },
+    mutate(data, {
+      onSuccess: (data) => {
+        setUser({ ...user, profile: data })
+        toast.success("Profile updated successfully")
+        onClose()
+        if (!profile.fullName) {
+          navigate("/direct-message")
+        }
       },
-    )
+    })
   }
 
   return (
@@ -144,9 +145,7 @@ export default function UpdateProfileModal({ onClose, ...profile }: Props) {
               color="primary"
               isLoading={isPendingUpdate || isPendingUpload}
               isDisabled={
-                !methods.formState.isValid ||
-                !methods.formState.isDirty ||
-                !avatarUrl
+                !methods.formState.isValid || !methods.formState.isDirty
               }
             >
               Submit
