@@ -96,6 +96,5 @@ export function useGetGroupMessageListChannel({
         page: page + 1,
       }
     },
-    refetchInterval: 10000,
   })
 }
