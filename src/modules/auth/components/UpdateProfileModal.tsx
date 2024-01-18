@@ -13,6 +13,7 @@ import {
 } from "modules/user/services/updateUserProfile"
 import { useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import { AiOutlineUser } from "react-icons/ai"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "store/user"
@@ -24,10 +25,12 @@ const formSchema = yup.object({
   gender: yup.string().label("Gender").required(),
 })
 
-interface Props extends Partial<UserProfile> {}
+interface Props extends Partial<UserProfile> {
+  onClose: () => void
+}
 
-export default function UpdateProfileModal(profile: Props) {
-  const { user } = useUser()
+export default function UpdateProfileModal({ onClose, ...profile }: Props) {
+  const { user, setUser } = useUser()
 
   const navigate = useNavigate()
 
@@ -63,8 +66,13 @@ export default function UpdateProfileModal(profile: Props) {
     mutate(
       { ...data, avatarUrl },
       {
-        onSuccess: () => {
-          navigate("/direct-message")
+        onSuccess: (data) => {
+          setUser({ ...user, profile: data })
+          toast.success("Profile updated successfully")
+          onClose()
+          if (!profile.fullName) {
+            navigate("/direct-message")
+          }
         },
       },
     )

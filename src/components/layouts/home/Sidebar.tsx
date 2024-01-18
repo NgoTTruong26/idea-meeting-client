@@ -78,7 +78,7 @@ export default function Sidebar() {
         }}
       >
         <ModalContent>
-          <UpdateProfileModal {...profile} />
+          {(onClose) => <UpdateProfileModal onClose={onClose} {...profile} />}
         </ModalContent>
       </Modal>
       <Modal
