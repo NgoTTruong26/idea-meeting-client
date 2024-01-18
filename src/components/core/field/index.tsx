@@ -30,7 +30,9 @@ export default function Field(props: FieldProps) {
               errorMessage={error?.message}
             />
           )}
-          {t === "hide-input-errors" && <Input {...props} {...field} />}
+          {t === "hide-input-errors" && (
+            <Input ref={ref} {...props} {...field} />
+          )}
           {t === "select" && (
             <Select
               {...props}
