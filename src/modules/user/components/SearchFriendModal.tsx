@@ -44,6 +44,7 @@ export default function SearchFriendModal({ onClose }: Props) {
     <>
       <ModalHeader className="flex flex-col gap-1 ">
         <Input
+          autoFocus
           variant="bordered"
           color="primary"
           t="input"
