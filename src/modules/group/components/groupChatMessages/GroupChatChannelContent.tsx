@@ -1,9 +1,9 @@
-import { useInView } from "react-intersection-observer"
-import { useUser } from "store/user"
-
+import LoadingChatContent from "modules/direct-message/components/ChatMessages/LoadingChatContent"
 import { GetGroupChannelResponse } from "modules/group/services/getGroup"
 import { useGetGroupMessageListChannel } from "modules/group/services/getGroupMessage"
 import { useEffect } from "react"
+import { useInView } from "react-intersection-observer"
+import { useUser } from "store/user"
 import { GroupMessageFromSocket } from "types/messageFromSocket"
 import GroupMessageFromFriend from "./GroupMessageFromFriend"
 import GroupMessageFromMe from "./GroupMessageFromMe"
@@ -137,7 +137,7 @@ export default function GroupChatChannelContent({
           ),
       )}
 
-      {/* {isFetchingNextPage && <LoadingChatContent />} */}
+      {getGroupMessageListChannel.isFetchingNextPage && <LoadingChatContent />}
       {!getGroupMessageListChannel.hasNextPage && (
         <IntroduceChannel groupChannel={groupChannel} />
       )}

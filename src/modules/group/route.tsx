@@ -1,7 +1,7 @@
 import AuthLayout from "components/layouts/AuthLayout"
 import HomeLayout from "components/layouts/home"
 import { nav } from "constants/nav"
-import { Outlet, RouteObject } from "react-router-dom"
+import { Navigate, Outlet, RouteObject } from "react-router-dom"
 import ChatGroupMessages from "./pages/ChatGroupMessages"
 import DirectGroupMessages from "./pages/DirectGroupMessages"
 import HomeGroupChannel from "./pages/HomeGroupChannel"
@@ -24,6 +24,10 @@ export const directGroupMessageRoute: RouteObject = {
     </AuthLayout>
   ),
   children: [
+    {
+      path: "",
+      element: <Navigate to={"/"} />,
+    },
     {
       path: ":groupId",
       Component: DirectGroupMessages,

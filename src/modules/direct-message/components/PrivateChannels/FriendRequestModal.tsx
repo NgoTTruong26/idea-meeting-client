@@ -72,6 +72,7 @@ function FriendRequestRow({ data, refetch }: FriendRequestRowProps) {
         queryKey: ["countFriendRequestToMe"],
       })
       queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
+      queryClient.refetchQueries({ queryKey: ["getFriend"] })
       queryClient.refetchQueries({ queryKey: ["getFriendList"] })
       refetch()
     },
@@ -84,6 +85,7 @@ function FriendRequestRow({ data, refetch }: FriendRequestRowProps) {
         queryKey: ["countFriendRequestToMe"],
       })
       queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
+      queryClient.refetchQueries({ queryKey: ["getFriend"] })
       refetch()
     },
   })

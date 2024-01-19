@@ -72,11 +72,14 @@ export default function InviteCode() {
               <>
                 <ModalHeader className="flex flex-col gap-2 items-center pb-0">
                   <Avatar
-                    src="https://i.pravatar.cc/150?u=a04258114e29026708c"
+                    src={
+                      getGroupProfileByInviteCode.data.owner.profile.avatarUrl
+                    }
                     className="w-20 h-20"
                   />
                   <div className="text-zinc-500 font-normal">
-                    Chú thích Lisa2 invited you to join
+                    {getGroupProfileByInviteCode.data.owner.profile.fullName}{" "}
+                    invited you to join
                   </div>
                 </ModalHeader>
                 <ModalBody>

@@ -23,25 +23,31 @@ export default function FriendRequest({
   const accept = useMutation({
     mutationFn: acceptFriendRequest,
     onSuccess() {
-      toast.success(`Accepted friend request from '${profile.fullName}'`)
-      queryClient.invalidateQueries({
-        queryKey: ["countFriendRequestToMe"],
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["countFriendRequestToMe"],
+        }),
+        queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] }),
+        queryClient.refetchQueries({ queryKey: ["getFriend"] }),
+        queryClient.refetchQueries({ queryKey: ["getFriendList"] }),
+      ]).then(() => {
+        toast.success(`Accepted friend request from '${profile.fullName}'`)
       })
-      queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
-      queryClient.refetchQueries({ queryKey: ["getFriend", profile.userId] })
-      queryClient.refetchQueries({ queryKey: ["getFriendList"] })
     },
   })
 
   const cancel = useMutation({
     mutationFn: cancelFriendRequest,
     onSuccess() {
-      toast.success(`Canceled friend request`)
-      queryClient.invalidateQueries({
-        queryKey: ["countFriendRequestToMe"],
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["countFriendRequestToMe"],
+        }),
+        queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] }),
+        queryClient.refetchQueries({ queryKey: ["getFriend"] }),
+      ]).then(() => {
+        toast.success(`Canceled friend request`)
       })
-      queryClient.refetchQueries({ queryKey: ["getFriendRequestToMeList"] })
-      queryClient.refetchQueries({ queryKey: ["getFriend"] })
     },
   })
 
@@ -98,10 +104,13 @@ export default function FriendRequest({
               { toUserId: profile.userId },
               {
                 onSuccess: () => {
-                  toast.success(`Sent request to ${profile.fullName}`)
-                  queryClient.refetchQueries({
-                    queryKey: ["getFriend"],
-                  })
+                  queryClient
+                    .refetchQueries({
+                      queryKey: ["getFriend"],
+                    })
+                    .then(() => {
+                      toast.success(`Sent request to ${profile.fullName}`)
+                    })
                 },
               },
             )

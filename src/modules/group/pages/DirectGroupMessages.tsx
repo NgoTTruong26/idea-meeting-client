@@ -9,7 +9,10 @@ import {
   ModalContent,
   useDisclosure,
 } from "@nextui-org/react"
+import DialogModal from "components/common/DialogModal"
+import { queryClient } from "configs/queryClient"
 import { useEffect, useState } from "react"
+import { toast } from "react-hot-toast"
 import { AiOutlineUser } from "react-icons/ai"
 import {
   MdAddToPhotos,
@@ -29,21 +32,24 @@ import ChatChannels from "../components/channels/ChatChannels"
 import MembersListModal from "../components/groupChatMessages/MembersListModal"
 import { GroupMessageParams } from "../route"
 import { useGetGroupProfile } from "../services/getGroup"
+import { useLeaveGroup } from "../services/leaveGroup"
 
 export default function DirectGroupMessages() {
+  const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const { user } = useUser()
+
   const navigate = useNavigate()
+
+  const { groupId = "" } = useParams<keyof GroupMessageParams>()
 
   const disclosureAddMembers = useDisclosure()
   const disclosureAddChatChannel = useDisclosure()
   const disclosureUpdateGroup = useDisclosure()
   const disclosureGetMembersList = useDisclosure()
-
-  const { groupId = "" } = useParams<keyof GroupMessageParams>()
+  const disclosureLeaveGroup = useDisclosure()
 
   const groupProfile = useGetGroupProfile({ groupId })
-
-  const [showDropdown, setShowDropdown] = useState<boolean>(false)
+  const leaveGroup = useLeaveGroup()
 
   const handleOpenChange = (isOpen: boolean) => {
     setShowDropdown(isOpen)
@@ -133,7 +139,7 @@ export default function DirectGroupMessages() {
                   <DropdownItem
                     color="danger"
                     endContent={<MdOutlineGroupRemove size={18} />}
-                    /* onClick={disclosureAddMembers.onOpen} */
+                    onClick={disclosureLeaveGroup.onOpen}
                     className="text-danger"
                   >
                     Leave Group
@@ -188,6 +194,53 @@ export default function DirectGroupMessages() {
                   </ModalContent>
                 </Modal>
               </>
+            )}
+
+            {groupProfile.data.ownerId !== user.id && (
+              <Modal
+                size="lg"
+                isDismissable={false}
+                isOpen={disclosureLeaveGroup.isOpen}
+                onClose={disclosureLeaveGroup.onClose}
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <DialogModal
+                      textHeader={`Leave group '${groupProfile.data.name}'`}
+                      body={
+                        <span>
+                          Are you sure you want to leave group{" "}
+                          <strong>{groupProfile.data.name}</strong>
+                        </span>
+                      }
+                      btnAcceptProps={{
+                        children: "Leave Group",
+                        isLoading: leaveGroup.isPending,
+                        onClick: () =>
+                          leaveGroup.mutate(
+                            { groupId: groupProfile.data.id },
+                            {
+                              onSuccess: () => {
+                                queryClient
+                                  .refetchQueries({
+                                    queryKey: ["getGroup"],
+                                  })
+                                  .then(() => {
+                                    toast.success(
+                                      `Leave group ${groupProfile.data.name} successfully`,
+                                    )
+                                    onClose()
+                                    navigate("/")
+                                  })
+                              },
+                            },
+                          ),
+                      }}
+                      onClose={onClose}
+                    />
+                  )}
+                </ModalContent>
+              </Modal>
             )}
 
             <Modal

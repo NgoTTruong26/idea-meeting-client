@@ -20,13 +20,16 @@ interface Props {
 }
 
 const formSchema = yup.object({
+  imageUrl: yup.string().required(),
   name: yup.string().label("Group Name").required(),
 })
 
 export default function CreateGroupModal({ onClose }: Props) {
   const [imageUrl, setImageUrl] = useState<string>()
 
-  const methods = useForm<Required<Pick<CreateGroupRequest, "name">>>({
+  const methods = useForm<
+    Required<Pick<CreateGroupRequest, "name" | "imageUrl">>
+  >({
     defaultValues: {
       name: "",
     },
@@ -36,7 +39,7 @@ export default function CreateGroupModal({ onClose }: Props) {
 
   const onSuccess = (data: AxiosResponse<string>) => {
     setImageUrl(data.data)
-
+    methods.setValue("imageUrl", data.data, { shouldValidate: true })
     return data.data
   }
 
@@ -51,19 +54,16 @@ export default function CreateGroupModal({ onClose }: Props) {
 
   const onSubmit = (data: CreateGroupRequest) => {
     if (imageUrl) {
-      createGroup.mutate(
-        { ...data, imageUrl },
-        {
-          onSuccess: () => {
-            queryClient
-              .refetchQueries({ queryKey: ["getGroupList"] })
-              .then(() => {
-                toast.success("Create group success")
-                onClose()
-              })
-          },
+      createGroup.mutate(data, {
+        onSuccess: () => {
+          queryClient
+            .refetchQueries({ queryKey: ["getGroupList"] })
+            .then(() => {
+              toast.success("Create group success")
+              onClose()
+            })
         },
-      )
+      })
       return
     }
   }
@@ -118,7 +118,7 @@ export default function CreateGroupModal({ onClose }: Props) {
           <Button
             type="submit"
             color="primary"
-            isDisabled={!methods.formState.isValid || !imageUrl}
+            isDisabled={!methods.formState.isValid}
             isLoading={createGroup.isPending || isPendingUpload}
           >
             Action
