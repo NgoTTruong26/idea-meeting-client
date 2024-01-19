@@ -11,6 +11,7 @@ import { SelectOption } from "components/core/field/Select"
 import { queryClient } from "configs/queryClient"
 import { useMemo } from "react"
 import { FormProvider, useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import * as yup from "yup"
 import {
   GenerateInviteCodeRequest,
@@ -77,9 +78,13 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
       { groupId: groupProfile.id, ...data },
       {
         onSuccess: () => {
-          queryClient.refetchQueries({
-            queryKey: ["getGroup", groupProfile.id],
-          })
+          queryClient
+            .refetchQueries({
+              queryKey: ["getGroup", groupProfile.id],
+            })
+            .then(() => {
+              toast.success("Generate a new link successfully")
+            })
         },
       },
     )

@@ -37,7 +37,7 @@ export default function UpdateGroupProfileModal({
   >({
     defaultValues: {
       name: groupProfile.name,
-      imageUrl: imageUrl,
+      imageUrl: groupProfile.imageUrl,
     },
     resolver: yupResolver(formSchema),
     mode: "onChange",
@@ -45,6 +45,10 @@ export default function UpdateGroupProfileModal({
 
   const onSuccess = (data: AxiosResponse<string>) => {
     setImageUrl(data.data)
+    methods.setValue("imageUrl", data.data, {
+      shouldValidate: true,
+      shouldDirty: true,
+    })
     return data.data
   }
 
@@ -141,9 +145,7 @@ export default function UpdateGroupProfileModal({
             color="primary"
             isLoading={updateGroup.isPending || isPendingUpload}
             isDisabled={
-              !methods.formState.isValid ||
-              !methods.formState.isDirty ||
-              !imageUrl
+              !methods.formState.isValid || !methods.formState.isDirty
             }
           >
             Submit

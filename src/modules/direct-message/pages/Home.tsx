@@ -163,7 +163,7 @@ export default function Home() {
         }}
       >
         <ModalContent>
-          <UpdateProfileModal {...profile} />
+          {(onClose) => <UpdateProfileModal onClose={onClose} {...profile} />}
         </ModalContent>
       </Modal>
     </div>

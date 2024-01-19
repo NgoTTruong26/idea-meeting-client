@@ -1,16 +1,17 @@
+import Picker from "@emoji-mart/react"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Button } from "@nextui-org/react"
 import Field from "components/core/field"
 import { socket } from "configs/socket"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { GoSmiley } from "react-icons/go"
 import { LuSend } from "react-icons/lu"
-import { MdOutlineAttachFile } from "react-icons/md"
 import { WsEvent } from "types/ws"
 import { removeWhiteSpace } from "utils/removeWhiteSpace"
 import * as yup from "yup"
 
+import { EmojiObject } from "modules/direct-message/components/ChatMessages/MessageInput"
 import { MessageType } from "modules/direct-message/services/sendMessage"
 import { CreateGroupMessageRequest } from "modules/group/services/sendGroupMessage"
 
@@ -29,6 +30,8 @@ const formSchema = yup.object().shape({
 })
 
 export default function GroupMessageInput({ groupMessageChannelId }: Props) {
+  const [showPicker, setShowPicker] = useState(false)
+
   const methods = useForm<Required<Omit<FormValues, "groupMessageChannelId">>>({
     defaultValues: {
       type: "TEXT",
@@ -43,12 +46,17 @@ export default function GroupMessageInput({ groupMessageChannelId }: Props) {
       groupMessageChannelId,
     })
 
+    methods.setFocus("value")
     methods.reset()
   })
 
   useEffect(() => {
     methods.setFocus("value")
   }, [methods.setFocus])
+
+  const onEmojiClick = (emojiObject: EmojiObject) => {
+    methods.setValue("value", methods.getValues("value") + emojiObject.native)
+  }
 
   return (
     <FormProvider {...methods}>
@@ -60,15 +68,10 @@ export default function GroupMessageInput({ groupMessageChannelId }: Props) {
               t="hide-input-errors"
               placeholder="Write a message..."
               variant="bordered"
-              startContent={
-                <MdOutlineAttachFile
-                  size={25}
-                  className="text-primary-500 rotate-45 mx-2 cursor-pointer"
-                />
-              }
               endContent={
                 <GoSmiley
                   size={20}
+                  onClick={() => setShowPicker(true)}
                   className="text-primary-500 cursor-pointer"
                 />
               }
@@ -76,6 +79,25 @@ export default function GroupMessageInput({ groupMessageChannelId }: Props) {
               isInvalid={false}
               errorMessage={false}
             />
+            {showPicker && (
+              <>
+                <div className="z-50 absolute bottom-14 right-0">
+                  <Picker
+                    theme="light"
+                    set="facebook"
+                    previewPosition="none"
+                    onEmojiSelect={onEmojiClick}
+                  />
+                </div>
+
+                <div
+                  onClick={() => {
+                    setShowPicker(false)
+                  }}
+                  className="z-10 fixed w-full h-full top-0 right-0"
+                ></div>
+              </>
+            )}
           </div>
           <div>
             <Button type="submit" isIconOnly color="primary" size="lg">

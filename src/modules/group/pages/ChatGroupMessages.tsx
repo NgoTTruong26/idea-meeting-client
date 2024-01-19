@@ -1,5 +1,6 @@
 import { Button } from "@nextui-org/react"
 import clsx from "clsx"
+import { queryClient } from "configs/queryClient"
 import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
 import { FaHashtag } from "react-icons/fa6"
@@ -32,18 +33,25 @@ export default function ChatGroupMessages() {
   }
 
   useEffect(() => {
-    if (groupChannel.isError) {
-      navigate("/")
-    }
-  }, [groupChannel.isError, navigate])
-
-  useEffect(() => {
     socket.on(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
 
     return () => {
       socket.off(WsEvent.CREATE_GROUP_MESSAGE, handleIncomingMessage)
     }
   }, [groupMessageChannelId, groupId, handleIncomingMessage])
+
+  useEffect(() => {
+    setMessages([])
+    queryClient.refetchQueries({
+      queryKey: ["getGroupMessageListChannel"],
+    })
+  }, [groupId, groupMessageChannelId])
+
+  useEffect(() => {
+    if (groupChannel.isError) {
+      navigate("/")
+    }
+  }, [groupChannel.isError, navigate])
 
   return (
     <div className="flex flex-col justify-between w-full max-h-screen">

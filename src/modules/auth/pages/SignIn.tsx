@@ -114,7 +114,7 @@ export default function SignIn() {
         }}
       >
         <ModalContent>
-          <UpdateProfileModal />
+          {(onClose) => <UpdateProfileModal onClose={onClose} />}
         </ModalContent>
       </Modal>
     </div>
