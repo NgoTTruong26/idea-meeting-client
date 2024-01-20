@@ -1,3 +1,4 @@
+import LoadingPage from "components/common/LoadingPage"
 import LoadingChatContent from "modules/direct-message/components/ChatMessages/LoadingChatContent"
 import { GetGroupChannelResponse } from "modules/group/services/getGroup"
 import { useGetGroupMessageListChannel } from "modules/group/services/getGroupMessage"
@@ -37,7 +38,11 @@ export default function GroupChatChannelContent({
     }
   }, [getGroupMessageListChannel.fetchNextPage, inView])
 
-  return (
+  return (getGroupMessageListChannel.isFetching &&
+    !getGroupMessageListChannel.isFetchingNextPage) ||
+    getGroupMessageListChannel.isLoading ? (
+    <LoadingPage />
+  ) : (
     <>
       {messages.map((message, idx) =>
         message.userId === user.id &&

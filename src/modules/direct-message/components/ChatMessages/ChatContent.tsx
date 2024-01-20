@@ -1,3 +1,4 @@
+import LoadingPage from "components/common/LoadingPage"
 import { useGetMessageListFromFriend } from "modules/direct-message/services/getMessage"
 import { useEffect } from "react"
 import { useInView } from "react-intersection-observer"
@@ -29,6 +30,8 @@ export default function ChatContent({
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
+    isFetching,
+    isLoading,
   } = useGetMessageListFromFriend(
     {
       directMessageChannelId,
@@ -44,11 +47,9 @@ export default function ChatContent({
     }
   }, [fetchNextPage, inView])
 
-  if (!dataResponse) {
-    return <div></div>
-  }
-
-  return (
+  return (isFetching && !isFetchingNextPage) || isLoading ? (
+    <LoadingPage />
+  ) : (
     <>
       {messages.map((message, idx) =>
         message.userId === user.id &&
@@ -78,7 +79,7 @@ export default function ChatContent({
           )
         ),
       )}
-      {dataResponse.pages.map(
+      {dataResponse?.pages.map(
         (page, pageIdx) =>
           page &&
           page.data.map((message, idx) =>
