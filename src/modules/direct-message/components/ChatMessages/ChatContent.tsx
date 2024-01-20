@@ -1,4 +1,4 @@
-import LoadingPage from "components/common/LoadingPage"
+import LoadingIcon from "components/common/LoadingIcon"
 import { useGetMessageListFromFriend } from "modules/direct-message/services/getMessage"
 import { useEffect } from "react"
 import { useInView } from "react-intersection-observer"
@@ -48,7 +48,7 @@ export default function ChatContent({
   }, [fetchNextPage, inView])
 
   return (isFetching && !isFetchingNextPage) || isLoading ? (
-    <LoadingPage />
+    <LoadingIcon size="xl" />
   ) : (
     <>
       {messages.map((message, idx) =>
