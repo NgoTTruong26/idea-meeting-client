@@ -1,7 +1,6 @@
 import {
   Avatar,
   Button,
-  Chip,
   Modal,
   ModalContent,
   useDisclosure,
@@ -51,38 +50,18 @@ export default function InCallModal() {
   const localStreamRef = useRef<HTMLVideoElement>(null)
   const remoteStreamRef = useRef<HTMLVideoElement>(null)
 
-  const enableMic = () => {
-    if (micEnabled) setMicEnabled(false)
-    else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: cameraEnabled })
-        .then((stream) => {
-          setMicEnabled(true)
-          setStream(stream)
-          if (localStreamRef.current) localStreamRef.current.srcObject = stream
-        })
-        .catch(() => {
-          toast.error("Can't connect to microphone device or camera device")
-          setMicEnabled(false)
-        })
-    }
+  const toggleMic = () => {
+    setMicEnabled(!micEnabled)
+    if (mediaConnection)
+      mediaConnection.localStream.getAudioTracks()[0].enabled = !micEnabled
   }
-  const enableCamera = () => {
-    if (cameraEnabled) setCameraEnabled(false)
-    else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: micEnabled, video: true })
-        .then((stream) => {
-          setCameraEnabled(true)
-          setStream(stream)
-          if (localStreamRef.current) localStreamRef.current.srcObject = stream
-        })
-        .catch(() => {
-          toast.error("Can't connect to microphone device or camera device")
-          setCameraEnabled(false)
-        })
-    }
+
+  const toggleCamera = () => {
+    setCameraEnabled(!cameraEnabled)
+    if (mediaConnection)
+      mediaConnection.localStream.getVideoTracks()[0].enabled = !cameraEnabled
   }
+
   const cancelCall = () => {
     if (!isOpen || isEnding) return
     socket.emit(WsEvent.CANCEL_CALL)
@@ -123,20 +102,20 @@ export default function InCallModal() {
       setMicEnabled(false)
       setCameraEnabled(false)
       setDirectCallChannel(undefined)
+      setMediaConnection(undefined)
       if (localStreamRef.current) localStreamRef.current.srcObject = null
       if (remoteStreamRef.current) remoteStreamRef.current.srcObject = null
-      if (mediaConnection) mediaConnection.close()
+      mediaConnection?.close()
     }
   }, [
     peer,
     isOpen,
-    mediaConnection,
     setIsEnding,
-    setMediaConnection,
     setStream,
     setMicEnabled,
     setCameraEnabled,
     setDirectCallChannel,
+    setMediaConnection,
   ])
   useEffect(() => {
     if (peer) {
@@ -206,27 +185,13 @@ export default function InCallModal() {
           </div>
         </div>
         <div className="absolute bottom-6 w-full flex flex-col items-center z-10">
-          {!!remoteStreamRef.current &&
-            !!remoteStreamRef.current.srcObject &&
-            !(remoteStreamRef.current.srcObject as MediaStream).getAudioTracks()
-              .length && (
-              <Chip size="lg">
-                {targetUserProfile?.fullName}'s camera is off
-              </Chip>
-            )}
-          {!!remoteStreamRef.current &&
-            !!remoteStreamRef.current.srcObject &&
-            !(remoteStreamRef.current.srcObject as MediaStream).getAudioTracks()
-              .length && (
-              <Chip size="lg">{targetUserProfile?.fullName}'s mic is off</Chip>
-            )}
           <div className="flex items-center gap-4">
             <Button
               isIconOnly
               variant="flat"
               size="lg"
               radius="full"
-              onClick={enableMic}
+              onClick={toggleMic}
             >
               {micEnabled ? <MdMic size="26" /> : <MdMicOff size="26" />}
             </Button>
@@ -235,7 +200,7 @@ export default function InCallModal() {
               variant="flat"
               size="lg"
               radius="full"
-              onClick={enableCamera}
+              onClick={toggleCamera}
             >
               {cameraEnabled ? (
                 <MdVideocam size="26" />
