@@ -81,7 +81,7 @@ export default function JoinGroupModal({ onClose }: Props) {
             <Field
               t="input"
               name="inviteCode"
-              placeholder="http://127.0.0.1:5173/group/join/w7hClAWkNJ"
+              placeholder="w7hClAWkNJ"
               color="primary"
               className="text-black"
               size="lg"
@@ -93,7 +93,6 @@ export default function JoinGroupModal({ onClose }: Props) {
             </div>
             <div className="flex flex-col text-sm text-zinc-500">
               <div>w7hClAWkNJ</div>
-              <div>http://127.0.0.1:5173/group/join/w7hClAWkNJ</div>
             </div>
           </div>
         </ModalBody>
