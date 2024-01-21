@@ -99,9 +99,9 @@ export default function ChatMessages() {
             </div>
             <div className="flex w-full flex-col pl-3">
               <div className="flex w-full mb-1">
-                <span className="font-bold">
+                <div className="font-bold break-all">
                   {friend.data.profile.fullName}
-                </span>
+                </div>
               </div>
               <div className="flex w-full">
                 <span className={clsx("text-gray-500 text-sm")}>

@@ -95,11 +95,13 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
                   },
                 )}
               >
-                <div className="flex items-center space-x-1">
+                <div className="w-full flex items-center space-x-1 overflow-hidden">
                   <span>
                     <FaHashtag size={16} />
                   </span>
-                  <span>{chatChannel.name}</span>
+                  <span className="w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
+                    {chatChannel.name}
+                  </span>
                 </div>
                 {isOwner && (
                   <>

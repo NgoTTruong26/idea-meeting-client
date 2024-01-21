@@ -85,8 +85,8 @@ export default function DirectGroupMessages() {
                     )
                   }
                 >
-                  <div className="w-full flex flex-col items-start space-y-1 text-black">
-                    <div className="font-semibold text-xl">
+                  <div className="w-full flex flex-col items-start space-y-1 text-black overflow-hidden">
+                    <div className="text-start w-full font-semibold text-xl overflow-hidden overflow-ellipsis whitespace-nowrap">
                       {groupProfile.data.name}
                     </div>
                     <div className="flex items-end space-x-1 text-sm">
