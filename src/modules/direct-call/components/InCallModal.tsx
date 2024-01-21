@@ -119,7 +119,7 @@ export default function InCallModal() {
       mediaConnection?.close()
       setMediaConnection(undefined)
     }
-  }, [isOpen, mediaConnection])
+  }, [isOpen, mediaConnection, setMediaConnection])
   useEffect(() => {
     if (peer) {
       peer.on("call", (mediaConnection) => {
