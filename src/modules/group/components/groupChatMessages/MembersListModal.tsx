@@ -77,7 +77,7 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                   <User
                     name={
                       <div className="relative flex items-center gap-2">
-                        <div>
+                        <div className="w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
                           {user.user.profile.userId !== id
                             ? user.user.profile.fullName
                             : `Me (${user.user.profile.fullName})`}

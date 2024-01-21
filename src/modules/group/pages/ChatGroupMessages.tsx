@@ -1,10 +1,7 @@
-import { Button } from "@nextui-org/react"
-import clsx from "clsx"
 import { queryClient } from "configs/queryClient"
 import { socket } from "configs/socket"
 import { useEffect, useState } from "react"
 import { FaHashtag } from "react-icons/fa6"
-import { HiDotsVertical } from "react-icons/hi"
 import { useNavigate, useParams } from "react-router-dom"
 import { GroupMessageFromSocket } from "types/messageFromSocket"
 import { WsEvent } from "types/ws"
@@ -61,14 +58,7 @@ export default function ChatGroupMessages() {
             <span>
               <FaHashtag size={20} />
             </span>
-            <span className="text-xl">{groupChannel.data?.name}</span>
-          </div>
-          <div
-            className={clsx("flex text-primary-500", "[&>button]:rounded-full")}
-          >
-            <Button isIconOnly variant="light" color="primary" size="lg">
-              <HiDotsVertical size="25" />
-            </Button>
+            <span className="text-xl break-all">{groupChannel.data?.name}</span>
           </div>
         </div>
       </div>
