@@ -1,7 +1,6 @@
 import {
   Avatar,
   Button,
-  Chip,
   Modal,
   ModalContent,
   useDisclosure,
@@ -18,7 +17,6 @@ import {
   MdVideocam,
   MdVideocamOff,
 } from "react-icons/md"
-import { useStopwatch } from "react-timer-hook"
 import { usePeer } from "store/peer"
 import { useUser } from "store/user"
 import { WsEvent } from "types/ws"
@@ -47,42 +45,22 @@ export default function InCallModal() {
       )?.user.profile || null
     )
   }, [user, directCallChannel])
-  const stopwatch = useStopwatch({ autoStart: false })
+
   const localStreamRef = useRef<HTMLVideoElement>(null)
   const remoteStreamRef = useRef<HTMLVideoElement>(null)
 
-  const enableMic = () => {
-    if (micEnabled) setMicEnabled(false)
-    else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: cameraEnabled })
-        .then((stream) => {
-          setMicEnabled(true)
-          setStream(stream)
-          if (localStreamRef.current) localStreamRef.current.srcObject = stream
-        })
-        .catch(() => {
-          toast.error("Can't connect to microphone device or camera device")
-          setMicEnabled(false)
-        })
-    }
+  const toggleMic = () => {
+    setMicEnabled(!micEnabled)
+    if (mediaConnection)
+      mediaConnection.localStream.getAudioTracks()[0].enabled = !micEnabled
   }
-  const enableCamera = () => {
-    if (cameraEnabled) setCameraEnabled(false)
-    else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: micEnabled, video: true })
-        .then((stream) => {
-          setCameraEnabled(true)
-          setStream(stream)
-          if (localStreamRef.current) localStreamRef.current.srcObject = stream
-        })
-        .catch(() => {
-          toast.error("Can't connect to microphone device or camera device")
-          setCameraEnabled(false)
-        })
-    }
+
+  const toggleCamera = () => {
+    setCameraEnabled(!cameraEnabled)
+    if (mediaConnection)
+      mediaConnection.localStream.getVideoTracks()[0].enabled = !cameraEnabled
   }
+
   const cancelCall = () => {
     if (!isOpen || isEnding) return
     socket.emit(WsEvent.CANCEL_CALL)
@@ -91,7 +69,6 @@ export default function InCallModal() {
   const handleAcceptRequestCall = (channel: DirectCallChannel) => {
     onOpen()
     setDirectCallChannel(channel)
-    stopwatch.reset(undefined, true)
   }
   const handleCancelCall = (channel: DirectCallChannel) => {
     if (channel.id !== directCallChannel?.id) return
@@ -125,22 +102,25 @@ export default function InCallModal() {
       setDirectCallChannel(undefined)
       if (localStreamRef.current) localStreamRef.current.srcObject = null
       if (remoteStreamRef.current) remoteStreamRef.current.srcObject = null
-      if (mediaConnection) mediaConnection.close()
     }
   }, [
     peer,
     isOpen,
-    mediaConnection,
     setIsEnding,
-    setMediaConnection,
     setStream,
     setMicEnabled,
     setCameraEnabled,
     setDirectCallChannel,
   ])
   useEffect(() => {
+    if (!isOpen) {
+      mediaConnection?.close()
+      setMediaConnection(undefined)
+    }
+  }, [isOpen, mediaConnection, setMediaConnection])
+  useEffect(() => {
     if (peer) {
-      peer.on("call", (mediaConnection) => {
+      peer?.on("call", (mediaConnection) => {
         mediaConnection.answer(stream)
         mediaConnection.on("stream", (stream) => {
           console.log("answer", stream)
@@ -187,46 +167,24 @@ export default function InCallModal() {
     >
       <ModalContent className="relative h-[600px] overflow-hidden">
         <div className="absolute top-5 left-5 flex items-center gap-3 z-10">
-          <Avatar />
+          <Avatar src={targetUserProfile?.avatarUrl} />
           <div>
             <div className="font-bold leading-4">
               {targetUserProfile?.fullName || "Nam Dao"}
             </div>
             <div className="mt-1 text-gray-500 text-xs">
-              {isEnding
-                ? "The call has ended"
-                : `${
-                    stopwatch.hours
-                      ? String(stopwatch.hours).padStart(2, "0") + ":"
-                      : ""
-                  }${String(stopwatch.minutes).padStart(2, "0")}:${String(
-                    stopwatch.seconds,
-                  ).padStart(2, "0")}`}
+              {isEnding && "The call has ended"}
             </div>
           </div>
         </div>
         <div className="absolute bottom-6 w-full flex flex-col items-center z-10">
-          {!!remoteStreamRef.current &&
-            !!remoteStreamRef.current.srcObject &&
-            !(remoteStreamRef.current.srcObject as MediaStream).getAudioTracks()
-              .length && (
-              <Chip size="lg">
-                {targetUserProfile?.fullName}'s camera is off
-              </Chip>
-            )}
-          {!!remoteStreamRef.current &&
-            !!remoteStreamRef.current.srcObject &&
-            !(remoteStreamRef.current.srcObject as MediaStream).getAudioTracks()
-              .length && (
-              <Chip size="lg">{targetUserProfile?.fullName}'s mic is off</Chip>
-            )}
           <div className="flex items-center gap-4">
             <Button
               isIconOnly
               variant="flat"
               size="lg"
               radius="full"
-              onClick={enableMic}
+              onClick={toggleMic}
             >
               {micEnabled ? <MdMic size="26" /> : <MdMicOff size="26" />}
             </Button>
@@ -235,7 +193,7 @@ export default function InCallModal() {
               variant="flat"
               size="lg"
               radius="full"
-              onClick={enableCamera}
+              onClick={toggleCamera}
             >
               {cameraEnabled ? (
                 <MdVideocam size="26" />

@@ -42,9 +42,16 @@ export default function AuthLayout({ children }: PropsWithChildren) {
       socket.auth = {
         accessToken: auth.accessToken,
       }
-
       socket.connect()
 
+      return () => {
+        socket.disconnect()
+      }
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (user.id) {
       axios
         .get(
           "https://idea-meeting.metered.live/api/v1/turn/credentials?apiKey=e3f696802a20d03870c4d2c8b452ca3fc20c",
@@ -61,10 +68,9 @@ export default function AuthLayout({ children }: PropsWithChildren) {
     }
 
     return () => {
-      socket.disconnect()
       peer.clear()
     }
-  }, [peer.set, peer.clear])
+  }, [user, peer.set, peer.clear])
 
   if (!loading) {
     return user.id ? children : <Navigate to={nav.AUTH + nav.SIGN_IN} replace />

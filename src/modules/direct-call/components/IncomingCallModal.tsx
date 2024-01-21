@@ -90,7 +90,7 @@ export default function IncomingCallModal() {
         <ModalHeader></ModalHeader>
         <ModalBody>
           <div className="flex flex-col items-center">
-            <Avatar size="lg" />
+            <Avatar size="lg" src={fromUserProfile?.avatarUrl} />
             <div className="mt-4 font-bold text-xl">
               {fromUserProfile?.fullName || "‎"}
             </div>
