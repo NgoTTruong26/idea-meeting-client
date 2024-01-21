@@ -121,7 +121,7 @@ export default function InCallModal() {
   }, [isOpen, mediaConnection, setMediaConnection])
   useEffect(() => {
     if (peer) {
-      peer.on("call", (mediaConnection) => {
+      peer?.on("call", (mediaConnection) => {
         mediaConnection.answer(stream)
         mediaConnection.on("stream", (stream) => {
           console.log("answer", stream)
