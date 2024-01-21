@@ -24,8 +24,9 @@ import SearchFriendModal from "modules/user/components/SearchFriendModal"
 import { useMemo, useState } from "react"
 import { toast } from "react-hot-toast"
 import { HiDotsVertical } from "react-icons/hi"
-import { ImBin, ImPhone } from "react-icons/im"
-import { IoChatbox } from "react-icons/io5"
+import { ImPhone } from "react-icons/im"
+import { IoTrashBin } from "react-icons/io5"
+import { TbMessageCircle2Filled } from "react-icons/tb"
 import { useNavigate, useParams } from "react-router-dom"
 import { Friend } from "types/friend"
 import { UserProfile } from "types/user"
@@ -122,7 +123,10 @@ export default function FriendList() {
                 <DropdownMenu aria-label="Dropdown menu with description">
                   <DropdownItem
                     startContent={
-                      <IoChatbox size="20" className="text-primary" />
+                      <TbMessageCircle2Filled
+                        size="20"
+                        className="text-primary"
+                      />
                     }
                     onClick={() =>
                       navigate(`/direct-message/${user.profile.userId}`)
@@ -142,7 +146,7 @@ export default function FriendList() {
                   <DropdownItem
                     className="text-danger"
                     color="danger"
-                    startContent={<ImBin size="20" />}
+                    startContent={<IoTrashBin size="20" />}
                     onClick={() => handleOpenDialogDeleteFriend(user.profile)}
                   >
                     Remove friend

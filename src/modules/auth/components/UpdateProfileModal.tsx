@@ -22,7 +22,7 @@ import * as yup from "yup"
 
 const formSchema = yup.object({
   avatarUrl: yup.string().required(),
-  fullName: yup.string().label("Full name").required().min(6),
+  fullName: yup.string().trim().label("Full name").required().min(6),
   gender: yup.string().label("Gender").required(),
 })
 
@@ -39,7 +39,8 @@ export default function UpdateProfileModal({ onClose, ...profile }: Props) {
 
   const methods = useForm<Required<Omit<UpdateUserProfileRequest, "userId">>>({
     defaultValues: {
-      avatarUrl: profile.avatarUrl || "",
+      avatarUrl:
+        profile.avatarUrl || "https://i.pravatar.cc/150?u=a042581f4e29026704d",
       fullName: profile.fullName || "",
       gender: profile.gender || "",
     },
@@ -145,7 +146,9 @@ export default function UpdateProfileModal({ onClose, ...profile }: Props) {
               color="primary"
               isLoading={isPendingUpdate || isPendingUpload}
               isDisabled={
-                !methods.formState.isDirty || !methods.formState.isValid
+                profile.fullName
+                  ? !methods.formState.isValid || !methods.formState.isDirty
+                  : !methods.formState.isValid
               }
             >
               Submit
