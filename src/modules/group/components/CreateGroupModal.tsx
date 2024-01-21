@@ -31,6 +31,7 @@ export default function CreateGroupModal({ onClose }: Props) {
     Required<Pick<CreateGroupRequest, "name" | "imageUrl">>
   >({
     defaultValues: {
+      imageUrl: "https://i.pravatar.cc/150?u=a04258114e29026708c",
       name: "",
     },
     resolver: yupResolver(formSchema),
@@ -53,19 +54,15 @@ export default function CreateGroupModal({ onClose }: Props) {
   const createGroup = useCreateGroup()
 
   const onSubmit = (data: CreateGroupRequest) => {
-    if (imageUrl) {
-      createGroup.mutate(data, {
-        onSuccess: () => {
-          queryClient
-            .refetchQueries({ queryKey: ["getGroupList"] })
-            .then(() => {
-              toast.success("Create group success")
-              onClose()
-            })
-        },
-      })
-      return
-    }
+    createGroup.mutate(data, {
+      onSuccess: () => {
+        queryClient.refetchQueries({ queryKey: ["getGroupList"] }).then(() => {
+          toast.success("Create group success")
+          onClose()
+        })
+      },
+    })
+    return
   }
 
   return (

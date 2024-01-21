@@ -12,14 +12,13 @@ import {
 import DialogModal from "components/common/DialogModal"
 import { queryClient } from "configs/queryClient"
 import { useDeleteMember } from "modules/group/services/deleteMember"
-
 import { useGetGroupMembersList } from "modules/group/services/getGroupMembers"
 import { useTransferOwnership } from "modules/group/services/transferOwnership"
 import LoadingSearchFriend from "modules/user/components/LoadingSearchFriend"
 import { useState } from "react"
 import { toast } from "react-hot-toast"
 import { FaCrown } from "react-icons/fa6"
-import { ImBin } from "react-icons/im"
+import { IoTrashBin } from "react-icons/io5"
 import { RiShieldStarFill } from "react-icons/ri"
 import { TbMessageCircle2Filled } from "react-icons/tb"
 import { useNavigate } from "react-router-dom"
@@ -159,7 +158,7 @@ export default function MembersListModal({ onClose, groupId, isOwner }: Props) {
                             color="danger"
                             radius="full"
                           >
-                            <ImBin size={20} />
+                            <IoTrashBin size={20} />
                           </Button>
                         </Tooltip>
                       </>

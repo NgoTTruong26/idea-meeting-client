@@ -21,7 +21,7 @@ import {
 import { useState } from "react"
 import { toast } from "react-hot-toast"
 import { FaHashtag } from "react-icons/fa6"
-import { ImBin } from "react-icons/im"
+import { IoTrashBin } from "react-icons/io5"
 import { MdAdd } from "react-icons/md"
 import { RiSettings5Fill } from "react-icons/ri"
 import { TbEdit } from "react-icons/tb"
@@ -128,7 +128,7 @@ export default function ChatChannels({ groupId, isOwner }: Props) {
                           key="delete"
                           className="text-danger"
                           color="danger"
-                          endContent={<ImBin size="18" />}
+                          endContent={<IoTrashBin size="18" />}
                           onClick={() => {
                             setChatChannel(chatChannel)
                             disclosureDialogDeleteGroupChannel.onOpen()
