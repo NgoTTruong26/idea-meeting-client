@@ -21,7 +21,6 @@ import { usePeer } from "store/peer"
 import { useUser } from "store/user"
 import { WsEvent } from "types/ws"
 import { DirectCallChannel } from "../types/direct-call-channel"
-import { StopwatchMemozied } from "./StopWatch"
 
 export default function InCallModal() {
   const { user } = useUser()
@@ -174,7 +173,7 @@ export default function InCallModal() {
               {targetUserProfile?.fullName || "Nam Dao"}
             </div>
             <div className="mt-1 text-gray-500 text-xs">
-              {isEnding ? "The call has ended" : <StopwatchMemozied />}
+              {isEnding && "The call has ended"}
             </div>
           </div>
         </div>
