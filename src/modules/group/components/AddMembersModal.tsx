@@ -107,7 +107,7 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
             }}
           >
             <div className="overflow-hidden overflow-ellipsis whitespace-nowrap ">
-              https://cute-biscochitos-848115.netlify.app/group/join/
+              {window.location.host}/group/join/
               {groupProfile.inviteCode}
             </div>
           </Snippet>
