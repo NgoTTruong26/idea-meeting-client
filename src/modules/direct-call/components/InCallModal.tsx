@@ -17,11 +17,11 @@ import {
   MdVideocam,
   MdVideocamOff,
 } from "react-icons/md"
-import { useStopwatch } from "react-timer-hook"
 import { usePeer } from "store/peer"
 import { useUser } from "store/user"
 import { WsEvent } from "types/ws"
 import { DirectCallChannel } from "../types/direct-call-channel"
+import { StopwatchMemozied } from "./StopWatch"
 
 export default function InCallModal() {
   const { user } = useUser()
@@ -46,7 +46,7 @@ export default function InCallModal() {
       )?.user.profile || null
     )
   }, [user, directCallChannel])
-  const stopwatch = useStopwatch({ autoStart: false })
+
   const localStreamRef = useRef<HTMLVideoElement>(null)
   const remoteStreamRef = useRef<HTMLVideoElement>(null)
 
@@ -70,7 +70,6 @@ export default function InCallModal() {
   const handleAcceptRequestCall = (channel: DirectCallChannel) => {
     onOpen()
     setDirectCallChannel(channel)
-    stopwatch.reset(undefined, true)
   }
   const handleCancelCall = (channel: DirectCallChannel) => {
     if (channel.id !== directCallChannel?.id) return
@@ -169,21 +168,13 @@ export default function InCallModal() {
     >
       <ModalContent className="relative h-[600px] overflow-hidden">
         <div className="absolute top-5 left-5 flex items-center gap-3 z-10">
-          <Avatar />
+          <Avatar src={targetUserProfile?.avatarUrl} />
           <div>
             <div className="font-bold leading-4">
               {targetUserProfile?.fullName || "Nam Dao"}
             </div>
             <div className="mt-1 text-gray-500 text-xs">
-              {isEnding
-                ? "The call has ended"
-                : `${
-                    stopwatch.hours
-                      ? String(stopwatch.hours).padStart(2, "0") + ":"
-                      : ""
-                  }${String(stopwatch.minutes).padStart(2, "0")}:${String(
-                    stopwatch.seconds,
-                  ).padStart(2, "0")}`}
+              {isEnding ? "The call has ended" : <StopwatchMemozied />}
             </div>
           </div>
         </div>
