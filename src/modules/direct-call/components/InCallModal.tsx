@@ -102,10 +102,8 @@ export default function InCallModal() {
       setMicEnabled(false)
       setCameraEnabled(false)
       setDirectCallChannel(undefined)
-      setMediaConnection(undefined)
       if (localStreamRef.current) localStreamRef.current.srcObject = null
       if (remoteStreamRef.current) remoteStreamRef.current.srcObject = null
-      mediaConnection?.close()
     }
   }, [
     peer,
@@ -115,8 +113,13 @@ export default function InCallModal() {
     setMicEnabled,
     setCameraEnabled,
     setDirectCallChannel,
-    setMediaConnection,
   ])
+  useEffect(() => {
+    if (!isOpen) {
+      mediaConnection?.close()
+      setMediaConnection(undefined)
+    }
+  }, [isOpen, mediaConnection])
   useEffect(() => {
     if (peer) {
       peer.on("call", (mediaConnection) => {
