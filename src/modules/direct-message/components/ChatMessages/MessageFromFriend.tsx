@@ -48,7 +48,7 @@ const MessageFromFriend = forwardRef(
                 <div></div>
               )}
               <Tooltip placement="right" content={time}>
-                <div className="flex px-3 py-2 bg-white rounded-2xl max-w-xl">
+                <div className="px-3 py-2 bg-white rounded-2xl max-w-xl break-words">
                   {message}
                 </div>
               </Tooltip>

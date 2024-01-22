@@ -127,6 +127,18 @@ export default function DirectGroupMessages() {
                   >
                     Members List
                   </DropdownItem>
+                  {groupProfile.data._count.users === 1 ? (
+                    <DropdownItem
+                      color="danger"
+                      endContent={<MdOutlineGroupRemove size={18} />}
+                      onClick={disclosureLeaveGroup.onOpen}
+                      className="text-danger"
+                    >
+                      Leave Group
+                    </DropdownItem>
+                  ) : (
+                    <DropdownItem className="hidden"></DropdownItem>
+                  )}
                 </DropdownMenu>
               ) : (
                 <DropdownMenu aria-label="Dynamic Actions">
@@ -196,7 +208,9 @@ export default function DirectGroupMessages() {
               </>
             )}
 
-            {groupProfile.data.ownerId !== user.id && (
+            {(groupProfile.data.ownerId !== user.id ||
+              (groupProfile.data.ownerId === user.id &&
+                groupProfile.data._count.users === 1)) && (
               <Modal
                 size="lg"
                 isDismissable={false}

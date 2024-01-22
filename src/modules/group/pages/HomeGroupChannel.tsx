@@ -145,6 +145,21 @@ export default function HomeGroupChannel() {
                 Members list
               </div>
             </Button>
+            {id === groupProfile.ownerId && groupProfile._count.users === 1 && (
+              <Button
+                variant="flat"
+                color="danger"
+                onClick={disclosureLeaveGroup.onOpen}
+                fullWidth
+                startContent={<MdOutlineGroupRemove size={25} />}
+                endContent={<IoIosLogOut size={20} />}
+                className="flex justify-between capitalize px-4 py-4 h-full backdrop-blur-xl"
+              >
+                <div className="flex-1 flex justify-start mx-2 font-semibold">
+                  Leave group
+                </div>
+              </Button>
+            )}
             {id !== groupProfile.ownerId && (
               <Button
                 variant="flat"
@@ -161,7 +176,9 @@ export default function HomeGroupChannel() {
               </Button>
             )}
 
-            {id !== groupProfile.ownerId && (
+            {(id !== groupProfile.ownerId ||
+              (id === groupProfile.ownerId &&
+                groupProfile._count.users === 1)) && (
               <Modal
                 size="lg"
                 isDismissable={false}
