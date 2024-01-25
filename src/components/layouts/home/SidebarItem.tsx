@@ -1,6 +1,6 @@
 import Tooltip from "components/core/Tooltip"
 import { PropsWithChildren, useMemo } from "react"
-import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai"
+import { AiOutlineUsergroupAdd } from "react-icons/ai"
 import { TiMessages } from "react-icons/ti"
 import { colors } from "styles/theme"
 
@@ -16,7 +16,6 @@ export default function SidebarItem({
   children,
   handleClick,
 }: PropsWithChildren<SidebarItemProps>) {
-  const isUpdateProfile = useMemo(() => label === "Update Profile", [label])
   const isDirectMessages = useMemo(() => label === "Direct Messages", [label])
   const isAddGroup = useMemo(() => label === "Add Group", [label])
 
@@ -31,9 +30,7 @@ export default function SidebarItem({
               backgroundImage: src && `url('${src}')`,
             }}
           >
-            {isUpdateProfile ? (
-              <AiOutlineUser size={24} color={colors.primary[500]} />
-            ) : isDirectMessages ? (
+            {isDirectMessages ? (
               <TiMessages size={24} color={colors.primary[500]} />
             ) : isAddGroup ? (
               <AiOutlineUsergroupAdd size={24} color={colors.primary[500]} />

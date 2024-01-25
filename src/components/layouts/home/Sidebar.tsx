@@ -26,6 +26,7 @@ export default function Sidebar() {
       <div className="space-y-2  max-h-[calc(100vh - 30px)] overflow-x-hidden overflow-y-auto pb-6">
         <SidebarItem
           label="Update Profile"
+          src={profile.avatarUrl}
           handleClick={disclosureUpdateProfile.onOpen}
         />
         <SidebarItem
