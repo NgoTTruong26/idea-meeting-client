@@ -16,7 +16,7 @@ import { WsEvent } from "types/ws"
 import { DirectCallChannel } from "../types/direct-call-channel"
 
 export default function IncomingCallModal() {
-  const user = useUser()
+  const { user } = useUser()
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
   const [isEnding, setIsEnding] = useState(false)
   const [directCallChannel, setDirectCallChannel] =
@@ -24,8 +24,9 @@ export default function IncomingCallModal() {
   const fromUserProfile = useMemo(() => {
     if (!directCallChannel) return null
     return (
-      directCallChannel.users.find(({ user: { id } }) => id !== user.user.id)
-        ?.user.profile || null
+      directCallChannel.users.find(
+        (item) => item.user.profile.userId !== user.id,
+      )?.user.profile || null
     )
   }, [user, directCallChannel])
 
@@ -39,7 +40,7 @@ export default function IncomingCallModal() {
     onClose()
   }
   const handleRequestCall = (channel: DirectCallChannel) => {
-    if (channel.createdById !== user.user.id) {
+    if (channel.createdById !== user.id) {
       onOpen()
       setDirectCallChannel(channel)
     }
