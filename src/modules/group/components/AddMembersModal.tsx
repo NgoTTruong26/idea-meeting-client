@@ -66,9 +66,13 @@ export default function AddMembersModal({ onClose, groupProfile }: Props) {
         { groupId: groupProfile.id, ...data },
         {
           onSuccess: () => {
-            queryClient.refetchQueries({
-              queryKey: ["getGroup", groupProfile.id],
-            })
+            queryClient
+              .refetchQueries({
+                queryKey: ["getGroup", groupProfile.id],
+              })
+              .then(() => {
+                toast.success("Generate a new link successfully")
+              })
           },
         },
       )

@@ -79,6 +79,7 @@ export default function JoinGroupModal({ onClose }: Props) {
           <div className="space-y-2">
             <div className="uppercase font-semibold">Invite link</div>
             <Field
+              autoFocus
               t="input"
               name="inviteCode"
               placeholder="w7hClAWkNJ"

@@ -53,7 +53,7 @@ export default function AddChatChannelModal({ onClose, groupId }: Props) {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <ModalHeader className="flex flex-col gap-1">
-          Create Channel
+          Add Chat Channel
           <span className="text-xs text-zinc-500">In the chat channel</span>
         </ModalHeader>
         <ModalBody>
@@ -75,6 +75,7 @@ export default function AddChatChannelModal({ onClose, groupId }: Props) {
             <div className="space-y-2">
               <div className="uppercase font-semibold">Channel Name</div>
               <Field
+                autoFocus
                 t="input"
                 name="name"
                 placeholder="New Channel"

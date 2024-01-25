@@ -101,7 +101,7 @@ export default function UpdateGroupProfileModal({
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <ModalHeader className="flex items-center flex-col gap-1">
-          <div className="text-center">Update your group</div>
+          <div className="text-center">Edit Group Profile</div>
         </ModalHeader>
         <ModalBody className="space-y-4">
           <div className="flex justify-center">

@@ -106,7 +106,7 @@ export default function CreateGroupModal({ onClose }: Props) {
             </div>
           </div>
 
-          <Field t="input" name="name" label="Group Name" />
+          <Field autoFocus t="input" name="name" label="Group Name" />
         </ModalBody>
         <ModalFooter>
           <Button color="danger" variant="light" onPress={onClose}>
