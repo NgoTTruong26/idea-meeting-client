@@ -1,5 +1,4 @@
 import LoadingIcon from "components/common/LoadingIcon"
-import LoadingChatContent from "modules/direct-message/components/ChatMessages/LoadingChatContent"
 import { GetGroupChannelResponse } from "modules/group/services/getGroup"
 import { useGetGroupMessageListChannel } from "modules/group/services/getGroupMessage"
 import { useEffect } from "react"
@@ -142,7 +141,11 @@ export default function GroupChatChannelContent({
           ),
       )}
 
-      {getGroupMessageListChannel.isFetchingNextPage && <LoadingChatContent />}
+      {getGroupMessageListChannel.isFetchingNextPage && (
+        <div className="py-2">
+          <LoadingIcon size="lg" />
+        </div>
+      )}
       {!getGroupMessageListChannel.hasNextPage && (
         <IntroduceChannel groupChannel={groupChannel} />
       )}

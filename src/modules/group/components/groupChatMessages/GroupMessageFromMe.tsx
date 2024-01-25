@@ -33,7 +33,7 @@ const GroupMessageFromMe = forwardRef(
         <div className="grid grid-cols-[62px,1fr,15px]">
           <div></div>
           <Tooltip placement="left" content={time}>
-            <div className="px-3 py-2 bg-primary-500 rounded-2xl text-white max-w-xl break-words">
+            <div className="px-3 py-2 bg-primary-500 rounded-2xl text-white max-w-[45vw] break-words">
               {message}
             </div>
           </Tooltip>

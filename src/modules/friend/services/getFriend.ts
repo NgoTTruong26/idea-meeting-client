@@ -57,7 +57,7 @@ export function useGetFriendList({ take = 20 }: GetFriendListRequest) {
       }
     },
     retry: 0,
-    refetchInterval: 10000,
+    refetchInterval: 4000,
   })
 }
 
@@ -70,6 +70,6 @@ export function useGetFriend({ targetId }: GetFriendRequest, userId?: string) {
     queryKey: ["getFriend", userId, targetId],
     queryFn: async () => await getFriend(targetId),
     retry: 0,
-    refetchInterval: 10000,
+    refetchInterval: 4000,
   })
 }

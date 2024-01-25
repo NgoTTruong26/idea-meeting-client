@@ -39,9 +39,6 @@ export default function Chat() {
                   src={item.user.profile.avatarUrl}
                   size="lg"
                 />
-                {item.user.isOnline && (
-                  <span className="absolute right-0 bottom-0 z-10 w-4 h-4 rounded-full bg-green-400"></span>
-                )}
               </div>
               <div className="flex w-full gap-5 items-center justify-between overflow-hidden">
                 <div className="flex w-full flex-col pl-3 overflow-hidden">

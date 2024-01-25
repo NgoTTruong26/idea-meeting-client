@@ -6,7 +6,6 @@ import { useUser } from "store/user"
 import { MessageFromSocket } from "types/messageFromSocket"
 import { UserProfile } from "types/user"
 import IntroduceFriend from "./IntroduceFriend"
-import LoadingChatContent from "./LoadingChatContent"
 import MessageFromFriend from "./MessageFromFriend"
 import MessageFromMe from "./MessageFromMe"
 
@@ -135,7 +134,11 @@ export default function ChatContent({
           ),
       )}
 
-      {isFetchingNextPage && <LoadingChatContent />}
+      {isFetchingNextPage && (
+        <div className="py-2">
+          <LoadingIcon size="lg" />
+        </div>
+      )}
       {!hasNextPage && <IntroduceFriend {...profile} isOnline={isOnline} />}
     </>
   )
