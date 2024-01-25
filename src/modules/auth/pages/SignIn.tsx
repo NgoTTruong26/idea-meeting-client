@@ -92,15 +92,6 @@ export default function SignIn() {
           >
             Sign in with Google
           </Button>
-          <Button
-            color="primary"
-            size="lg"
-            startContent={
-              <img src="/images/facebook.png" alt="" className="w-6" />
-            }
-          >
-            Sign in with Facebook
-          </Button>
         </div>
       </div>
       <Modal
