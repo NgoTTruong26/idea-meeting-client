@@ -58,7 +58,7 @@ export function useGetGroupMessageListChannel({
 }: GetGroupMessageChannelRequest) {
   return useInfiniteQuery({
     queryKey: [
-      "getGroupMessageListChannel",
+      `getGroupMessageListChannel-${props.groupId}-${props.groupMessageChannelId}`,
       props.groupId,
       props.groupMessageChannelId,
       take,
