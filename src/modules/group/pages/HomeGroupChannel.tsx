@@ -203,6 +203,9 @@ export default function HomeGroupChannel() {
                             { groupId: groupProfile.id },
                             {
                               onSuccess: () => {
+                                queryClient.removeQueries({
+                                  queryKey: ["getGroup", groupProfile.id],
+                                })
                                 queryClient
                                   .refetchQueries({
                                     queryKey: ["getGroup"],
