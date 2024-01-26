@@ -1,6 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
-import { toast } from "react-hot-toast"
 import { BaseGetList, PageParam } from "types/getList"
 import { User, UserProfile } from "types/user"
 import { MessageType } from "./sendMessage"
@@ -62,16 +61,12 @@ export async function getGetMessageListFromFriend({
   directMessageChannelId,
   ...params
 }: GetMessageListFromFriendRequest) {
-  try {
-    return (
-      await api.get<GetMessageListFromFriendResponse>(
-        `/direct-message-channel/${directMessageChannelId}/message`,
-        { params },
-      )
-    ).data
-  } catch (error) {
-    toast.error("Can't get Message")
-  }
+  return (
+    await api.get<GetMessageListFromFriendResponse>(
+      `/direct-message-channel/${directMessageChannelId}/message`,
+      { params },
+    )
+  ).data
 }
 
 export function useGetMessageListFromFriend(
@@ -119,22 +114,14 @@ export function useGetDirectMessage({ take = 20 }: GetDirectMessageRequest) {
   return useInfiniteQuery({
     queryKey: ["get-direct-message", take],
     queryFn: async ({ pageParam: { page } }) => {
-      try {
-        return (
-          await api.get<GetDirectMessageListResponse>(
-            `/direct-message-channel`,
-            {
-              params: {
-                take,
-                page,
-              },
-            },
-          )
-        ).data
-      } catch (error) {
-        toast.error("Can't get Message")
-        throw error
-      }
+      return (
+        await api.get<GetDirectMessageListResponse>(`/direct-message-channel`, {
+          params: {
+            take,
+            page,
+          },
+        })
+      ).data
     },
     initialPageParam: {
       page: 1,

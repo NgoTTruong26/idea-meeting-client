@@ -1,7 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { api } from "configs/api"
 import { MessageType } from "modules/direct-message/services/sendMessage"
-import { toast } from "react-hot-toast"
 import { BaseGetList, PageParam } from "types/getList"
 import { User } from "types/user"
 
@@ -45,17 +44,12 @@ export async function getGroupMessageListChannel({
   groupMessageChannelId,
   ...params
 }: GetGroupMessageChannelRequest) {
-  try {
-    return (
-      await api.get<GetGroupMessageListChannelResponse>(
-        `/group-message-channel/${groupId}/${groupMessageChannelId}/message`,
-        { params },
-      )
-    ).data
-  } catch (error) {
-    toast.error("Can't get Message")
-    throw error
-  }
+  return (
+    await api.get<GetGroupMessageListChannelResponse>(
+      `/group-message-channel/${groupId}/${groupMessageChannelId}/message`,
+      { params },
+    )
+  ).data
 }
 
 export function useGetGroupMessageListChannel({
