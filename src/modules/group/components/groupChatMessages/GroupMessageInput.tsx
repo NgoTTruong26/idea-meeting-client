@@ -64,6 +64,7 @@ export default function GroupMessageInput({ groupMessageChannelId }: Props) {
         <div className="flex gap-2 items-center w-full py-2 px-4 bg-purple-50">
           <div className="flex-1">
             <Field
+              autoFocus
               name="value"
               t="hide-input-errors"
               placeholder="Write a message..."
