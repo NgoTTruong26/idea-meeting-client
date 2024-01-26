@@ -119,8 +119,8 @@ export default function InCallModal() {
     }
   }, [isOpen, mediaConnection, setMediaConnection])
   useEffect(() => {
-    if (peer?.on) {
-      peer.on("call", (mediaConnection) => {
+    if (peer) {
+      peer?.on("call", (mediaConnection) => {
         mediaConnection.answer(stream)
         mediaConnection.on("stream", (stream) => {
           console.log("answer", stream)
@@ -130,31 +130,23 @@ export default function InCallModal() {
         setMediaConnection(mediaConnection)
       })
     }
-  }, [peer?.on, stream, setMediaConnection])
+  }, [peer, stream, setMediaConnection])
 
   useEffect(() => {
-    if (peer?.call && stream && directCallChannel && targetUserProfile) {
+    if (peer && stream && directCallChannel && targetUserProfile) {
       if (directCallChannel.createdById !== targetUserProfile.userId) {
         const mediaConnection = peer.call(targetUserProfile.userId, stream)
-        if (mediaConnection) {
-          mediaConnection.on("stream", (stream) => {
-            console.log("caller", stream)
-            if (remoteStreamRef.current)
-              remoteStreamRef.current.srcObject = stream
-          })
-          setMediaConnection(mediaConnection)
-        }
+        mediaConnection.on("stream", (stream) => {
+          console.log("caller", stream)
+          if (remoteStreamRef.current)
+            remoteStreamRef.current.srcObject = stream
+        })
+        setMediaConnection(mediaConnection)
       }
     }
 
     return () => {}
-  }, [
-    peer?.call,
-    stream,
-    directCallChannel,
-    targetUserProfile,
-    setMediaConnection,
-  ])
+  }, [peer, stream, directCallChannel, targetUserProfile, setMediaConnection])
   useEffect(() => {
     socket.on(WsEvent.ACCEPT_REQUEST_CALL, handleAcceptRequestCall)
     socket.on(WsEvent.CANCEL_CALL, handleCancelCall)
