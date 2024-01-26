@@ -8,8 +8,6 @@ import { useNavigate } from "react-router-dom"
 import * as yup from "yup"
 import { AcceptInviteRequest, useAcceptInvite } from "../services/acceptInvite"
 
-const regexLinkInviteCode =
-  /http:\/\/127\.0\.0\.1:5173\/group\/join\/[A-Za-z0-9]+/i
 const regexInviteCode = /[A-Za-z0-9]+/i
 
 interface Props {
@@ -23,7 +21,6 @@ const formSchema = yup.object({
     .required()
     .test({
       test: (value) => {
-        if (value.match(regexLinkInviteCode)) return true
         if (value.match(regexInviteCode)) return true
         return false
       },
@@ -44,11 +41,6 @@ export default function JoinGroupModal({ onClose }: Props) {
   })
 
   const onSubmit = ({ inviteCode }: AcceptInviteRequest) => {
-    if (inviteCode.match(regexLinkInviteCode)) {
-      const arr = inviteCode.split("/")
-      inviteCode = arr[arr.length - 1]
-    }
-
     acceptInvite.mutate(
       { inviteCode },
       {
